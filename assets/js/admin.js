@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         try {
             // Store in localStorage for now (will be replaced with Convex)
-            const existingPosts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+            const existingPosts = await convex.query(api.blogPosts.getAllPosts);
             const newPost = {
                 id: Date.now().toString(),
                 ...postData,

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function loadBlogPosts() {
         try {
             // Load posts from localStorage (will be replaced with Convex)
-            const storedPosts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+            const storedPosts = await convex.query(api.blogPosts.getAllPosts);
             
             // Filter only published posts
             const publishedPosts = storedPosts.filter(post => post.isPublished);
