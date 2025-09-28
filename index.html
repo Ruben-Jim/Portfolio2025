@@ -151,10 +151,6 @@
 
     </aside>
 
-
-
-
-
     <!--
       - #main-content
     -->
@@ -181,10 +177,10 @@
             <button class="navbar-link" data-nav-link>Portfolio</button>
           </li>
 
-          <!-- <li class="navbar-item">
+          <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Blog</button>
           </li>
-           -->
+          
           
           <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Contact</button>
@@ -193,10 +189,6 @@
         </ul>
 
       </nav>
-
-
-
-
 
       <!--
         - #ABOUT
@@ -288,22 +280,7 @@
 
         </section>
 
-        <!-- 
-          - Github chart
-        -->
-
-        <section class="github">
-          <h3 class="h3 github-title">Days I Code</h3>
-          
-          <ul class="github-list">
-            <li class="github-item">
-              <img src="https://ghchart.rshah.org/ceb15a/Ruben-Jim" alt="Your GitHub chart" width="100%"  />
-
-            </li>
-
-          </ul>
-
-        </section>
+        
         <!--
           - testimonials
         -->
@@ -447,13 +424,11 @@
 
         </div>
 
-
         <!--
           - clients
         -->
-
-      <!--         
-        <section class="clients">
+       
+        <!-- <section class="clients">
 
           <h3 class="h3 clients-title">Clients</h3>
 
@@ -497,24 +472,19 @@
 
           </ul>
 
-        </section>
-         -->
-
+        </section> -->
       </article>
-
-
-
-
+      
       <!--
         - #RESUME
       -->
-
       <article class="resume" data-page="resume">
 
         <header>
           <h2 class="h2 article-title">Resume</h2>
         </header>
 
+        
         <section class="timeline">
 
           <div class="title-wrapper">
@@ -555,7 +525,7 @@
 
         </section>
 
-        <!--<section class="timeline">
+        <!-- <section class="timeline">
 
           <div class="title-wrapper">
             <div class="icon-box">
@@ -611,7 +581,7 @@
 
           </ol>
 
-        </section>-->
+        </section> -->
 
         <section class="skill">
 
@@ -675,16 +645,27 @@
 
         </section>
 
+        <!-- 
+          - Github chart
+        -->
+
+        <section class="github">
+          <h3 class="h3 github-title">Days I Code</h3>
+          
+          <ul class="github-list">
+            <li class="github-item">
+              <img src="https://ghchart.rshah.org/ceb15a/Ruben-Jim" alt="Your GitHub chart" width="100%"  />
+            </li>
+
+          </ul>
+
+        </section>
+
       </article>
-
-
-
-
 
       <!--
         - #PORTFOLIO
       -->
-
       <article class="portfolio" data-page="portfolio">
 
         <header>
@@ -943,42 +924,58 @@
 
       </article>
 
-
-
-<!--
+      <!--
         - #BLOG
       -->
-
       <article class="blog" data-page="blog">
-
         <header>
           <h2 class="h2 article-title">Blog</h2>
+          
         </header>
 
+        <!-- Blog Management Section -->
+        <section class="blog-management">
+          <div class="blog-actions">
+            <button class="btn btn-secondary" id="login-btn" style="display: none;">
+              <ion-icon name="log-in-outline"></ion-icon>
+              Login
+            </button>
+            <button class="btn btn-primary" id="add-blog-btn" style="display: none;">
+              <ion-icon name="add-outline"></ion-icon>
+              Add New Post
+            </button>
+            <button class="btn btn-secondary" id="logout-btn" style="display: none;">
+              <ion-icon name="log-out-outline"></ion-icon>
+              Logout
+            </button>
+          </div>
+        </section>
+
+        <!-- Blog posts -->
         <section class="blog-posts">
 
-          <ul class="blog-posts-list">
+          <ul class="blog-posts-list" id="blog-posts-list">
 
-            <!-- <li class="blog-post-item">
-              <a href="#">
+            <li class="blog-post-item">
+              <a href="#" data-blog-item>
 
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-1.jpg" alt="Design conferences in 2022" loading="lazy">
+                  <img src="./assets/images/blog-1.jpg" alt="Design conferences in 2022" loading="lazy" data-blog-image>
                 </figure>
 
                 <div class="blog-content">
 
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
+                    <p class="blog-category" data-blog-category>Design</p>
 
                     <span class="dot"></span>
 
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2022-02-23" data-blog-date>Feb 23, 2022</time>
                   </div>
 
-                  <h3 class="h3 blog-item-title">Design conferences in 2022</h3>
+                  <h3 class="h3 blog-item-title" data-blog-title>Design conferences in 2022</h3>
 
-                  <p class="blog-text">
+                  <p class="blog-text" data-blog-excerpt>
                     Veritatis et quasi architecto beatae vitae dicta sunt, explicabo.
                   </p>
 
@@ -988,25 +985,25 @@
             </li>
             
             <li class="blog-post-item">
-              <a href="#">
+              <a href="#" data-blog-item>
                 
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-2.jpg" alt="Best fonts every designer" loading="lazy">
+                  <img src="./assets/images/blog-2.jpg" alt="Best fonts every designer" loading="lazy" data-blog-image>
                 </figure>
                 
                 <div class="blog-content">
                   
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
+                    <p class="blog-category" data-blog-category>Design</p>
                     
                     <span class="dot"></span>
                     
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2022-02-23" data-blog-date>Feb 23, 2022</time>
                   </div>
                   
-                  <h3 class="h3 blog-item-title">Best fonts every designer</h3>
+                  <h3 class="h3 blog-item-title" data-blog-title>Best fonts every designer</h3>
                   
-                  <p class="blog-text">
+                  <p class="blog-text" data-blog-excerpt>
                     Sed ut perspiciatis, nam libero tempore, cum soluta nobis est eligendi.
                   </p>
                   
@@ -1016,25 +1013,25 @@
             </li>
             
             <li class="blog-post-item">
-              <a href="#">
+              <a href="#" data-blog-item>
                 
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-3.jpg" alt="Design digest #80" loading="lazy">
+                  <img src="./assets/images/blog-3.jpg" alt="Design digest #80" loading="lazy" data-blog-image>
                 </figure>
                 
                 <div class="blog-content">
                   
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
+                    <p class="blog-category" data-blog-category>Design</p>
                     
                     <span class="dot"></span>
                     
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2022-02-23" data-blog-date>Feb 23, 2022</time>
                   </div>
                   
-                  <h3 class="h3 blog-item-title">Design digest #80</h3>
+                  <h3 class="h3 blog-item-title" data-blog-title>Design digest #80</h3>
                   
-                  <p class="blog-text">
+                  <p class="blog-text" data-blog-excerpt>
                     Excepteur sint occaecat cupidatat no proident, quis nostrum exercitationem ullam corporis suscipit.
                   </p>
                   
@@ -1044,25 +1041,25 @@
             </li>
             
             <li class="blog-post-item">
-              <a href="#">
+              <a href="#" data-blog-item>
                 
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-4.jpg" alt="UI interactions of the week" loading="lazy">
+                  <img src="./assets/images/blog-4.jpg" alt="UI interactions of the week" loading="lazy" data-blog-image>
                 </figure>
                 
                 <div class="blog-content">
                   
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
+                    <p class="blog-category" data-blog-category>Design</p>
                     
                     <span class="dot"></span>
                     
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2022-02-23" data-blog-date>Feb 23, 2022</time>
                   </div>
                   
-                  <h3 class="h3 blog-item-title">UI interactions of the week</h3>
+                  <h3 class="h3 blog-item-title" data-blog-title>UI interactions of the week</h3>
                   
-                  <p class="blog-text">
+                  <p class="blog-text" data-blog-excerpt>
                     Enim ad minim veniam, consectetur adipiscing elit, quis nostrud exercitation ullamco laboris nisi.
                   </p>
                   
@@ -1072,25 +1069,25 @@
             </li>
             
             <li class="blog-post-item">
-              <a href="#">
+              <a href="#" data-blog-item>
                 
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-5.jpg" alt="The forgotten art of spacing" loading="lazy">
+                  <img src="./assets/images/blog-5.jpg" alt="The forgotten art of spacing" loading="lazy" data-blog-image>
                 </figure>
                 
                 <div class="blog-content">
                   
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
+                    <p class="blog-category" data-blog-category>Design</p>
                     
                     <span class="dot"></span>
                     
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2022-02-23" data-blog-date>Feb 23, 2022</time>
                   </div>
                   
-                  <h3 class="h3 blog-item-title">The forgotten art of spacing</h3>
+                  <h3 class="h3 blog-item-title" data-blog-title>The forgotten art of spacing</h3>
                   
-                  <p class="blog-text">
+                  <p class="blog-text" data-blog-excerpt>
                     Maxime placeat, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   </p>
                   
@@ -1100,39 +1097,201 @@
             </li>
             
             <li class="blog-post-item">
-              <a href="#">
+              <a href="#" data-blog-item>
                 
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-6.jpg" alt="Design digest #79" loading="lazy">
+                  <img src="./assets/images/blog-6.jpg" alt="Design digest #79" loading="lazy" data-blog-image>
                 </figure>
                 
                 <div class="blog-content">
                   
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
+                    <p class="blog-category" data-blog-category>Design</p>
                     
                     <span class="dot"></span>
                     
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2022-02-23" data-blog-date>Feb 23, 2022</time>
                   </div>
                   
-                  <h3 class="h3 blog-item-title">Design digest #79</h3>
+                  <h3 class="h3 blog-item-title" data-blog-title>Design digest #79</h3>
                   
-                  <p class="blog-text">
+                  <p class="blog-text" data-blog-excerpt>
                     Optio cumque nihil impedit uo minus quod maxime placeat, velit esse cillum.
                   </p>
                   
                 </div>
                 
               </a>
-            </li> -->
-              
-              
+            </li>
           </ul>
             
+        </section>
+
+        <!--
+          - blog modal (fullscreen blog post) 
+        -->
+        <div class="blog-modal-container" data-blog-modal-container>
+
+          <div class="overlay" data-blog-overlay></div>
+
+          <section class="blog-modal">
+
+            <button class="modal-close-btn" data-blog-modal-close-btn>
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+
+            <div class="blog-modal-img-wrapper">
+              <figure class="blog-modal-banner-box">
+                <img src="./assets/images/blog-1.jpg" alt="Blog post image" data-blog-modal-image>
+              </figure>
+            </div>
+
+            <div class="blog-modal-content">
+
+              <div class="blog-modal-meta">
+                <p class="blog-modal-category" data-blog-modal-category>Design</p>
+                
+                <span class="dot"></span>
+                
+                <time class="blog-modal-date" datetime="2022-02-23" data-blog-modal-date>Feb 23, 2022</time>
+              </div>
+
+              <h3 class="h3 blog-modal-title" data-blog-modal-title>Design conferences in 2022</h3>
+
+              <div class="blog-modal-text" data-blog-modal-text>
+                <p>
+                  This is where the full blog post content will be displayed. You can add detailed content here including multiple paragraphs, images, and other rich content.
+                </p>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p>
+                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+              </div>
+
+            </div>
+
           </section>
-          
-        </article>
+
+        </div>
+
+        <!-- Login Modal -->
+        <div class="login-modal" id="login-modal">
+          <div class="login-overlay" id="login-overlay"></div>
+          <div class="login-content">
+            <div class="login-header">
+              <h3 class="h3">Admin Login</h3>
+              <button class="login-close-btn" id="login-close-btn">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+            
+            <form class="login-form" id="login-form">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-login-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Login</button>
+              </div>
+              
+              <div class="login-info">
+                <p><strong>Demo Credentials:</strong></p>
+                <p>Username: <code>admin</code> | Password: <code>admin123</code></p>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Add a Blog Post Modal -->
+        <div class="add-blog-modal" id="add-blog-modal">
+          <div class="add-blog-overlay" id="add-blog-overlay"></div>
+          <div class="add-blog-content">
+            <div class="add-blog-header">
+              <h3 class="h3">Create New Blog Post</h3>
+              <button class="add-blog-close-btn" id="add-blog-close-btn">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+            
+            <form class="add-blog-form" id="add-blog-form">
+              <div class="form-group">
+                <label for="blog-title">Title</label>
+                <input type="text" id="blog-title" name="title" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="blog-category">Category</label>
+                <select id="blog-category" name="category" required>
+                  <option value="Design">Design</option>
+                  <option value="Development">Development</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Tutorial">Tutorial</option>
+                  <option value="News">News</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="blog-date">Date</label>
+                <input type="date" id="blog-date" name="date" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="blog-image">Image URL</label>
+                <input type="url" id="blog-image" name="image" placeholder="https://example.com/image.jpg">
+              </div>
+              
+              <div class="form-group">
+                <label for="blog-excerpt">Excerpt (Short Description)</label>
+                <textarea id="blog-excerpt" name="excerpt" rows="3" required></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="blog-content">Content (HTML Supported)</label>
+                <div class="content-editor">
+                  <div class="editor-toolbar">
+                    <button type="button" class="editor-btn" data-command="bold" title="Bold">
+                      <ion-icon name="text-outline"></ion-icon>
+                    </button>
+                    <button type="button" class="editor-btn" data-command="italic" title="Italic">
+                      <ion-icon name="text-outline"></ion-icon>
+                    </button>
+                    <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Bullet List">
+                      <ion-icon name="list-outline"></ion-icon>
+                    </button>
+                    <button type="button" class="editor-btn" data-command="insertOrderedList" title="Numbered List">
+                      <ion-icon name="list-outline"></ion-icon>
+                    </button>
+                    <button type="button" class="editor-btn" data-command="insertParagraph" title="Paragraph">
+                      <ion-icon name="document-text-outline"></ion-icon>
+                    </button>
+                    <button type="button" class="editor-btn" data-command="insertCode" title="Code Block">
+                      <ion-icon name="code-outline"></ion-icon>
+                    </button>
+                    <button type="button" class="editor-btn" data-command="insertQuote" title="Quote">
+                      <ion-icon name="chatbubble-outline"></ion-icon>
+                    </button>
+                  </div>
+                  <textarea id="blog-content" name="content" rows="15" placeholder="Write your blog post content here. You can use HTML tags like &lt;p&gt;, &lt;h2&gt;, &lt;code&gt;, &lt;pre&gt;, &lt;blockquote&gt;, etc."></textarea>
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-blog-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Post</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </article>
         
 
       <!--
@@ -1183,15 +1342,43 @@
 
   </main>
 
-
-
-
-
-
   <!--
     - custom js link
   -->
   <script src="./assets/js/script.js"></script>
+
+  <!--
+    - Firebase SDK
+  -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+    // Your web app's Firebase configuration
+    // Replace with your actual Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAIbEHgpNMpjvk4Gv6GC3PyoAOVCZp_9iw",
+      authDomain: "portfolio-2578e.firebaseapp.com",
+      projectId: "portfolio-2578e",
+      storageBucket: "portfolio-2578e.firebasestorage.app",
+      messagingSenderId: "980239353589",
+      appId: "1:980239353589:web:f61de65bd802c9db5267bc"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Make Firebase available globally
+    window.db = db;
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.collection = collection;
+    window.orderBy = orderBy;
+    window.query = query;
+    window.serverTimestamp = serverTimestamp;
+  </script>
 
   <!--
     - ionicon link
