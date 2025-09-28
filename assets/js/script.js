@@ -1,33 +1,5 @@
 'use strict';
 
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-      import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-      
-      // Your web app's Firebase configuration
-      // Replace with your actual Firebase config
-
-    // Initialize Firebase
-    const firebaseConfig = {
-      apiKey: process.env.EXPO_FIREBASE_API_KEY,
-      authDomain: "portfolio-2578e.firebaseapp.com",
-      projectId: "portfolio-2578e",
-      storageBucket: "portfolio-2578e.firebasestorage.app",
-      messagingSenderId: "980239353589",
-      appId: "1:980239353589:web:f61de65bd802c9db5267bc"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Make Firebase available globally
-    window.db = db;
-    window.addDoc = addDoc;
-    window.getDocs = getDocs;
-    window.collection = collection;
-    window.orderBy = orderBy;
-    window.query = query;
-    window.serverTimestamp = serverTimestamp;
     
 // element toggle function
 const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
