@@ -1,5 +1,8 @@
 'use strict';
 
+// window.env = {
+//   API_KEY: 'AIzaSyCaklIEadgb9ZckNGOyr6SDiaZvbOYZqBY'
+// };
 
 
 // element toggle function
