@@ -746,6 +746,8 @@ for (let i = 0; i < filterBtn.length; i++) {
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
+const formMessage = document.getElementById("form-message");
+const formError = document.getElementById("form-error");
 
 // add event to all form input field
 for (let i = 0; i < formInputs.length; i++) {
@@ -759,6 +761,117 @@ for (let i = 0; i < formInputs.length; i++) {
     }
 
   });
+}
+
+// Initialize EmailJS when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.EMAILJS_CONFIG && window.EMAILJS_CONFIG.publicKey) {
+    emailjs.init(window.EMAILJS_CONFIG.publicKey);
+  }
+});
+
+// Enhanced form submission with EmailJS
+form.addEventListener("submit", async function(e) {
+  e.preventDefault();
+  
+  // Hide any existing messages
+  hideFormMessages();
+  
+  // Show loading state
+  showFormLoading();
+  
+  try {
+    // Check if EmailJS is available
+    if (typeof emailjs === 'undefined') {
+      throw new Error('EmailJS not loaded');
+    }
+    
+    // Get form data
+    const formData = new FormData(form);
+    const fullname = formData.get('fullname');
+    const email = formData.get('email');
+    const message = formData.get('message');
+    
+    // Validate required fields
+    if (!fullname || !email || !message) {
+      throw new Error('Please fill in all required fields');
+    }
+    
+    // Create email template parameters
+    const templateParams = {
+      fullname: fullname,
+      email: email,
+      message: message,
+      timestamp: new Date().toISOString(),
+      website: window.location.href,
+      user_agent: navigator.userAgent,
+      ip_address: 'N/A', // EmailJS doesn't provide IP
+      to_email: 'Ruben.Jim.co@gmail.com', // Your email address
+      subject: 'New Contact Form Submission - Portfolio'
+    };
+    
+    console.log('Sending email with params:', templateParams);
+    
+    // Send email using EmailJS
+    const response = await emailjs.send(
+      window.EMAILJS_CONFIG.serviceId,
+      window.EMAILJS_CONFIG.templateId,
+      templateParams
+    );
+    
+    console.log('EmailJS response:', response);
+    
+    if (response.status === 200) {
+      showFormSuccess();
+      form.reset();
+      formBtn.setAttribute("disabled", "");
+    } else {
+      throw new Error('Email sending failed');
+    }
+    
+  } catch (error) {
+    console.error('Form submission error:', error);
+    showFormError();
+  } finally {
+    hideFormLoading();
+  }
+});
+
+function showFormLoading() {
+  formBtn.classList.add('loading');
+  formBtn.innerHTML = '<ion-icon name="hourglass"></ion-icon><span class="form-btn-text">Sending...</span>';
+  formBtn.disabled = true;
+}
+
+function hideFormLoading() {
+  formBtn.classList.remove('loading');
+  formBtn.innerHTML = '<ion-icon name="paper-plane"></ion-icon><span class="form-btn-text">Send Message</span>';
+  formBtn.disabled = false;
+}
+
+function showFormSuccess() {
+  formMessage.style.display = 'block';
+  formError.style.display = 'none';
+  
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    hideFormMessages();
+  }, 5000);
+}
+
+function showFormError() {
+  formError.style.display = 'block';
+  formMessage.style.display = 'none';
+  
+  // Auto-hide after 7 seconds
+  setTimeout(() => {
+    hideFormMessages();
+  }, 7000);
+}
+
+function hideFormMessages() {
+  formMessage.style.display = 'none';
+  formError.style.display = 'none';
 }
 
 

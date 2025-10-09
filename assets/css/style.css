@@ -1248,6 +1248,84 @@ textarea.form-input::-webkit-resizer { display: none; }
 
 .form-btn:disabled:hover::before { background: var(--bg-gradient-jet); }
 
+/* Form Messages */
+.form-message {
+  margin-top: 20px;
+  padding: 15px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--jet);
+  background: var(--bg-gradient-jet);
+  animation: slideIn 0.3s ease-out;
+}
+
+.form-message.error {
+  background: linear-gradient(135deg, hsla(0, 43%, 51%, 0.1) 0%, hsla(0, 43%, 51%, 0.05) 100%);
+  border-color: var(--bittersweet-shimmer);
+}
+
+.message-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.message-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.success-icon {
+  color: var(--orange-yellow-crayola);
+}
+
+.error-icon {
+  color: var(--bittersweet-shimmer);
+}
+
+.message-text {
+  color: var(--white-2);
+  font-size: var(--fs-6);
+  font-weight: var(--fw-400);
+  line-height: 1.4;
+}
+
+/* Form Loading State */
+.form-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.form-btn.loading .form-btn-text {
+  opacity: 0;
+}
+
+.form-btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--orange-yellow-crayola);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 
 

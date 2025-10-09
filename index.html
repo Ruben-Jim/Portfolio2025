@@ -1345,9 +1345,7 @@
 
           <h3 class="h3 form-title">Contact Form</h3>
 
-          <form action="https://api.web3forms.com/submit" method="POST" class="form" data-form>
-
-            <input type="hidden" name="access_key" value="b68a89ff-5c27-4fff-b91e-f1955bcc0633">
+          <form class="form" data-form>
 
             <div class="input-wrapper">
               <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
@@ -1361,6 +1359,21 @@
               <ion-icon name="paper-plane"></ion-icon>
               <span>Send Message</span>
             </button>
+
+            <!-- Success/Error Messages -->
+            <div class="form-message" id="form-message" style="display: none;">
+              <div class="message-content">
+                <ion-icon name="checkmark-circle" class="message-icon success-icon"></ion-icon>
+                <span class="message-text">Message sent successfully! I'll get back to you soon.</span>
+              </div>
+            </div>
+
+            <div class="form-message error" id="form-error" style="display: none;">
+              <div class="message-content">
+                <ion-icon name="close-circle" class="message-icon error-icon"></ion-icon>
+                <span class="message-text">Failed to send message. Please try again.</span>
+              </div>
+            </div>
 
           </form>
 
@@ -1377,6 +1390,11 @@
     - Firebase config
   -->
   <script src="./assets/js/config.js"></script>
+
+  <!--
+    - EmailJS SDK
+  -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <!--
     - custom js link

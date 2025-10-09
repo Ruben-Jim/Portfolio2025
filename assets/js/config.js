@@ -9,5 +9,13 @@ const FIREBASE_CONFIG = {
   appId: "1:980239353589:web:f61de65bd802c9db5267bc"
 };
 
+// EmailJS Configuration
+const EMAILJS_CONFIG = {
+  serviceId: "service_portfolio", // You'll need to create this in EmailJS
+  templateId: "portfolio_template", // You'll need to create this in EmailJS
+  publicKey: "G0WAMInPaotIyePKR" // You'll get this from EmailJS
+};
+
 // Make it available globally
 window.FIREBASE_CONFIG = FIREBASE_CONFIG;
+window.EMAILJS_CONFIG = EMAILJS_CONFIG;
