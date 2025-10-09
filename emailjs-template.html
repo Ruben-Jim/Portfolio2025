@@ -204,6 +204,65 @@
             box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
         }
         
+        /* Light Mode Support */
+        @media (prefers-color-scheme: light) {
+            body {
+                background-color: #f5f5f5;
+            }
+            
+            .email-container {
+                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                border: 1px solid #e0e0e0;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+            }
+            
+            .email-header::before {
+                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            }
+            
+            .email-subtitle {
+                color: #666666;
+            }
+            
+            .contact-info {
+                background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+                border: 1px solid #e0e0e0;
+            }
+            
+            .info-value {
+                color: #333333;
+            }
+            
+            .message-section {
+                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                border: 1px solid #e0e0e0;
+            }
+            
+            .message-content {
+                color: #333333;
+                background: #f8f9fa;
+                border: 1px solid #e0e0e0;
+            }
+            
+            .technical-info {
+                background: #f8f9fa;
+                border: 1px solid #e0e0e0;
+            }
+            
+            .tech-value {
+                color: #333333;
+            }
+            
+            .email-footer {
+                background: #f8f9fa;
+                border-top: 1px solid #e0e0e0;
+            }
+            
+            .footer-text {
+                color: #666666;
+            }
+        }
+        
         /* Responsive Design */
         @media (max-width: 600px) {
             .email-container {
