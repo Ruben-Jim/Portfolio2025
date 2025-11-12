@@ -88,6 +88,11 @@ function updateAuthUI() {
     addBlogBtn.style.display = 'none';
     logoutBtn.style.display = 'none';
   }
+  
+  // Re-render blog posts to show/hide edit/delete buttons
+  if (typeof renderBlogPosts === 'function') {
+    renderBlogPosts();
+  }
 }
 
 function login(username, password) {
@@ -240,6 +245,44 @@ async function saveBlogPostToFirestore(postData) {
   }
 }
 
+async function updateBlogPostInFirestore(postId, postData) {
+  try {
+    if (!window.db) {
+      console.log('Firebase not initialized, updating locally');
+      return postData;
+    }
+
+    const postRef = doc(window.db, 'blogPosts', postId);
+    await updateDoc(postRef, {
+      ...postData,
+      updatedAt: serverTimestamp()
+    });
+
+    return {
+      ...postData,
+      id: postId
+    };
+  } catch (error) {
+    console.error('Error updating blog post:', error);
+    throw error;
+  }
+}
+
+async function deleteBlogPostFromFirestore(postId) {
+  try {
+    if (!window.db) {
+      console.log('Firebase not initialized, deleting locally');
+      return;
+    }
+
+    const postRef = doc(window.db, 'blogPosts', postId);
+    await deleteDoc(postRef);
+  } catch (error) {
+    console.error('Error deleting blog post:', error);
+    throw error;
+  }
+}
+
 function showLoadingState() {
   const blogPostsList = document.getElementById('blog-posts-list');
   blogPostsList.innerHTML = `
@@ -278,6 +321,7 @@ function renderBlogPosts() {
   }
 
   console.log('Rendering blog posts:', blogPosts);
+  const isLoggedIn = isAuthenticated();
 
   blogPosts.forEach(post => {
     const blogItem = document.createElement('li');
@@ -300,12 +344,27 @@ function renderBlogPosts() {
           <p class="blog-text" data-blog-excerpt>${post.excerpt}</p>
         </div>
       </a>
+      ${isLoggedIn ? `
+        <div class="blog-post-actions">
+          <button class="blog-action-btn edit-btn" data-edit-blog="${post.id}" title="Edit Post">
+            <ion-icon name="create-outline"></ion-icon>
+          </button>
+          <button class="blog-action-btn delete-btn" data-delete-blog="${post.id}" title="Delete Post">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+      ` : ''}
     `;
     blogPostsList.appendChild(blogItem);
   });
 
   // Re-attach event listeners
   attachBlogEventListeners();
+  
+  // Attach edit/delete button listeners if logged in
+  if (isLoggedIn) {
+    attachEditDeleteListeners();
+  }
 }
 
 // Function to attach blog event listeners
@@ -559,50 +618,369 @@ editorBtns.forEach(btn => {
 });
 
 // Handle form submission
-addBlogForm.addEventListener('submit', async function(e) {
-  e.preventDefault();
+if (addBlogForm) {
+  addBlogForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    try {
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating...';
+      
+      const formData = new FormData(this);
+      const newPost = {
+        title: formData.get('title'),
+        category: formData.get('category'),
+        date: formData.get('date'),
+        image: formData.get('image') || './assets/images/blog-1.jpg',
+        excerpt: formData.get('excerpt'),
+        content: formData.get('content')
+      };
+      
+      // Save to Firestore
+      const savedPost = await saveBlogPostToFirestore(newPost);
+      
+      // Add to local array
+      blogPosts.unshift(savedPost);
+      
+      // Re-render blog posts
+      renderBlogPosts();
+      
+      // Close modal
+      closeAddBlogModal();
+      
+      // Show success message
+      showSuccessMessage('Blog post created successfully!');
+      
+    } catch (error) {
+      console.error('Error creating blog post:', error);
+      showErrorMessage('Failed to create blog post. Please try again.');
+    } finally {
+      // Reset button state
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+}
+
+// Edit Blog Modal Elements
+const editBlogModal = document.getElementById('edit-blog-modal');
+const editBlogOverlay = document.getElementById('edit-blog-overlay');
+const editBlogCloseBtn = document.getElementById('edit-blog-close-btn');
+const cancelEditBlogBtn = document.getElementById('cancel-edit-blog-btn');
+const editBlogForm = document.getElementById('edit-blog-form');
+const deleteBlogBtn = document.getElementById('delete-blog-btn');
+const editContentTextarea = document.getElementById('edit-blog-content');
+const editLineNumbers = document.getElementById('edit-editor-line-numbers');
+const editCharCount = document.getElementById('edit-char-count');
+const editWordCount = document.getElementById('edit-word-count');
+
+// Update line numbers for edit modal
+function updateEditLineNumbers() {
+  if (!editLineNumbers || !editContentTextarea) return;
   
-  const submitBtn = this.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
+  const lines = editContentTextarea.value.split('\n');
+  const lineCount = lines.length || 1;
   
-  try {
-    // Show loading state
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Creating...';
-    
-    const formData = new FormData(this);
-    const newPost = {
-      title: formData.get('title'),
-      category: formData.get('category'),
-      date: formData.get('date'),
-      image: formData.get('image') || './assets/images/blog-1.jpg',
-      excerpt: formData.get('excerpt'),
-      content: formData.get('content')
-    };
-    
-    // Save to Firestore
-    const savedPost = await saveBlogPostToFirestore(newPost);
-    
-    // Add to local array
-    blogPosts.unshift(savedPost);
-    
-    // Re-render blog posts
-    renderBlogPosts();
-    
-    // Close modal
-    closeAddBlogModal();
-    
-    // Show success message
-    showSuccessMessage('Blog post created successfully!');
-    
-  } catch (error) {
-    console.error('Error creating blog post:', error);
-    showErrorMessage('Failed to create blog post. Please try again.');
-  } finally {
-    // Reset button state
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalText;
+  let lineNumbersHTML = '';
+  for (let i = 1; i <= lineCount; i++) {
+    lineNumbersHTML += `${i}\n`;
   }
+  
+  editLineNumbers.textContent = lineNumbersHTML;
+}
+
+// Update character and word count for edit modal
+function updateEditCounts() {
+  if (!editCharCount || !editWordCount || !editContentTextarea) return;
+  
+  const text = editContentTextarea.value;
+  const charCountValue = text.length;
+  const wordCountValue = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  
+  editCharCount.textContent = `${charCountValue.toLocaleString()} characters`;
+  editWordCount.textContent = `${wordCountValue.toLocaleString()} words`;
+}
+
+// Sync scroll for edit modal
+function syncEditScroll() {
+  if (!editLineNumbers || !editContentTextarea) return;
+  editLineNumbers.scrollTop = editContentTextarea.scrollTop;
+}
+
+// Initialize edit editor features
+function initEditEditorFeatures() {
+  if (!editContentTextarea) return;
+  
+  editContentTextarea.addEventListener('input', function() {
+    updateEditLineNumbers();
+    updateEditCounts();
+  });
+  
+  editContentTextarea.addEventListener('scroll', syncEditScroll);
+}
+
+// Initialize edit editor on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEditEditorFeatures);
+} else {
+  initEditEditorFeatures();
+}
+
+// Open edit modal with post data
+function openEditBlogModal(postId) {
+  const post = blogPosts.find(p => p.id === postId);
+  if (!post) {
+    showErrorMessage('Blog post not found');
+    return;
+  }
+  
+  // Populate form fields
+  document.getElementById('edit-blog-id').value = post.id;
+  document.getElementById('edit-blog-title').value = post.title;
+  document.getElementById('edit-blog-category').value = post.category;
+  document.getElementById('edit-blog-date').value = post.date;
+  document.getElementById('edit-blog-image').value = post.image || '';
+  document.getElementById('edit-blog-excerpt').value = post.excerpt;
+  editContentTextarea.value = post.content;
+  
+  // Update counts and line numbers
+  setTimeout(function() {
+    updateEditLineNumbers();
+    updateEditCounts();
+  }, 100);
+  
+  // Open modal
+  editBlogModal.classList.add('active');
+}
+
+// Close edit modal
+function closeEditBlogModal() {
+  editBlogModal.classList.remove('active');
+  if (editBlogForm) {
+    editBlogForm.reset();
+  }
+}
+
+// Event listeners for edit modal
+if (editBlogCloseBtn) {
+  editBlogCloseBtn.addEventListener('click', closeEditBlogModal);
+}
+if (editBlogOverlay) {
+  editBlogOverlay.addEventListener('click', closeEditBlogModal);
+}
+if (cancelEditBlogBtn) {
+  cancelEditBlogBtn.addEventListener('click', closeEditBlogModal);
+}
+
+// Handle edit form submission
+if (editBlogForm) {
+  editBlogForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    const postId = document.getElementById('edit-blog-id').value;
+    
+    try {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Updating...';
+      
+      const formData = new FormData(this);
+      const updatedPost = {
+        title: formData.get('title'),
+        category: formData.get('category'),
+        date: formData.get('date'),
+        image: formData.get('image') || './assets/images/blog-1.jpg',
+        excerpt: formData.get('excerpt'),
+        content: formData.get('content')
+      };
+      
+      // Update in Firestore
+      await updateBlogPostInFirestore(postId, updatedPost);
+      
+      // Update local array
+      const index = blogPosts.findIndex(p => p.id === postId);
+      if (index !== -1) {
+        blogPosts[index] = { ...updatedPost, id: postId };
+      }
+      
+      // Re-render blog posts
+      renderBlogPosts();
+      
+      // Close modal
+      closeEditBlogModal();
+      
+      // Show success message
+      showSuccessMessage('Blog post updated successfully!');
+      
+    } catch (error) {
+      console.error('Error updating blog post:', error);
+      showErrorMessage('Failed to update blog post. Please try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+}
+
+// Handle delete button
+if (deleteBlogBtn) {
+  deleteBlogBtn.addEventListener('click', async function(e) {
+    e.preventDefault();
+    
+    const postId = document.getElementById('edit-blog-id').value;
+    if (!postId) return;
+    
+    if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      // Delete from Firestore
+      await deleteBlogPostFromFirestore(postId);
+      
+      // Remove from local array
+      blogPosts = blogPosts.filter(p => p.id !== postId);
+      
+      // Re-render blog posts
+      renderBlogPosts();
+      
+      // Close modal
+      closeEditBlogModal();
+      
+      // Show success message
+      showSuccessMessage('Blog post deleted successfully!');
+      
+    } catch (error) {
+      console.error('Error deleting blog post:', error);
+      showErrorMessage('Failed to delete blog post. Please try again.');
+    }
+  });
+}
+
+// Attach edit/delete button listeners
+function attachEditDeleteListeners() {
+  // Edit buttons
+  const editButtons = document.querySelectorAll('[data-edit-blog]');
+  editButtons.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const postId = this.getAttribute('data-edit-blog');
+      openEditBlogModal(postId);
+    });
+  });
+  
+  // Delete buttons
+  const deleteButtons = document.querySelectorAll('[data-delete-blog]');
+  deleteButtons.forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const postId = this.getAttribute('data-delete-blog');
+      
+      if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
+        return;
+      }
+      
+      try {
+        await deleteBlogPostFromFirestore(postId);
+        blogPosts = blogPosts.filter(p => p.id !== postId);
+        renderBlogPosts();
+        showSuccessMessage('Blog post deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting blog post:', error);
+        showErrorMessage('Failed to delete blog post. Please try again.');
+      }
+    });
+  });
+}
+
+// Enhanced editor toolbar functionality for edit modal
+const editEditorBtns = document.querySelectorAll('.editor-btn[data-editor="edit"]');
+editEditorBtns.forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const command = this.getAttribute('data-command');
+    
+    if (command === 'preview') {
+      alert('Preview feature coming soon!');
+      return;
+    }
+    
+    if (!editContentTextarea) return;
+    
+    editContentTextarea.focus();
+    const start = editContentTextarea.selectionStart;
+    const end = editContentTextarea.selectionEnd;
+    const selectedText = editContentTextarea.value.substring(start, end);
+    let newText = '';
+    let cursorPos = start;
+    
+    switch(command) {
+      case 'bold':
+        newText = `<strong>${selectedText || 'bold text'}</strong>`;
+        cursorPos = start + (selectedText ? newText.length : 7);
+        break;
+      case 'italic':
+        newText = `<em>${selectedText || 'italic text'}</em>`;
+        cursorPos = start + (selectedText ? newText.length : 8);
+        break;
+      case 'underline':
+        newText = `<u>${selectedText || 'underlined text'}</u>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertHeading':
+        newText = `<h2>${selectedText || 'Heading'}</h2>`;
+        cursorPos = start + (selectedText ? newText.length : 4);
+        break;
+      case 'insertUnorderedList':
+        newText = selectedText 
+          ? `<ul>\n  <li>${selectedText}</li>\n</ul>`
+          : `<ul>\n  <li>List item</li>\n</ul>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
+        break;
+      case 'insertOrderedList':
+        newText = selectedText
+          ? `<ol>\n  <li>${selectedText}</li>\n</ol>`
+          : `<ol>\n  <li>List item</li>\n</ol>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
+        break;
+      case 'insertCode':
+        if (selectedText.includes('\n')) {
+          newText = `<pre><code>${selectedText || 'code block'}</code></pre>`;
+        } else {
+          newText = `<code>${selectedText || 'code'}</code>`;
+        }
+        cursorPos = start + (selectedText ? newText.length : (selectedText.includes('\n') ? 17 : 7));
+        break;
+      case 'insertQuote':
+        newText = `<blockquote>\n  ${selectedText || 'Quote text'}\n</blockquote>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertLink':
+        const url = prompt('Enter URL:', 'https://');
+        if (url) {
+          newText = `<a href="${url}" target="_blank">${selectedText || 'link text'}</a>`;
+          cursorPos = start + (selectedText ? newText.length : 10);
+        } else {
+          return;
+        }
+        break;
+    }
+    
+    if (newText) {
+      editContentTextarea.value = editContentTextarea.value.substring(0, start) + newText + editContentTextarea.value.substring(end);
+      updateEditLineNumbers();
+      updateEditCounts();
+      editContentTextarea.focus();
+      editContentTextarea.setSelectionRange(cursorPos, cursorPos);
+    }
+  });
 });
 
 function showSuccessMessage(message) {

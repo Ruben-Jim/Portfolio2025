@@ -1350,6 +1350,62 @@ main {
   line-height: 1.6;
 }
 
+.blog-post-item {
+  position: relative;
+}
+
+.blog-post-actions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.blog-post-item:hover .blog-post-actions {
+  opacity: 1;
+}
+
+.blog-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--jet);
+  background: var(--eerie-black-2);
+  color: var(--white-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+  box-shadow: var(--shadow-2);
+}
+
+.blog-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-3);
+}
+
+.blog-action-btn.edit-btn:hover {
+  background: var(--vegas-gold);
+  color: var(--smoky-black);
+  border-color: var(--vegas-gold);
+}
+
+.blog-action-btn.delete-btn:hover {
+  background: var(--bittersweet-shimmer);
+  color: var(--white-1);
+  border-color: var(--bittersweet-shimmer);
+}
+
+.blog-action-btn ion-icon {
+  pointer-events: none;
+}
+
 
 
 
@@ -2609,6 +2665,19 @@ textarea.form-input::-webkit-resizer { display: none; }
 .btn-secondary:hover {
   background: var(--jet);
   transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: var(--eerie-black-2);
+  color: var(--bittersweet-shimmer);
+  border: 1px solid var(--bittersweet-shimmer);
+}
+
+.btn-danger:hover {
+  background: var(--bittersweet-shimmer);
+  color: var(--white-1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
 /* Add Blog Modal */

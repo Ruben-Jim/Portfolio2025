@@ -1594,6 +1594,162 @@
             </form>
           </div>
         </div>
+
+        <!-- Edit Blog Post Modal -->
+        <div class="add-blog-modal" id="edit-blog-modal">
+          <div class="add-blog-overlay" id="edit-blog-overlay"></div>
+          <div class="add-blog-content">
+            <div class="add-blog-header">
+              <div class="header-left">
+                <ion-icon name="create-outline" class="header-icon"></ion-icon>
+                <h3 class="h3">Edit Blog Post</h3>
+                <span class="editor-badge">Web Dev Journey</span>
+              </div>
+              <button class="add-blog-close-btn" id="edit-blog-close-btn">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+            
+            <form class="add-blog-form" id="edit-blog-form">
+              <input type="hidden" id="edit-blog-id" name="id">
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-title">
+                    <ion-icon name="create-outline"></ion-icon>
+                    Post Title
+                  </label>
+                  <input type="text" id="edit-blog-title" name="title" placeholder="e.g., Building My First Full-Stack Application" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-category">
+                    <ion-icon name="pricetag-outline"></ion-icon>
+                    Category
+                  </label>
+                  <select id="edit-blog-category" name="category" required>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="Full-Stack">Full-Stack</option>
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Learning Journey">Learning Journey</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Tutorial">Tutorial</option>
+                    <option value="Tech Stack">Tech Stack</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-date">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    Date
+                  </label>
+                  <input type="date" id="edit-blog-date" name="date" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-image">
+                    <ion-icon name="image-outline"></ion-icon>
+                    Featured Image URL
+                  </label>
+                  <input type="url" id="edit-blog-image" name="image" placeholder="https://example.com/image.jpg">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-blog-excerpt">
+                  <ion-icon name="text-outline"></ion-icon>
+                  Excerpt (Brief Summary)
+                </label>
+                <textarea id="edit-blog-excerpt" name="excerpt" rows="2" placeholder="A short description that will appear in the blog preview..." required></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-blog-content">
+                  <ion-icon name="code-slash-outline"></ion-icon>
+                  Content Editor
+                  <span class="editor-hint">HTML & Markdown supported</span>
+                </label>
+                <div class="content-editor">
+                  <div class="editor-toolbar">
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="bold" data-editor="edit" title="Bold (Ctrl+B)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>B</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="italic" data-editor="edit" title="Italic (Ctrl+I)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>I</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="underline" data-editor="edit" title="Underline">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>U</span>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertHeading" data-editor="edit" title="Heading">
+                        <ion-icon name="text-outline"></ion-icon>
+                        <span>H</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertUnorderedList" data-editor="edit" title="Bullet List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertOrderedList" data-editor="edit" title="Numbered List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertCode" data-editor="edit" title="Code Block">
+                        <ion-icon name="code-slash-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertQuote" data-editor="edit" title="Quote">
+                        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertLink" data-editor="edit" title="Link">
+                        <ion-icon name="link-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="preview" data-editor="edit" title="Preview">
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="editor-wrapper">
+                    <div class="editor-line-numbers" id="edit-editor-line-numbers"></div>
+                    <textarea id="edit-blog-content" name="content" rows="20" class="editor-textarea" placeholder="Start writing your blog post...&#10;&#10;You can use HTML tags:&#10;&lt;p&gt;Paragraph text&lt;/p&gt;&#10;&lt;h2&gt;Heading&lt;/h2&gt;&#10;&lt;code&gt;inline code&lt;/code&gt;&#10;&lt;pre&gt;&lt;code&gt;code block&lt;/code&gt;&lt;/pre&gt;&#10;&lt;blockquote&gt;Quote&lt;/blockquote&gt;&#10;&lt;ul&gt;&lt;li&gt;List item&lt;/li&gt;&lt;/ul&gt;"></textarea>
+                  </div>
+                  <div class="editor-footer">
+                    <span class="char-count" id="edit-char-count">0 characters</span>
+                    <span class="word-count" id="edit-word-count">0 words</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="btn btn-danger" id="delete-blog-btn">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  Delete Post
+                </button>
+                <div style="display: flex; gap: 12px; margin-left: auto;">
+                  <button type="button" class="btn btn-secondary" id="cancel-edit-blog-btn">
+                    <ion-icon name="close-outline"></ion-icon>
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    Update Post
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
       </article>
         
 
@@ -1697,7 +1853,7 @@
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     
     // Your web app's Firebase configuration
     const firebaseConfig = window.FIREBASE_CONFIG;
@@ -1714,6 +1870,9 @@
     window.orderBy = orderBy;
     window.query = query;
     window.serverTimestamp = serverTimestamp;
+    window.updateDoc = updateDoc;
+    window.deleteDoc = deleteDoc;
+    window.doc = doc;
   </script>
 
   <!--
