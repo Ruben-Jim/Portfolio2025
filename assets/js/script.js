@@ -892,7 +892,8 @@ for (let i = 0; i < navigationLinks.length; i++) {
         
         // Re-initialize accordion if resume page is shown
         if (pages[i].dataset.page === "resume") {
-          setTimeout(initClassAccordion, 100); // Small delay to ensure DOM is ready
+          accordionInitialized = false; // Reset flag to allow re-initialization
+          setTimeout(initClassAccordion, 150); // Small delay to ensure DOM is ready
         }
       } else {
         pages[i].classList.remove("active");
@@ -906,21 +907,37 @@ for (let i = 0; i < navigationLinks.length; i++) {
 
 
 // high-level classes accordion functionality
+let accordionInitialized = false;
+let accordionDelegateHandler = null;
+
 function initClassAccordion() {
-  // Get all class toggle buttons
-  const classToggleButtons = document.querySelectorAll("[data-class-toggle]");
+  // Use event delegation on the high-level-classes container for reliability
+  const highLevelClassesContainer = document.querySelector(".high-level-classes");
   
-  if (classToggleButtons.length === 0) {
-    return; // No buttons found
+  if (!highLevelClassesContainer) {
+    return; // Container not found
   }
   
-  // Function to handle accordion toggle
-  function handleToggle(e) {
+  // Remove old delegation handler if exists
+  if (accordionDelegateHandler) {
+    highLevelClassesContainer.removeEventListener("click", accordionDelegateHandler);
+    highLevelClassesContainer.removeEventListener("touchend", accordionDelegateHandler);
+  }
+  
+  // Create new delegation handler
+  accordionDelegateHandler = function(e) {
+    // Check if click is on a button or any element inside a button with data-class-toggle
+    const button = e.target.closest("[data-class-toggle]");
+    const classHeader = e.target.closest(".class-header");
+    
+    if (!button && !classHeader) return;
+    
     e.preventDefault();
     e.stopPropagation();
     
-    const button = e.currentTarget;
-    const classItem = button.closest(".class-item");
+    // Get the actual button element
+    const targetButton = button || classHeader;
+    const classItem = targetButton.closest(".class-item");
     
     if (!classItem) return;
     
@@ -942,31 +959,41 @@ function initClassAccordion() {
     } else {
       classItem.classList.add("active");
     }
-  }
+  };
   
-  // Attach event listeners directly to each button
-  classToggleButtons.forEach(button => {
-    // Remove any existing listeners by cloning
-    const newButton = button.cloneNode(true);
-    button.parentNode.replaceChild(newButton, button);
-    
-    // Add fresh event listeners
-    newButton.addEventListener("click", handleToggle);
-    newButton.addEventListener("touchend", function(e) {
-      handleToggle(e);
-      e.preventDefault();
-    });
-  });
+  // Attach event listeners using delegation
+  highLevelClassesContainer.addEventListener("click", accordionDelegateHandler, { passive: false });
+  highLevelClassesContainer.addEventListener("touchend", function(e) {
+    accordionDelegateHandler(e);
+    e.preventDefault();
+  }, { passive: false });
+  
+  accordionInitialized = true;
 }
 
 // Initialize accordion on page load
-document.addEventListener('DOMContentLoaded', function() {
-  initClassAccordion();
-});
+function initializeAccordionOnLoad() {
+  // Wait a bit to ensure all DOM is ready, especially if page loads on Resume section
+  setTimeout(function() {
+    initClassAccordion();
+    // Also check if resume page is active on load and initialize
+    const resumePage = document.querySelector('[data-page="resume"]');
+    if (resumePage && resumePage.classList.contains('active')) {
+      setTimeout(initClassAccordion, 100);
+    }
+  }, 200);
+}
+
+document.addEventListener('DOMContentLoaded', initializeAccordionOnLoad);
 
 // Also initialize if DOM is already loaded
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initClassAccordion);
+  document.addEventListener('DOMContentLoaded', initializeAccordionOnLoad);
 } else {
-  initClassAccordion();
+  initializeAccordionOnLoad();
 }
+
+// Also initialize when window loads (as a fallback)
+window.addEventListener('load', function() {
+  setTimeout(initClassAccordion, 100);
+});
