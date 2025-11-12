@@ -880,28 +880,86 @@ function hideFormMessages() {
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
+// Function to switch to a specific page
+function switchToPage(pageName, skipSave = false) {
+  for (let i = 0; i < pages.length; i++) {
+    if (pageName === pages[i].dataset.page) {
+      pages[i].classList.add("active");
+      navigationLinks[i].classList.add("active");
+      window.scrollTo(0, 0);
+      
+      // Save to localStorage (unless skipSave is true)
+      if (!skipSave) {
+        localStorage.setItem('activePage', pageName);
+      }
+      
+      // Re-initialize accordion if resume page is shown
+      if (pages[i].dataset.page === "resume") {
+        accordionInitialized = false; // Reset flag to allow re-initialization
+        setTimeout(initClassAccordion, 150); // Small delay to ensure DOM is ready
+      }
+    } else {
+      pages[i].classList.remove("active");
+      navigationLinks[i].classList.remove("active");
+    }
+  }
+}
+
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-        
-        // Re-initialize accordion if resume page is shown
-        if (pages[i].dataset.page === "resume") {
-          accordionInitialized = false; // Reset flag to allow re-initialization
-          setTimeout(initClassAccordion, 150); // Small delay to ensure DOM is ready
-        }
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
-      }
-    }
-
+    const pageName = this.innerHTML.toLowerCase();
+    switchToPage(pageName);
   });
+}
+
+// Restore active page from localStorage on page load with loading animation
+function restoreActivePage() {
+  const loadingScreen = document.getElementById('loading-screen');
+  const savedPage = localStorage.getItem('activePage');
+  
+  // Always show About page first (don't save to localStorage during initial load)
+  switchToPage('about', true);
+  
+  if (savedPage && savedPage !== 'about') {
+    // Wait 700ms (less than a second) then switch to saved page and hide loading
+    setTimeout(function() {
+      switchToPage(savedPage);
+      // Hide loading screen with fade out
+      if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+        // Remove from DOM after animation completes
+        setTimeout(function() {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+    }, 700);
+  } else {
+    // If no saved page or saved page is "about", just hide loading after delay
+    setTimeout(function() {
+      if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+        setTimeout(function() {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+    }, 700);
+  }
+}
+
+// Restore page on load
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure loading screen is visible
+  setTimeout(restoreActivePage, 50);
+});
+
+// Also restore if DOM is already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(restoreActivePage, 50);
+  });
+} else {
+  setTimeout(restoreActivePage, 50);
 }
 
 
