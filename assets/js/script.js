@@ -889,6 +889,11 @@ for (let i = 0; i < navigationLinks.length; i++) {
         pages[i].classList.add("active");
         navigationLinks[i].classList.add("active");
         window.scrollTo(0, 0);
+        
+        // Re-initialize accordion if resume page is shown
+        if (pages[i].dataset.page === "resume") {
+          setTimeout(initClassAccordion, 100); // Small delay to ensure DOM is ready
+        }
       } else {
         pages[i].classList.remove("active");
         navigationLinks[i].classList.remove("active");
@@ -896,4 +901,72 @@ for (let i = 0; i < navigationLinks.length; i++) {
     }
 
   });
+}
+
+
+
+// high-level classes accordion functionality
+function initClassAccordion() {
+  // Get all class toggle buttons
+  const classToggleButtons = document.querySelectorAll("[data-class-toggle]");
+  
+  if (classToggleButtons.length === 0) {
+    return; // No buttons found
+  }
+  
+  // Function to handle accordion toggle
+  function handleToggle(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const button = e.currentTarget;
+    const classItem = button.closest(".class-item");
+    
+    if (!classItem) return;
+    
+    const isActive = classItem.classList.contains("active");
+    
+    // Close all other class items in the same subject section
+    const subjectSection = classItem.closest(".class-subject-section");
+    if (subjectSection) {
+      subjectSection.querySelectorAll(".class-item").forEach(item => {
+        if (item !== classItem) {
+          item.classList.remove("active");
+        }
+      });
+    }
+    
+    // Toggle current item
+    if (isActive) {
+      classItem.classList.remove("active");
+    } else {
+      classItem.classList.add("active");
+    }
+  }
+  
+  // Attach event listeners directly to each button
+  classToggleButtons.forEach(button => {
+    // Remove any existing listeners by cloning
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
+    
+    // Add fresh event listeners
+    newButton.addEventListener("click", handleToggle);
+    newButton.addEventListener("touchend", function(e) {
+      handleToggle(e);
+      e.preventDefault();
+    });
+  });
+}
+
+// Initialize accordion on page load
+document.addEventListener('DOMContentLoaded', function() {
+  initClassAccordion();
+});
+
+// Also initialize if DOM is already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initClassAccordion);
+} else {
+  initClassAccordion();
 }
