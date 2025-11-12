@@ -878,29 +878,79 @@ main {
 .class-subject-section {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding: 20px;
+  gap: 0;
+  padding: 0;
   background: var(--bg-gradient-jet);
   border: 1px solid var(--jet);
   border-radius: 12px;
   box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+
+.subject-title-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.subject-title-btn:hover {
+  background: var(--jet);
 }
 
 .subject-title {
   color: var(--vegas-gold);
   font-size: var(--fs-4);
   font-weight: var(--fw-600);
-  margin-bottom: 10px;
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--jet);
+  padding: 0;
+  border: none;
 }
 
 .subject-title ion-icon {
   font-size: 24px;
   color: var(--orange-yellow-crayola);
+}
+
+.subject-icon {
+  color: var(--vegas-gold);
+  font-size: 20px;
+  transition: transform 0.6s ease;
+}
+
+.class-subject-section.active .subject-icon {
+  transform: rotate(180deg);
+}
+
+.classes-accordion {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.8s ease-out, padding 0.7s ease-out;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.class-subject-section.active .classes-accordion {
+  max-height: 5000px;
+  padding: 0 20px 20px;
+  transition: max-height 0.8s ease-out, padding 0.7s ease-out;
+}
+
+.class-subject-section.active .classes-accordion > .class-item:first-child {
+  margin-top: 15px;
 }
 
 .classes-section-title {
@@ -910,11 +960,6 @@ main {
   margin-bottom: 15px;
 }
 
-.classes-accordion {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
 .class-item {
   background: var(--eerie-black-1);
@@ -939,7 +984,7 @@ main {
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: background 0.3s ease;
+  transition: background 1.3s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;

@@ -893,10 +893,13 @@ function switchToPage(pageName, skipSave = false) {
         localStorage.setItem('activePage', pageName);
       }
       
-      // Re-initialize accordion if resume page is shown
+      // Re-initialize accordions if resume page is shown
       if (pages[i].dataset.page === "resume") {
         accordionInitialized = false; // Reset flag to allow re-initialization
-        setTimeout(initClassAccordion, 150); // Small delay to ensure DOM is ready
+        setTimeout(function() {
+          initClassAccordion();
+          initSubjectAccordion();
+        }, 150); // Small delay to ensure DOM is ready
       }
     } else {
       pages[i].classList.remove("active");
@@ -984,6 +987,10 @@ function initClassAccordion() {
   
   // Create new delegation handler
   accordionDelegateHandler = function(e) {
+    // Ignore clicks on subject toggle buttons
+    const subjectToggle = e.target.closest("[data-subject-toggle]");
+    if (subjectToggle) return;
+    
     // Check if click is on a button or any element inside a button with data-class-toggle
     const button = e.target.closest("[data-class-toggle]");
     const classHeader = e.target.closest(".class-header");
@@ -1029,15 +1036,77 @@ function initClassAccordion() {
   accordionInitialized = true;
 }
 
+// Subject accordion functionality (to collapse/expand entire subject sections)
+let subjectAccordionInitialized = false;
+
+function initSubjectAccordion() {
+  const subjectToggleButtons = document.querySelectorAll("[data-subject-toggle]");
+  
+  if (subjectToggleButtons.length === 0) {
+    return;
+  }
+  
+  // Remove old listeners by cloning buttons if already initialized
+  if (subjectAccordionInitialized) {
+    subjectToggleButtons.forEach(button => {
+      const newButton = button.cloneNode(true);
+      button.parentNode.replaceChild(newButton, button);
+    });
+  }
+  
+  // Get fresh references after cloning
+  const freshButtons = document.querySelectorAll("[data-subject-toggle]");
+  
+  freshButtons.forEach(button => {
+    button.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const subjectSection = this.closest(".class-subject-section");
+      if (!subjectSection) return;
+      
+      const isActive = subjectSection.classList.contains("active");
+      
+      // Toggle active state
+      if (isActive) {
+        subjectSection.classList.remove("active");
+      } else {
+        subjectSection.classList.add("active");
+      }
+    });
+  });
+  
+  subjectAccordionInitialized = true;
+}
+
+// Initialize subject accordion on page load
+document.addEventListener('DOMContentLoaded', function() {
+  initSubjectAccordion();
+});
+
+// Also initialize if DOM is already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSubjectAccordion);
+} else {
+  initSubjectAccordion();
+}
+
+// Re-initialize subject accordion when navigating to resume page (integrated with existing navigation)
+// This is handled in the switchToPage function below
+
 // Initialize accordion on page load
 function initializeAccordionOnLoad() {
   // Wait a bit to ensure all DOM is ready, especially if page loads on Resume section
   setTimeout(function() {
     initClassAccordion();
+    initSubjectAccordion();
     // Also check if resume page is active on load and initialize
     const resumePage = document.querySelector('[data-page="resume"]');
     if (resumePage && resumePage.classList.contains('active')) {
-      setTimeout(initClassAccordion, 100);
+      setTimeout(function() {
+        initClassAccordion();
+        initSubjectAccordion();
+      }, 100);
     }
   }, 200);
 }
@@ -1053,5 +1122,8 @@ if (document.readyState === 'loading') {
 
 // Also initialize when window loads (as a fallback)
 window.addEventListener('load', function() {
-  setTimeout(initClassAccordion, 100);
+  setTimeout(function() {
+    initClassAccordion();
+    initSubjectAccordion();
+  }, 100);
 });
