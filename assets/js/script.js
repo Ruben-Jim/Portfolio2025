@@ -368,13 +368,54 @@ const addBlogOverlay = document.getElementById('add-blog-overlay');
 const addBlogCloseBtn = document.getElementById('add-blog-close-btn');
 const cancelBlogBtn = document.getElementById('cancel-blog-btn');
 const addBlogForm = document.getElementById('add-blog-form');
+const contentTextarea = document.getElementById('blog-content');
+const lineNumbers = document.getElementById('editor-line-numbers');
+const charCount = document.querySelector('.char-count');
+const wordCount = document.querySelector('.word-count');
+
+// Update line numbers
+function updateLineNumbers() {
+  if (!lineNumbers || !contentTextarea) return;
+  
+  const lines = contentTextarea.value.split('\n');
+  const lineCount = lines.length || 1;
+  
+  let lineNumbersHTML = '';
+  for (let i = 1; i <= lineCount; i++) {
+    lineNumbersHTML += `${i}\n`;
+  }
+  
+  lineNumbers.textContent = lineNumbersHTML;
+}
+
+// Update character and word count
+function updateCounts() {
+  if (!charCount || !wordCount || !contentTextarea) return;
+  
+  const text = contentTextarea.value;
+  const charCountValue = text.length;
+  const wordCountValue = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  
+  charCount.textContent = `${charCountValue.toLocaleString()} characters`;
+  wordCount.textContent = `${wordCountValue.toLocaleString()} words`;
+}
 
 // Open add blog modal
-addBlogBtn.addEventListener('click', function() {
-  addBlogModal.classList.add('active');
-  // Set today's date as default
-  document.getElementById('blog-date').value = new Date().toISOString().split('T')[0];
-});
+if (addBlogBtn) {
+  addBlogBtn.addEventListener('click', function() {
+    addBlogModal.classList.add('active');
+    // Set today's date as default
+    const dateInput = document.getElementById('blog-date');
+    if (dateInput) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+    // Initialize editor features when modal opens
+    setTimeout(function() {
+      updateLineNumbers();
+      updateCounts();
+    }, 100);
+  });
+}
 
 // Close add blog modal
 function closeAddBlogModal() {
@@ -388,43 +429,132 @@ cancelBlogBtn.addEventListener('click', closeAddBlogModal);
 
 // Editor toolbar functionality
 const editorBtns = document.querySelectorAll('.editor-btn');
-const contentTextarea = document.getElementById('blog-content');
 
+// Sync scroll between textarea and line numbers
+function syncScroll() {
+  if (!lineNumbers || !contentTextarea) return;
+  lineNumbers.scrollTop = contentTextarea.scrollTop;
+}
+
+// Initialize editor features
+function initEditorFeatures() {
+  if (!contentTextarea) return;
+  
+  // Update on input
+  contentTextarea.addEventListener('input', function() {
+    updateLineNumbers();
+    updateCounts();
+  });
+  
+  // Update on scroll
+  contentTextarea.addEventListener('scroll', syncScroll);
+  
+  // Initial update
+  updateLineNumbers();
+  updateCounts();
+  
+  // Update when modal opens
+  if (addBlogModal) {
+    const observer = new MutationObserver(function(mutations) {
+      if (addBlogModal.classList.contains('active')) {
+        setTimeout(function() {
+          updateLineNumbers();
+          updateCounts();
+        }, 100);
+      }
+    });
+    
+    observer.observe(addBlogModal, { attributes: true, attributeFilter: ['class'] });
+  }
+}
+
+// Initialize on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEditorFeatures);
+} else {
+  initEditorFeatures();
+}
+
+// Enhanced editor toolbar functionality
 editorBtns.forEach(btn => {
-  btn.addEventListener('click', function() {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
     const command = this.getAttribute('data-command');
+    
+    if (command === 'preview') {
+      // Preview functionality - could open a preview modal
+      alert('Preview feature coming soon!');
+      return;
+    }
+    
+    if (!contentTextarea) return;
+    
+    contentTextarea.focus();
     const start = contentTextarea.selectionStart;
     const end = contentTextarea.selectionEnd;
     const selectedText = contentTextarea.value.substring(start, end);
     let newText = '';
+    let cursorPos = start;
     
     switch(command) {
       case 'bold':
         newText = `<strong>${selectedText || 'bold text'}</strong>`;
+        cursorPos = start + (selectedText ? newText.length : 7);
         break;
       case 'italic':
         newText = `<em>${selectedText || 'italic text'}</em>`;
+        cursorPos = start + (selectedText ? newText.length : 8);
+        break;
+      case 'underline':
+        newText = `<u>${selectedText || 'underlined text'}</u>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertHeading':
+        newText = `<h2>${selectedText || 'Heading'}</h2>`;
+        cursorPos = start + (selectedText ? newText.length : 4);
         break;
       case 'insertUnorderedList':
-        newText = `<ul>\n  <li>${selectedText || 'list item'}</li>\n</ul>`;
+        newText = selectedText 
+          ? `<ul>\n  <li>${selectedText}</li>\n</ul>`
+          : `<ul>\n  <li>List item</li>\n</ul>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
         break;
       case 'insertOrderedList':
-        newText = `<ol>\n  <li>${selectedText || 'list item'}</li>\n</ol>`;
-        break;
-      case 'insertParagraph':
-        newText = `<p>${selectedText || 'paragraph text'}</p>`;
+        newText = selectedText
+          ? `<ol>\n  <li>${selectedText}</li>\n</ol>`
+          : `<ol>\n  <li>List item</li>\n</ol>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
         break;
       case 'insertCode':
-        newText = `<code>${selectedText || 'code'}</code>`;
+        if (selectedText.includes('\n')) {
+          newText = `<pre><code>${selectedText || 'code block'}</code></pre>`;
+        } else {
+          newText = `<code>${selectedText || 'code'}</code>`;
+        }
+        cursorPos = start + (selectedText ? newText.length : (selectedText.includes('\n') ? 17 : 7));
         break;
       case 'insertQuote':
-        newText = `<blockquote>\n  ${selectedText || 'quote text'}\n</blockquote>`;
+        newText = `<blockquote>\n  ${selectedText || 'Quote text'}\n</blockquote>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertLink':
+        const url = prompt('Enter URL:', 'https://');
+        if (url) {
+          newText = `<a href="${url}" target="_blank">${selectedText || 'link text'}</a>`;
+          cursorPos = start + (selectedText ? newText.length : 10);
+        } else {
+          return; // User cancelled
+        }
         break;
     }
     
-    contentTextarea.value = contentTextarea.value.substring(0, start) + newText + contentTextarea.value.substring(end);
-    contentTextarea.focus();
-    contentTextarea.setSelectionRange(start + newText.length, start + newText.length);
+    if (newText) {
+      contentTextarea.value = contentTextarea.value.substring(0, start) + newText + contentTextarea.value.substring(end);
+      updateLineNumbers();
+      updateCounts();
+      contentTextarea.focus();
+      contentTextarea.setSelectionRange(cursorPos, cursorPos);
+    }
   });
 });
 

@@ -1451,77 +1451,145 @@
           <div class="add-blog-overlay" id="add-blog-overlay"></div>
           <div class="add-blog-content">
             <div class="add-blog-header">
-              <h3 class="h3">Create New Blog Post</h3>
+              <div class="header-left">
+                <ion-icon name="code-working-outline" class="header-icon"></ion-icon>
+                <h3 class="h3">New Blog Post</h3>
+                <span class="editor-badge">Web Dev Journey</span>
+              </div>
               <button class="add-blog-close-btn" id="add-blog-close-btn">
                 <ion-icon name="close-outline"></ion-icon>
               </button>
             </div>
             
             <form class="add-blog-form" id="add-blog-form">
-              <div class="form-group">
-                <label for="blog-title">Title</label>
-                <input type="text" id="blog-title" name="title" required>
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="blog-title">
+                    <ion-icon name="create-outline"></ion-icon>
+                    Post Title
+                  </label>
+                  <input type="text" id="blog-title" name="title" placeholder="e.g., Building My First Full-Stack Application" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="blog-category">
+                    <ion-icon name="pricetag-outline"></ion-icon>
+                    Category
+                  </label>
+                  <select id="blog-category" name="category" required>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="Full-Stack">Full-Stack</option>
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Learning Journey">Learning Journey</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Tutorial">Tutorial</option>
+                    <option value="Tech Stack">Tech Stack</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="blog-date">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    Date
+                  </label>
+                  <input type="date" id="blog-date" name="date" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="blog-image">
+                    <ion-icon name="image-outline"></ion-icon>
+                    Featured Image URL
+                  </label>
+                  <input type="url" id="blog-image" name="image" placeholder="https://example.com/image.jpg">
+                </div>
               </div>
               
               <div class="form-group">
-                <label for="blog-category">Category</label>
-                <select id="blog-category" name="category" required>
-                  <option value="Design">Design</option>
-                  <option value="Development">Development</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Tutorial">Tutorial</option>
-                  <option value="News">News</option>
-                </select>
+                <label for="blog-excerpt">
+                  <ion-icon name="text-outline"></ion-icon>
+                  Excerpt (Brief Summary)
+                </label>
+                <textarea id="blog-excerpt" name="excerpt" rows="2" placeholder="A short description that will appear in the blog preview..." required></textarea>
               </div>
               
               <div class="form-group">
-                <label for="blog-date">Date</label>
-                <input type="date" id="blog-date" name="date" required>
-              </div>
-              
-              <div class="form-group">
-                <label for="blog-image">Image URL</label>
-                <input type="url" id="blog-image" name="image" placeholder="https://example.com/image.jpg">
-              </div>
-              
-              <div class="form-group">
-                <label for="blog-excerpt">Excerpt (Short Description)</label>
-                <textarea id="blog-excerpt" name="excerpt" rows="3" required></textarea>
-              </div>
-              
-              <div class="form-group">
-                <label for="blog-content">Content (HTML Supported)</label>
+                <label for="blog-content">
+                  <ion-icon name="code-slash-outline"></ion-icon>
+                  Content Editor
+                  <span class="editor-hint">HTML & Markdown supported</span>
+                </label>
                 <div class="content-editor">
                   <div class="editor-toolbar">
-                    <button type="button" class="editor-btn" data-command="bold" title="Bold">
-                      <ion-icon name="text-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="italic" title="Italic">
-                      <ion-icon name="text-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Bullet List">
-                      <ion-icon name="list-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertOrderedList" title="Numbered List">
-                      <ion-icon name="list-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertParagraph" title="Paragraph">
-                      <ion-icon name="document-text-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertCode" title="Code Block">
-                      <ion-icon name="code-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertQuote" title="Quote">
-                      <ion-icon name="chatbubble-outline"></ion-icon>
-                    </button>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="bold" title="Bold (Ctrl+B)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>B</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="italic" title="Italic (Ctrl+I)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>I</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="underline" title="Underline">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>U</span>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertHeading" title="Heading">
+                        <ion-icon name="text-outline"></ion-icon>
+                        <span>H</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Bullet List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertOrderedList" title="Numbered List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertCode" title="Code Block">
+                        <ion-icon name="code-slash-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertQuote" title="Quote">
+                        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertLink" title="Link">
+                        <ion-icon name="link-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="preview" title="Preview">
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                    </div>
                   </div>
-                  <textarea id="blog-content" name="content" rows="15" placeholder="Write your blog post content here. You can use HTML tags like &lt;p&gt;, &lt;h2&gt;, &lt;code&gt;, &lt;pre&gt;, &lt;blockquote&gt;, etc."></textarea>
+                  <div class="editor-wrapper">
+                    <div class="editor-line-numbers" id="editor-line-numbers"></div>
+                    <textarea id="blog-content" name="content" rows="20" class="editor-textarea" placeholder="Start writing your blog post...&#10;&#10;You can use HTML tags:&#10;&lt;p&gt;Paragraph text&lt;/p&gt;&#10;&lt;h2&gt;Heading&lt;/h2&gt;&#10;&lt;code&gt;inline code&lt;/code&gt;&#10;&lt;pre&gt;&lt;code&gt;code block&lt;/code&gt;&lt;/pre&gt;&#10;&lt;blockquote&gt;Quote&lt;/blockquote&gt;&#10;&lt;ul&gt;&lt;li&gt;List item&lt;/li&gt;&lt;/ul&gt;"></textarea>
+                  </div>
+                  <div class="editor-footer">
+                    <span class="char-count">0 characters</span>
+                    <span class="word-count">0 words</span>
+                  </div>
                 </div>
               </div>
               
               <div class="form-actions">
-                <button type="button" class="btn btn-secondary" id="cancel-blog-btn">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create Post</button>
+                <button type="button" class="btn btn-secondary" id="cancel-blog-btn">
+                  <ion-icon name="close-outline"></ion-icon>
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Publish Post
+                </button>
               </div>
             </form>
           </div>
