@@ -1546,43 +1546,59 @@ function initClassAccordion() {
 
 // Subject accordion functionality (to collapse/expand entire subject sections)
 let subjectAccordionInitialized = false;
+let subjectAccordionDelegateHandler = null;
 
 function initSubjectAccordion() {
-  const subjectToggleButtons = document.querySelectorAll("[data-subject-toggle]");
+  const highLevelClassesContainer = document.querySelector(".high-level-classes");
   
-  if (subjectToggleButtons.length === 0) {
+  if (!highLevelClassesContainer) {
     return;
   }
   
-  // Remove old listeners by cloning buttons if already initialized
-  if (subjectAccordionInitialized) {
-    subjectToggleButtons.forEach(button => {
-      const newButton = button.cloneNode(true);
-      button.parentNode.replaceChild(newButton, button);
-    });
+  // Remove old delegation handler if exists
+  if (subjectAccordionDelegateHandler) {
+    highLevelClassesContainer.removeEventListener("click", subjectAccordionDelegateHandler);
+    highLevelClassesContainer.removeEventListener("touchend", subjectAccordionDelegateHandler);
   }
   
-  // Get fresh references after cloning
-  const freshButtons = document.querySelectorAll("[data-subject-toggle]");
+  // Create new delegation handler
+  subjectAccordionDelegateHandler = function(e) {
+    // Ignore clicks on class items (handled by class accordion)
+    const classItem = e.target.closest(".class-item");
+    const classHeader = e.target.closest(".class-header");
+    if (classItem || classHeader) return;
+    
+    // Check if click/touch is on a subject toggle button or any element inside it
+    const subjectToggle = e.target.closest("[data-subject-toggle]");
+    const subjectTitleBtn = e.target.closest(".subject-title-btn");
+    
+    if (!subjectToggle && !subjectTitleBtn) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get the actual button element
+    const targetButton = subjectToggle || subjectTitleBtn;
+    const subjectSection = targetButton.closest(".class-subject-section");
+    
+    if (!subjectSection) return;
+    
+    const isActive = subjectSection.classList.contains("active");
+    
+    // Toggle active state
+    if (isActive) {
+      subjectSection.classList.remove("active");
+    } else {
+      subjectSection.classList.add("active");
+    }
+  };
   
-  freshButtons.forEach(button => {
-    button.addEventListener("click", function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const subjectSection = this.closest(".class-subject-section");
-      if (!subjectSection) return;
-      
-      const isActive = subjectSection.classList.contains("active");
-      
-      // Toggle active state
-      if (isActive) {
-        subjectSection.classList.remove("active");
-      } else {
-        subjectSection.classList.add("active");
-      }
-    });
-  });
+  // Attach event listeners using delegation for both click and touch
+  highLevelClassesContainer.addEventListener("click", subjectAccordionDelegateHandler, { passive: false });
+  highLevelClassesContainer.addEventListener("touchend", function(e) {
+    subjectAccordionDelegateHandler(e);
+    e.preventDefault();
+  }, { passive: false });
   
   subjectAccordionInitialized = true;
 }
