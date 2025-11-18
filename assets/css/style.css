@@ -1911,10 +1911,13 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .classes-accordion {
     padding: 0 16px;
+    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
   }
 
   .class-subject-section.active .classes-accordion {
+    max-height: 5000px; /* Ensure accordion can expand */
     padding: 0 16px 16px;
+    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
   }
 
   .class-subject-section.active .classes-accordion > .class-item:first-child {
@@ -2051,10 +2054,13 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .classes-accordion {
     padding: 0 14px;
+    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
   }
 
   .class-subject-section.active .classes-accordion {
+    max-height: 5000px; /* Ensure accordion can expand */
     padding: 0 14px 14px;
+    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
   }
 
   .class-subject-section.active .classes-accordion > .class-item:first-child {
