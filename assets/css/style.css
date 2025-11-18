@@ -1858,118 +1858,29 @@ textarea.form-input::-webkit-resizer { display: none; }
    * #RESUME
    */
 
-  .timeline-list { 
-    margin-left: 65px; 
-  }
+  .timeline-list { margin-left: 65px; }
 
-  .timeline-item:not(:last-child)::before { 
-    left: -40px; 
-  }
-
-  .timeline-item:not(:last-child) { 
-    margin-bottom: 25px; 
-  }
-
-  .timeline-item-title {
-    font-size: var(--fs-6);
-    line-height: 1.4;
-  }
-
-  .timeline-text {
-    font-size: var(--fs-7);
-    line-height: 1.7;
-  }
+  .timeline-item:not(:last-child)::before { left: -40px; }
 
   .high-level-classes {
     margin-top: 20px;
-    margin-bottom: 30px;
     padding-top: 15px;
-    gap: 20px;
-  }
-
-  .class-subject-section {
-    border-radius: 10px;
-  }
-
-  .subject-title-btn {
-    padding: 18px 16px;
-    min-height: 56px; /* Better touch target */
-  }
-
-  .subject-title {
-    font-size: var(--fs-5);
-    gap: 10px;
-  }
-
-  .subject-title ion-icon {
-    font-size: 20px;
-  }
-
-  .subject-icon {
-    font-size: 18px;
-  }
-
-  .classes-accordion {
-    padding: 0 16px;
-    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
-  }
-
-  .class-subject-section.active .classes-accordion {
-    max-height: 5000px; /* Ensure accordion can expand */
-    padding: 0 16px 16px;
-    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
-  }
-
-  .class-subject-section.active .classes-accordion > .class-item:first-child {
-    margin-top: 12px;
-  }
-
-  .class-item {
-    border-radius: 6px;
   }
 
   .class-header {
-    padding: 14px 16px;
-    min-height: 50px; /* Better touch target */
+    padding: 12px 15px;
+  }
+
+  .class-content {
+    padding: 0 15px;
+  }
+
+  .class-item.active .class-content {
+    padding: 0 15px 15px;
   }
 
   .class-name {
     font-size: var(--fs-6);
-    line-height: 1.4;
-    padding-right: 10px;
-  }
-
-  .class-icon {
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-
-  .class-content {
-    padding: 0 16px;
-  }
-
-  .class-item.active .class-content {
-    padding: 0 16px 16px;
-  }
-
-  .class-details {
-    padding-top: 12px;
-  }
-
-  .class-description {
-    font-size: var(--fs-7);
-    line-height: 1.7;
-    margin-bottom: 12px;
-  }
-
-  .class-info-list {
-    gap: 8px;
-  }
-
-  .class-info-list li {
-    font-size: var(--fs-7);
-    line-height: 1.7;
-    padding-left: 18px;
   }
 
   .timeline-item::after {
@@ -1980,164 +1891,7 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .skills-item:not(:last-child) { margin-bottom: 25px; }
 
-}
 
-/**
- * Mobile styles for screens 480px and below
- */
-@media (max-width: 480px) {
-  /**
-   * #RESUME - Extra small screens
-   */
-
-  .timeline-list { 
-    margin-left: 50px; 
-  }
-
-  .timeline-item:not(:last-child)::before { 
-    left: -30px; 
-  }
-
-  .timeline-item:not(:last-child) { 
-    margin-bottom: 20px; 
-  }
-
-  .timeline-item-title {
-    font-size: var(--fs-7);
-    line-height: 1.5;
-    margin-bottom: 5px;
-  }
-
-  .timeline-item-title + span {
-    margin-bottom: 10px;
-    font-size: var(--fs-7);
-  }
-
-  .timeline-text {
-    font-size: 13px;
-    line-height: 1.8;
-  }
-
-  .timeline-item::after {
-    height: 6px;
-    width: 6px;
-    left: -33px;
-  }
-
-  .high-level-classes {
-    margin-top: 15px;
-    margin-bottom: 25px;
-    gap: 15px;
-  }
-
-  .class-subject-section {
-    border-radius: 8px;
-  }
-
-  .subject-title-btn {
-    padding: 16px 14px;
-    min-height: 60px; /* Even larger touch target for small screens */
-  }
-
-  .subject-title {
-    font-size: var(--fs-6);
-    gap: 8px;
-  }
-
-  .subject-title ion-icon {
-    font-size: 18px;
-  }
-
-  .subject-icon {
-    font-size: 16px;
-  }
-
-  .classes-accordion {
-    padding: 0 14px;
-    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
-  }
-
-  .class-subject-section.active .classes-accordion {
-    max-height: 5000px; /* Ensure accordion can expand */
-    padding: 0 14px 14px;
-    transition: max-height 0.8s ease-out, padding 0.7s ease-out;
-  }
-
-  .class-subject-section.active .classes-accordion > .class-item:first-child {
-    margin-top: 10px;
-  }
-
-  .class-item {
-    border-radius: 6px;
-  }
-
-  .class-header {
-    padding: 12px 14px;
-    min-height: 52px; /* Larger touch target */
-  }
-
-  .class-name {
-    font-size: 13px;
-    line-height: 1.5;
-    padding-right: 8px;
-  }
-
-  .class-icon {
-    font-size: 14px;
-  }
-
-  .class-content {
-    padding: 0 14px;
-  }
-
-  .class-item.active .class-content {
-    padding: 0 14px 14px;
-  }
-
-  .class-details {
-    padding-top: 10px;
-  }
-
-  .class-description {
-    font-size: 13px;
-    line-height: 1.8;
-    margin-bottom: 10px;
-  }
-
-  .class-info-list {
-    gap: 6px;
-  }
-
-  .class-info-list li {
-    font-size: 13px;
-    line-height: 1.8;
-    padding-left: 16px;
-  }
-
-  .class-info-list li::before {
-    font-size: var(--fs-6);
-  }
-
-  /* Ensure text doesn't overflow on small screens */
-  .class-name {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .subject-title {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .timeline-item-title {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .timeline-text {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
 
   /**
    * #PORTFOLIO, BLOG
