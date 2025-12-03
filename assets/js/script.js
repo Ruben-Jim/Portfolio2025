@@ -1478,6 +1478,7 @@ if (document.readyState === 'loading') {
 // high-level classes accordion functionality
 let accordionInitialized = false;
 let accordionDelegateHandler = null;
+let accordionTouchHandler = null;
 
 function initClassAccordion() {
   // Use event delegation on the high-level-classes container for reliability
@@ -1487,10 +1488,16 @@ function initClassAccordion() {
     return; // Container not found
   }
   
+  if (accordionInitialized) {
+    return;
+  }
+  
   // Remove old delegation handler if exists
   if (accordionDelegateHandler) {
     highLevelClassesContainer.removeEventListener("click", accordionDelegateHandler);
-    highLevelClassesContainer.removeEventListener("touchend", accordionDelegateHandler);
+  }
+  if (accordionTouchHandler) {
+    highLevelClassesContainer.removeEventListener("touchend", accordionTouchHandler);
   }
   
   // Create new delegation handler
@@ -1536,10 +1543,11 @@ function initClassAccordion() {
   
   // Attach event listeners using delegation
   highLevelClassesContainer.addEventListener("click", accordionDelegateHandler, { passive: false });
-  highLevelClassesContainer.addEventListener("touchend", function(e) {
+  accordionTouchHandler = function(e) {
     accordionDelegateHandler(e);
     e.preventDefault();
-  }, { passive: false });
+  };
+  highLevelClassesContainer.addEventListener("touchend", accordionTouchHandler, { passive: false });
   
   accordionInitialized = true;
 }
@@ -1547,6 +1555,7 @@ function initClassAccordion() {
 // Subject accordion functionality (to collapse/expand entire subject sections)
 let subjectAccordionInitialized = false;
 let subjectAccordionDelegateHandler = null;
+let subjectAccordionTouchHandler = null;
 
 function initSubjectAccordion() {
   const highLevelClassesContainer = document.querySelector(".high-level-classes");
@@ -1555,10 +1564,16 @@ function initSubjectAccordion() {
     return;
   }
   
+  if (subjectAccordionInitialized) {
+    return;
+  }
+  
   // Remove old delegation handler if exists
   if (subjectAccordionDelegateHandler) {
     highLevelClassesContainer.removeEventListener("click", subjectAccordionDelegateHandler);
-    highLevelClassesContainer.removeEventListener("touchend", subjectAccordionDelegateHandler);
+  }
+  if (subjectAccordionTouchHandler) {
+    highLevelClassesContainer.removeEventListener("touchend", subjectAccordionTouchHandler);
   }
   
   // Create new delegation handler
@@ -1595,10 +1610,11 @@ function initSubjectAccordion() {
   
   // Attach event listeners using delegation for both click and touch
   highLevelClassesContainer.addEventListener("click", subjectAccordionDelegateHandler, { passive: false });
-  highLevelClassesContainer.addEventListener("touchend", function(e) {
+  subjectAccordionTouchHandler = function(e) {
     subjectAccordionDelegateHandler(e);
     e.preventDefault();
-  }, { passive: false });
+  };
+  highLevelClassesContainer.addEventListener("touchend", subjectAccordionTouchHandler, { passive: false });
   
   subjectAccordionInitialized = true;
 }
