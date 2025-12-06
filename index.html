@@ -428,7 +428,7 @@
           - clients
         -->
        
-        <!-- <section class="clients">
+        <section class="clients">
 
           <h3 class="h3 clients-title">Clients</h3>
 
@@ -442,37 +442,37 @@
 
             <li class="clients-item">
               <a href="#">
-                <img src="./assets/images/logo-2-color.png" alt="client logo">
+                <!-- <img src="./assets/images/logo-2-color.png" alt="client logo"> -->
               </a>
             </li>
 
             <li class="clients-item">
               <a href="#">
-                <img src="./assets/images/logo-3-color.png" alt="client logo">
+                <!-- <img src="./assets/images/logo-3-color.png" alt="client logo"> -->
               </a>
             </li>
 
             <li class="clients-item">
               <a href="#">
-                <img src="./assets/images/logo-4-color.png" alt="client logo">
+                <!-- <img src="./assets/images/logo-4-color.png" alt="client logo"> -->
               </a>
             </li>
 
             <li class="clients-item">
               <a href="#">
-                <img src="./assets/images/logo-5-color.png" alt="client logo">
+                <!-- <img src="./assets/images/logo-5-color.png" alt="client logo"> -->
               </a>
             </li>
 
             <li class="clients-item">
               <a href="#">
-                <img src="./assets/images/logo-6-color.png" alt="client logo">
+                <!-- <img src="./assets/images/logo-6-color.png" alt="client logo"> -->
               </a>
             </li>
 
           </ul>
 
-        </section> -->
+        </section>
       </article>
       
       <!--
@@ -503,9 +503,215 @@
 
               <span>2021 — 2025</span>
 
-              <p class="timeline-text">
-                I am in my final semester at Clovis Community College in Fresno, California, where I have completed an Associate of Science in Mathematics. This fall, I will complete my final course, Engineering Electric Circuits, to earn my Associate of Science in Software Engineering. My completed coursework includes CSCI-40 (Programming Concepts and Methodology I), CSCI-41 (Programming Concepts and Methodology II), CSCI-26 (Discrete Mathematics for Computer Science), Differential Equations and Linear Algebra, and Physics courses covering Mechanical, Electrostatics, Thermodynamics, Magnetism, and Electric Fields.
-              </p>
+              <!-- High-Level Classes Accordion -->
+              <div class="high-level-classes">
+                
+                <!-- Computer Science Section -->
+                <div class="class-subject-section">
+                  <button type="button" class="subject-title-btn" data-subject-toggle>
+                    <h5 class="h5 subject-title">
+                      <ion-icon name="code-slash-outline"></ion-icon>
+                      Computer Science
+                    </h5>
+                    <ion-icon name="chevron-down" class="subject-icon"></ion-icon>
+                  </button>
+                  <div class="classes-accordion">
+                    
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">CSCI 26 - Discrete Mathematics for Computer Science</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            This course studies elements of discrete mathematics which have applications to computer science. Topics include sets, propositional and predicate logic, relations and functions, proof techniques, graph, trees, and discrete probability.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Transfer Credits:</strong> (A, CSU, UC, CAL-GETC)</li>
+                            <li><strong>C-ID:</strong> COMP 152</li>
+                            <li><strong>Key Topics:</strong> Sets, propositional and predicate logic, relations and functions, proof techniques, graphs, trees, discrete probability</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">CSCI 41 - Programming Concepts and Methodology II</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            This course introduces object-oriented design concepts, recursion, manual and automatic memory management; implementation of data structures including linked lists, stacks, queues, binary search trees, heaps, and hash tables; insertion, searching, and deletion. C++ language is used.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Key Topics:</strong> Object-oriented design, recursion, memory management, data structures (linked lists, stacks, queues, binary search trees, heaps, hash tables), C++ programming</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">CSCI 40 - Programming Concepts and Methodology I</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            This course introduces problem solving, algorithm development, procedural and data abstraction using C++ language; program design, coding, debugging, testing, and documentation.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Transfer Credits:</strong> (A, CSU, UC)</li>
+                            <li><strong>C-ID:</strong> COMP 112, COMP 122</li>
+                            <li><strong>Key Topics:</strong> Problem solving, algorithm development, procedural and data abstraction, C++ programming, program design, debugging, testing, documentation</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Mathematics Section -->
+                <div class="class-subject-section">
+                  <button type="button" class="subject-title-btn" data-subject-toggle>
+                    <h5 class="h5 subject-title">
+                      <ion-icon name="calculator-outline"></ion-icon>
+                      Mathematics
+                    </h5>
+                    <ion-icon name="chevron-down" class="subject-icon"></ion-icon>
+                  </button>
+                  <div class="classes-accordion">
+                    
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">MATH 17 - Differential Equations and Linear Algebra</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            Solutions to first order ordinary differential equations, including separable, linear, homogeneous of degree zero, Bernoulli and exact with applications and numerical methods. Solutions to higher order differential equations using undetermined coefficients, variation of parameters, and power series, with applications. Solutions to linear and non-linear systems of differential equations, including numerical solutions. Matrix algebra, solutions of linear systems of equations, and determinants. Vector spaces, linear independence, basis and dimension, subspace and inner product space, including the Gram-Schmidt procedure. Linear transformations, kernel and range, eigenvalues, eigenvectors, diagonalization and symmetric matrices.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Transfer Credits:</strong> (A, CSU, UC, CAL-GETC)</li>
+                            <li><strong>C-ID:</strong> MATH 240, MATH 260, MATH 910S</li>
+                            <li><strong>Key Topics:</strong> Differential equations (first order, higher order, systems), Matrix algebra, Vector spaces, Linear transformations, Eigenvalues and eigenvectors, Diagonalization</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">MATH 6 - Calculus II</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            Course description to be added.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Key Topics:</strong> Advanced calculus topics</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">MATH 5B - Calculus I (Part B)</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            Course description to be added.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Key Topics:</strong> Calculus fundamentals</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">MATH 5A - Calculus I (Part A)</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            Course description to be added.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Key Topics:</strong> Introduction to calculus</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Physics Section -->
+                <div class="class-subject-section">
+                  <button type="button" class="subject-title-btn" data-subject-toggle>
+                    <h5 class="h5 subject-title">
+                      <ion-icon name="nuclear-outline"></ion-icon>
+                      Physics
+                    </h5>
+                    <ion-icon name="chevron-down" class="subject-icon"></ion-icon>
+                  </button>
+                  <div class="classes-accordion">
+                    
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">PHYSICS 4A - Mechanics and Wave Motion</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            Classical mechanics, properties of matter, gravitation, fluid mechanics, oscillatory motion and mechanical waves. This course is calculus-based.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Transfer Credits:</strong> (A, CSU, UC, CAL-GETC)</li>
+                            <li><strong>C-ID:</strong> PHYS 205, PHYS 200S (PHYS 4A + PHYS 4B + PHYS 4C)</li>
+                            <li><strong>Key Topics:</strong> Classical mechanics, properties of matter, gravitation, fluid mechanics, oscillatory motion, mechanical waves, calculus-based physics</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="class-item">
+                      <button type="button" class="class-header" data-class-toggle>
+                        <span class="class-name">PHYSICS 4B - Electricity, Magnetism, and Thermodynamics</span>
+                        <ion-icon name="chevron-down" class="class-icon"></ion-icon>
+                      </button>
+                      <div class="class-content">
+                        <div class="class-details">
+                          <p class="class-description">
+                            The topics covered in this course include: Mechanical waves, Thermodynamics, electricity, magnetism.
+                          </p>
+                          <ul class="class-info-list">
+                            <li><strong>Transfer Credits:</strong> (A, CSU, UC, CAL-GETC)</li>
+                            <li><strong>C-ID:</strong> PHYS 210, PHYS 200S (PHYS 4A + PHYS 4B + PHYS 4C)</li>
+                            <li><strong>Key Topics:</strong> Mechanical waves, thermodynamics, electricity, magnetism</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
 
             </li>
 
@@ -756,7 +962,7 @@
                 <img src="./assets/images/project-11.png" alt="pc services" loading="lazy">
               </figure>
 
-              <h3 class="project-title">HOA App</h3>
+              <h3 class="project-title">Shelton Springs Home Owners Association App</h3>
 
               <p class="project-category">Application</p>
 
@@ -764,7 +970,7 @@
           </li>
 
           <!-- HOA Template App-->
-          <li class="project-item  active" data-filter-item data-category="applications">
+          <li class="project-item  active" data-filter-item data-category="web development">
             <a href="https://hoa-community-app--a7f6nhxo8x.expo.app">
 
               <figure class="project-img">
@@ -777,7 +983,7 @@
 
               <h3 class="project-title">HOA App</h3>
 
-              <p class="project-category">Application</p>
+              <p class="project-category">web development</p>
 
             </a>
           </li>
@@ -839,7 +1045,7 @@
               </a>
           </li>
 
-          <!-- Homeverse -->
+          <!-- Zoom Realty -->
           <li class="project-item  active" data-filter-item data-category="web development">
             <a href="https://ruben-jim.github.io/ZoomRealty2025-main/">
               
@@ -851,7 +1057,7 @@
                 <img src="./assets/images/project-5.png" alt="Real-Estate" loading="lazy">
               </figure>
               
-              <h3 class="project-title">Homeverse</h3>
+              <h3 class="project-title">Zoom Realty</h3>
               
               <p class="project-category">Web development</p>
               
@@ -877,7 +1083,7 @@
             </a>
           </li>
 
-          <!-- Zoomrealty -->
+          <!-- Homeverse -->
           <li class="project-item  active" data-filter-item data-category="web development">
             <a href="https://ruben-jim.github.io/DEMO/">
               
@@ -889,7 +1095,7 @@
                 <img src="./assets/images/project-4.png" alt="Real-Estate" loading="lazy">
               </figure>
               
-              <h3 class="project-title">ZoomRealty</h3>
+              <h3 class="project-title">Homeverse</h3>
               
               <p class="project-category">Web development</p>
               
@@ -929,7 +1135,7 @@
   
                 <h3 class="project-title">Worldwide Weather App</h3>
   
-                <p class="project-category">Web development</p>
+                <p class="project-category">applications</p>
   
               </a>
           </li>
@@ -948,7 +1154,7 @@
   
                 <h3 class="project-title">Digital Clock</h3>
   
-                <p class="project-category">Web development</p>
+                <p class="project-category">applications</p>
   
               </a>
           </li>
@@ -1245,77 +1451,301 @@
           <div class="add-blog-overlay" id="add-blog-overlay"></div>
           <div class="add-blog-content">
             <div class="add-blog-header">
-              <h3 class="h3">Create New Blog Post</h3>
+              <div class="header-left">
+                <ion-icon name="code-working-outline" class="header-icon"></ion-icon>
+                <h3 class="h3">New Blog Post</h3>
+                <span class="editor-badge">Web Dev Journey</span>
+              </div>
               <button class="add-blog-close-btn" id="add-blog-close-btn">
                 <ion-icon name="close-outline"></ion-icon>
               </button>
             </div>
             
             <form class="add-blog-form" id="add-blog-form">
-              <div class="form-group">
-                <label for="blog-title">Title</label>
-                <input type="text" id="blog-title" name="title" required>
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="blog-title">
+                    <ion-icon name="create-outline"></ion-icon>
+                    Post Title
+                  </label>
+                  <input type="text" id="blog-title" name="title" placeholder="e.g., Building My First Full-Stack Application" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="blog-category">
+                    <ion-icon name="pricetag-outline"></ion-icon>
+                    Category
+                  </label>
+                  <select id="blog-category" name="category" required>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="Full-Stack">Full-Stack</option>
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Learning Journey">Learning Journey</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Tutorial">Tutorial</option>
+                    <option value="Tech Stack">Tech Stack</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="blog-date">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    Date
+                  </label>
+                  <input type="date" id="blog-date" name="date" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="blog-image">
+                    <ion-icon name="image-outline"></ion-icon>
+                    Featured Image URL
+                  </label>
+                  <input type="url" id="blog-image" name="image" placeholder="https://example.com/image.jpg">
+                </div>
               </div>
               
               <div class="form-group">
-                <label for="blog-category">Category</label>
-                <select id="blog-category" name="category" required>
-                  <option value="Design">Design</option>
-                  <option value="Development">Development</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Tutorial">Tutorial</option>
-                  <option value="News">News</option>
-                </select>
+                <label for="blog-excerpt">
+                  <ion-icon name="text-outline"></ion-icon>
+                  Excerpt (Brief Summary)
+                </label>
+                <textarea id="blog-excerpt" name="excerpt" rows="2" placeholder="A short description that will appear in the blog preview..." required></textarea>
               </div>
               
               <div class="form-group">
-                <label for="blog-date">Date</label>
-                <input type="date" id="blog-date" name="date" required>
-              </div>
-              
-              <div class="form-group">
-                <label for="blog-image">Image URL</label>
-                <input type="url" id="blog-image" name="image" placeholder="https://example.com/image.jpg">
-              </div>
-              
-              <div class="form-group">
-                <label for="blog-excerpt">Excerpt (Short Description)</label>
-                <textarea id="blog-excerpt" name="excerpt" rows="3" required></textarea>
-              </div>
-              
-              <div class="form-group">
-                <label for="blog-content">Content (HTML Supported)</label>
+                <label for="blog-content">
+                  <ion-icon name="code-slash-outline"></ion-icon>
+                  Content Editor
+                  <span class="editor-hint">HTML & Markdown supported</span>
+                </label>
                 <div class="content-editor">
                   <div class="editor-toolbar">
-                    <button type="button" class="editor-btn" data-command="bold" title="Bold">
-                      <ion-icon name="text-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="italic" title="Italic">
-                      <ion-icon name="text-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Bullet List">
-                      <ion-icon name="list-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertOrderedList" title="Numbered List">
-                      <ion-icon name="list-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertParagraph" title="Paragraph">
-                      <ion-icon name="document-text-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertCode" title="Code Block">
-                      <ion-icon name="code-outline"></ion-icon>
-                    </button>
-                    <button type="button" class="editor-btn" data-command="insertQuote" title="Quote">
-                      <ion-icon name="chatbubble-outline"></ion-icon>
-                    </button>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="bold" title="Bold (Ctrl+B)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>B</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="italic" title="Italic (Ctrl+I)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>I</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="underline" title="Underline">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>U</span>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertHeading" title="Heading">
+                        <ion-icon name="text-outline"></ion-icon>
+                        <span>H</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Bullet List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertOrderedList" title="Numbered List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertCode" title="Code Block">
+                        <ion-icon name="code-slash-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertQuote" title="Quote">
+                        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertLink" title="Link">
+                        <ion-icon name="link-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="preview" title="Preview">
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                    </div>
                   </div>
-                  <textarea id="blog-content" name="content" rows="15" placeholder="Write your blog post content here. You can use HTML tags like &lt;p&gt;, &lt;h2&gt;, &lt;code&gt;, &lt;pre&gt;, &lt;blockquote&gt;, etc."></textarea>
+                  <div class="editor-wrapper">
+                    <div class="editor-line-numbers" id="editor-line-numbers"></div>
+                    <textarea id="blog-content" name="content" rows="20" class="editor-textarea" placeholder="Start writing your blog post...&#10;&#10;You can use HTML tags:&#10;&lt;p&gt;Paragraph text&lt;/p&gt;&#10;&lt;h2&gt;Heading&lt;/h2&gt;&#10;&lt;code&gt;inline code&lt;/code&gt;&#10;&lt;pre&gt;&lt;code&gt;code block&lt;/code&gt;&lt;/pre&gt;&#10;&lt;blockquote&gt;Quote&lt;/blockquote&gt;&#10;&lt;ul&gt;&lt;li&gt;List item&lt;/li&gt;&lt;/ul&gt;"></textarea>
+                  </div>
+                  <div class="editor-footer">
+                    <span class="char-count">0 characters</span>
+                    <span class="word-count">0 words</span>
+                  </div>
                 </div>
               </div>
               
               <div class="form-actions">
-                <button type="button" class="btn btn-secondary" id="cancel-blog-btn">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create Post</button>
+                <button type="button" class="btn btn-secondary" id="cancel-blog-btn">
+                  <ion-icon name="close-outline"></ion-icon>
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Publish Post
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Edit Blog Post Modal -->
+        <div class="add-blog-modal" id="edit-blog-modal">
+          <div class="add-blog-overlay" id="edit-blog-overlay"></div>
+          <div class="add-blog-content">
+            <div class="add-blog-header">
+              <div class="header-left">
+                <ion-icon name="create-outline" class="header-icon"></ion-icon>
+                <h3 class="h3">Edit Blog Post</h3>
+                <span class="editor-badge">Web Dev Journey</span>
+              </div>
+              <button class="add-blog-close-btn" id="edit-blog-close-btn">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+            
+            <form class="add-blog-form" id="edit-blog-form">
+              <input type="hidden" id="edit-blog-id" name="id">
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-title">
+                    <ion-icon name="create-outline"></ion-icon>
+                    Post Title
+                  </label>
+                  <input type="text" id="edit-blog-title" name="title" placeholder="e.g., Building My First Full-Stack Application" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-category">
+                    <ion-icon name="pricetag-outline"></ion-icon>
+                    Category
+                  </label>
+                  <select id="edit-blog-category" name="category" required>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="Full-Stack">Full-Stack</option>
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Learning Journey">Learning Journey</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Tutorial">Tutorial</option>
+                    <option value="Tech Stack">Tech Stack</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-date">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    Date
+                  </label>
+                  <input type="date" id="edit-blog-date" name="date" required>
+                </div>
+                
+                <div class="form-group form-group-half">
+                  <label for="edit-blog-image">
+                    <ion-icon name="image-outline"></ion-icon>
+                    Featured Image URL
+                  </label>
+                  <input type="url" id="edit-blog-image" name="image" placeholder="https://example.com/image.jpg">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-blog-excerpt">
+                  <ion-icon name="text-outline"></ion-icon>
+                  Excerpt (Brief Summary)
+                </label>
+                <textarea id="edit-blog-excerpt" name="excerpt" rows="2" placeholder="A short description that will appear in the blog preview..." required></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-blog-content">
+                  <ion-icon name="code-slash-outline"></ion-icon>
+                  Content Editor
+                  <span class="editor-hint">HTML & Markdown supported</span>
+                </label>
+                <div class="content-editor">
+                  <div class="editor-toolbar">
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="bold" data-editor="edit" title="Bold (Ctrl+B)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>B</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="italic" data-editor="edit" title="Italic (Ctrl+I)">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>I</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="underline" data-editor="edit" title="Underline">
+                        <ion-icon name="remove-outline"></ion-icon>
+                        <span>U</span>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertHeading" data-editor="edit" title="Heading">
+                        <ion-icon name="text-outline"></ion-icon>
+                        <span>H</span>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertUnorderedList" data-editor="edit" title="Bullet List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertOrderedList" data-editor="edit" title="Numbered List">
+                        <ion-icon name="list-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="insertCode" data-editor="edit" title="Code Block">
+                        <ion-icon name="code-slash-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertQuote" data-editor="edit" title="Quote">
+                        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                      </button>
+                      <button type="button" class="editor-btn" data-command="insertLink" data-editor="edit" title="Link">
+                        <ion-icon name="link-outline"></ion-icon>
+                      </button>
+                    </div>
+                    <div class="toolbar-separator"></div>
+                    <div class="toolbar-group">
+                      <button type="button" class="editor-btn" data-command="preview" data-editor="edit" title="Preview">
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="editor-wrapper">
+                    <div class="editor-line-numbers" id="edit-editor-line-numbers"></div>
+                    <textarea id="edit-blog-content" name="content" rows="20" class="editor-textarea" placeholder="Start writing your blog post...&#10;&#10;You can use HTML tags:&#10;&lt;p&gt;Paragraph text&lt;/p&gt;&#10;&lt;h2&gt;Heading&lt;/h2&gt;&#10;&lt;code&gt;inline code&lt;/code&gt;&#10;&lt;pre&gt;&lt;code&gt;code block&lt;/code&gt;&lt;/pre&gt;&#10;&lt;blockquote&gt;Quote&lt;/blockquote&gt;&#10;&lt;ul&gt;&lt;li&gt;List item&lt;/li&gt;&lt;/ul&gt;"></textarea>
+                  </div>
+                  <div class="editor-footer">
+                    <span class="char-count" id="edit-char-count">0 characters</span>
+                    <span class="word-count" id="edit-word-count">0 words</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="btn btn-danger" id="delete-blog-btn">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  Delete Post
+                </button>
+                <div style="display: flex; gap: 12px; margin-left: auto;">
+                  <button type="button" class="btn btn-secondary" id="cancel-edit-blog-btn">
+                    <ion-icon name="close-outline"></ion-icon>
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    Update Post
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -1387,6 +1817,20 @@
   </main>
 
   <!--
+    - Loading Screen
+  -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loading-text">Loading Portfolio...</p>
+    </div>
+  </div>
+
+  <!--
     - Firebase config
   -->
   <script src="./assets/js/config.js"></script>
@@ -1409,7 +1853,7 @@
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     
     // Your web app's Firebase configuration
     const firebaseConfig = window.FIREBASE_CONFIG;
@@ -1426,6 +1870,9 @@
     window.orderBy = orderBy;
     window.query = query;
     window.serverTimestamp = serverTimestamp;
+    window.updateDoc = updateDoc;
+    window.deleteDoc = deleteDoc;
+    window.doc = doc;
   </script>
 
   <!--

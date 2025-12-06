@@ -88,6 +88,11 @@ function updateAuthUI() {
     addBlogBtn.style.display = 'none';
     logoutBtn.style.display = 'none';
   }
+  
+  // Re-render blog posts to show/hide edit/delete buttons
+  if (typeof renderBlogPosts === 'function') {
+    renderBlogPosts();
+  }
 }
 
 function login(username, password) {
@@ -240,6 +245,44 @@ async function saveBlogPostToFirestore(postData) {
   }
 }
 
+async function updateBlogPostInFirestore(postId, postData) {
+  try {
+    if (!window.db) {
+      console.log('Firebase not initialized, updating locally');
+      return postData;
+    }
+
+    const postRef = doc(window.db, 'blogPosts', postId);
+    await updateDoc(postRef, {
+      ...postData,
+      updatedAt: serverTimestamp()
+    });
+
+    return {
+      ...postData,
+      id: postId
+    };
+  } catch (error) {
+    console.error('Error updating blog post:', error);
+    throw error;
+  }
+}
+
+async function deleteBlogPostFromFirestore(postId) {
+  try {
+    if (!window.db) {
+      console.log('Firebase not initialized, deleting locally');
+      return;
+    }
+
+    const postRef = doc(window.db, 'blogPosts', postId);
+    await deleteDoc(postRef);
+  } catch (error) {
+    console.error('Error deleting blog post:', error);
+    throw error;
+  }
+}
+
 function showLoadingState() {
   const blogPostsList = document.getElementById('blog-posts-list');
   blogPostsList.innerHTML = `
@@ -278,6 +321,7 @@ function renderBlogPosts() {
   }
 
   console.log('Rendering blog posts:', blogPosts);
+  const isLoggedIn = isAuthenticated();
 
   blogPosts.forEach(post => {
     const blogItem = document.createElement('li');
@@ -300,12 +344,27 @@ function renderBlogPosts() {
           <p class="blog-text" data-blog-excerpt>${post.excerpt}</p>
         </div>
       </a>
+      ${isLoggedIn ? `
+        <div class="blog-post-actions">
+          <button class="blog-action-btn edit-btn" data-edit-blog="${post.id}" title="Edit Post">
+            <ion-icon name="create-outline"></ion-icon>
+          </button>
+          <button class="blog-action-btn delete-btn" data-delete-blog="${post.id}" title="Delete Post">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+      ` : ''}
     `;
     blogPostsList.appendChild(blogItem);
   });
 
   // Re-attach event listeners
   attachBlogEventListeners();
+  
+  // Attach edit/delete button listeners if logged in
+  if (isLoggedIn) {
+    attachEditDeleteListeners();
+  }
 }
 
 // Function to attach blog event listeners
@@ -368,13 +427,54 @@ const addBlogOverlay = document.getElementById('add-blog-overlay');
 const addBlogCloseBtn = document.getElementById('add-blog-close-btn');
 const cancelBlogBtn = document.getElementById('cancel-blog-btn');
 const addBlogForm = document.getElementById('add-blog-form');
+const contentTextarea = document.getElementById('blog-content');
+const lineNumbers = document.getElementById('editor-line-numbers');
+const charCount = document.querySelector('.char-count');
+const wordCount = document.querySelector('.word-count');
+
+// Update line numbers
+function updateLineNumbers() {
+  if (!lineNumbers || !contentTextarea) return;
+  
+  const lines = contentTextarea.value.split('\n');
+  const lineCount = lines.length || 1;
+  
+  let lineNumbersHTML = '';
+  for (let i = 1; i <= lineCount; i++) {
+    lineNumbersHTML += `${i}\n`;
+  }
+  
+  lineNumbers.textContent = lineNumbersHTML;
+}
+
+// Update character and word count
+function updateCounts() {
+  if (!charCount || !wordCount || !contentTextarea) return;
+  
+  const text = contentTextarea.value;
+  const charCountValue = text.length;
+  const wordCountValue = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  
+  charCount.textContent = `${charCountValue.toLocaleString()} characters`;
+  wordCount.textContent = `${wordCountValue.toLocaleString()} words`;
+}
 
 // Open add blog modal
-addBlogBtn.addEventListener('click', function() {
-  addBlogModal.classList.add('active');
-  // Set today's date as default
-  document.getElementById('blog-date').value = new Date().toISOString().split('T')[0];
-});
+if (addBlogBtn) {
+  addBlogBtn.addEventListener('click', function() {
+    addBlogModal.classList.add('active');
+    // Set today's date as default
+    const dateInput = document.getElementById('blog-date');
+    if (dateInput) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+    // Initialize editor features when modal opens
+    setTimeout(function() {
+      updateLineNumbers();
+      updateCounts();
+    }, 100);
+  });
+}
 
 // Close add blog modal
 function closeAddBlogModal() {
@@ -388,91 +488,499 @@ cancelBlogBtn.addEventListener('click', closeAddBlogModal);
 
 // Editor toolbar functionality
 const editorBtns = document.querySelectorAll('.editor-btn');
-const contentTextarea = document.getElementById('blog-content');
 
+// Sync scroll between textarea and line numbers
+function syncScroll() {
+  if (!lineNumbers || !contentTextarea) return;
+  lineNumbers.scrollTop = contentTextarea.scrollTop;
+}
+
+// Initialize editor features
+function initEditorFeatures() {
+  if (!contentTextarea) return;
+  
+  // Update on input
+  contentTextarea.addEventListener('input', function() {
+    updateLineNumbers();
+    updateCounts();
+  });
+  
+  // Update on scroll
+  contentTextarea.addEventListener('scroll', syncScroll);
+  
+  // Initial update
+  updateLineNumbers();
+  updateCounts();
+  
+  // Update when modal opens
+  if (addBlogModal) {
+    const observer = new MutationObserver(function(mutations) {
+      if (addBlogModal.classList.contains('active')) {
+        setTimeout(function() {
+          updateLineNumbers();
+          updateCounts();
+        }, 100);
+      }
+    });
+    
+    observer.observe(addBlogModal, { attributes: true, attributeFilter: ['class'] });
+  }
+}
+
+// Initialize on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEditorFeatures);
+} else {
+  initEditorFeatures();
+}
+
+// Enhanced editor toolbar functionality
 editorBtns.forEach(btn => {
-  btn.addEventListener('click', function() {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
     const command = this.getAttribute('data-command');
+    
+    if (command === 'preview') {
+      // Preview functionality - could open a preview modal
+      alert('Preview feature coming soon!');
+      return;
+    }
+    
+    if (!contentTextarea) return;
+    
+    contentTextarea.focus();
     const start = contentTextarea.selectionStart;
     const end = contentTextarea.selectionEnd;
     const selectedText = contentTextarea.value.substring(start, end);
     let newText = '';
+    let cursorPos = start;
     
     switch(command) {
       case 'bold':
         newText = `<strong>${selectedText || 'bold text'}</strong>`;
+        cursorPos = start + (selectedText ? newText.length : 7);
         break;
       case 'italic':
         newText = `<em>${selectedText || 'italic text'}</em>`;
+        cursorPos = start + (selectedText ? newText.length : 8);
+        break;
+      case 'underline':
+        newText = `<u>${selectedText || 'underlined text'}</u>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertHeading':
+        newText = `<h2>${selectedText || 'Heading'}</h2>`;
+        cursorPos = start + (selectedText ? newText.length : 4);
         break;
       case 'insertUnorderedList':
-        newText = `<ul>\n  <li>${selectedText || 'list item'}</li>\n</ul>`;
+        newText = selectedText 
+          ? `<ul>\n  <li>${selectedText}</li>\n</ul>`
+          : `<ul>\n  <li>List item</li>\n</ul>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
         break;
       case 'insertOrderedList':
-        newText = `<ol>\n  <li>${selectedText || 'list item'}</li>\n</ol>`;
-        break;
-      case 'insertParagraph':
-        newText = `<p>${selectedText || 'paragraph text'}</p>`;
+        newText = selectedText
+          ? `<ol>\n  <li>${selectedText}</li>\n</ol>`
+          : `<ol>\n  <li>List item</li>\n</ol>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
         break;
       case 'insertCode':
-        newText = `<code>${selectedText || 'code'}</code>`;
+        if (selectedText.includes('\n')) {
+          newText = `<pre><code>${selectedText || 'code block'}</code></pre>`;
+        } else {
+          newText = `<code>${selectedText || 'code'}</code>`;
+        }
+        cursorPos = start + (selectedText ? newText.length : (selectedText.includes('\n') ? 17 : 7));
         break;
       case 'insertQuote':
-        newText = `<blockquote>\n  ${selectedText || 'quote text'}\n</blockquote>`;
+        newText = `<blockquote>\n  ${selectedText || 'Quote text'}\n</blockquote>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertLink':
+        const url = prompt('Enter URL:', 'https://');
+        if (url) {
+          newText = `<a href="${url}" target="_blank">${selectedText || 'link text'}</a>`;
+          cursorPos = start + (selectedText ? newText.length : 10);
+        } else {
+          return; // User cancelled
+        }
         break;
     }
     
-    contentTextarea.value = contentTextarea.value.substring(0, start) + newText + contentTextarea.value.substring(end);
-    contentTextarea.focus();
-    contentTextarea.setSelectionRange(start + newText.length, start + newText.length);
+    if (newText) {
+      contentTextarea.value = contentTextarea.value.substring(0, start) + newText + contentTextarea.value.substring(end);
+      updateLineNumbers();
+      updateCounts();
+      contentTextarea.focus();
+      contentTextarea.setSelectionRange(cursorPos, cursorPos);
+    }
   });
 });
 
 // Handle form submission
-addBlogForm.addEventListener('submit', async function(e) {
-  e.preventDefault();
+if (addBlogForm) {
+  addBlogForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    try {
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating...';
+      
+      const formData = new FormData(this);
+      const newPost = {
+        title: formData.get('title'),
+        category: formData.get('category'),
+        date: formData.get('date'),
+        image: formData.get('image') || './assets/images/blog-1.jpg',
+        excerpt: formData.get('excerpt'),
+        content: formData.get('content')
+      };
+      
+      // Save to Firestore
+      const savedPost = await saveBlogPostToFirestore(newPost);
+      
+      // Add to local array
+      blogPosts.unshift(savedPost);
+      
+      // Re-render blog posts
+      renderBlogPosts();
+      
+      // Close modal
+      closeAddBlogModal();
+      
+      // Show success message
+      showSuccessMessage('Blog post created successfully!');
+      
+    } catch (error) {
+      console.error('Error creating blog post:', error);
+      showErrorMessage('Failed to create blog post. Please try again.');
+    } finally {
+      // Reset button state
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+}
+
+// Edit Blog Modal Elements
+const editBlogModal = document.getElementById('edit-blog-modal');
+const editBlogOverlay = document.getElementById('edit-blog-overlay');
+const editBlogCloseBtn = document.getElementById('edit-blog-close-btn');
+const cancelEditBlogBtn = document.getElementById('cancel-edit-blog-btn');
+const editBlogForm = document.getElementById('edit-blog-form');
+const deleteBlogBtn = document.getElementById('delete-blog-btn');
+const editContentTextarea = document.getElementById('edit-blog-content');
+const editLineNumbers = document.getElementById('edit-editor-line-numbers');
+const editCharCount = document.getElementById('edit-char-count');
+const editWordCount = document.getElementById('edit-word-count');
+
+// Update line numbers for edit modal
+function updateEditLineNumbers() {
+  if (!editLineNumbers || !editContentTextarea) return;
   
-  const submitBtn = this.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
+  const lines = editContentTextarea.value.split('\n');
+  const lineCount = lines.length || 1;
   
-  try {
-    // Show loading state
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Creating...';
-    
-    const formData = new FormData(this);
-    const newPost = {
-      title: formData.get('title'),
-      category: formData.get('category'),
-      date: formData.get('date'),
-      image: formData.get('image') || './assets/images/blog-1.jpg',
-      excerpt: formData.get('excerpt'),
-      content: formData.get('content')
-    };
-    
-    // Save to Firestore
-    const savedPost = await saveBlogPostToFirestore(newPost);
-    
-    // Add to local array
-    blogPosts.unshift(savedPost);
-    
-    // Re-render blog posts
-    renderBlogPosts();
-    
-    // Close modal
-    closeAddBlogModal();
-    
-    // Show success message
-    showSuccessMessage('Blog post created successfully!');
-    
-  } catch (error) {
-    console.error('Error creating blog post:', error);
-    showErrorMessage('Failed to create blog post. Please try again.');
-  } finally {
-    // Reset button state
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalText;
+  let lineNumbersHTML = '';
+  for (let i = 1; i <= lineCount; i++) {
+    lineNumbersHTML += `${i}\n`;
   }
+  
+  editLineNumbers.textContent = lineNumbersHTML;
+}
+
+// Update character and word count for edit modal
+function updateEditCounts() {
+  if (!editCharCount || !editWordCount || !editContentTextarea) return;
+  
+  const text = editContentTextarea.value;
+  const charCountValue = text.length;
+  const wordCountValue = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  
+  editCharCount.textContent = `${charCountValue.toLocaleString()} characters`;
+  editWordCount.textContent = `${wordCountValue.toLocaleString()} words`;
+}
+
+// Sync scroll for edit modal
+function syncEditScroll() {
+  if (!editLineNumbers || !editContentTextarea) return;
+  editLineNumbers.scrollTop = editContentTextarea.scrollTop;
+}
+
+// Initialize edit editor features
+function initEditEditorFeatures() {
+  if (!editContentTextarea) return;
+  
+  editContentTextarea.addEventListener('input', function() {
+    updateEditLineNumbers();
+    updateEditCounts();
+  });
+  
+  editContentTextarea.addEventListener('scroll', syncEditScroll);
+}
+
+// Initialize edit editor on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEditEditorFeatures);
+} else {
+  initEditEditorFeatures();
+}
+
+// Open edit modal with post data
+function openEditBlogModal(postId) {
+  const post = blogPosts.find(p => p.id === postId);
+  if (!post) {
+    showErrorMessage('Blog post not found');
+    return;
+  }
+  
+  // Populate form fields
+  document.getElementById('edit-blog-id').value = post.id;
+  document.getElementById('edit-blog-title').value = post.title;
+  document.getElementById('edit-blog-category').value = post.category;
+  document.getElementById('edit-blog-date').value = post.date;
+  document.getElementById('edit-blog-image').value = post.image || '';
+  document.getElementById('edit-blog-excerpt').value = post.excerpt;
+  editContentTextarea.value = post.content;
+  
+  // Update counts and line numbers
+  setTimeout(function() {
+    updateEditLineNumbers();
+    updateEditCounts();
+  }, 100);
+  
+  // Open modal
+  editBlogModal.classList.add('active');
+}
+
+// Close edit modal
+function closeEditBlogModal() {
+  editBlogModal.classList.remove('active');
+  if (editBlogForm) {
+    editBlogForm.reset();
+  }
+}
+
+// Event listeners for edit modal
+if (editBlogCloseBtn) {
+  editBlogCloseBtn.addEventListener('click', closeEditBlogModal);
+}
+if (editBlogOverlay) {
+  editBlogOverlay.addEventListener('click', closeEditBlogModal);
+}
+if (cancelEditBlogBtn) {
+  cancelEditBlogBtn.addEventListener('click', closeEditBlogModal);
+}
+
+// Handle edit form submission
+if (editBlogForm) {
+  editBlogForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    const postId = document.getElementById('edit-blog-id').value;
+    
+    try {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Updating...';
+      
+      const formData = new FormData(this);
+      const updatedPost = {
+        title: formData.get('title'),
+        category: formData.get('category'),
+        date: formData.get('date'),
+        image: formData.get('image') || './assets/images/blog-1.jpg',
+        excerpt: formData.get('excerpt'),
+        content: formData.get('content')
+      };
+      
+      // Update in Firestore
+      await updateBlogPostInFirestore(postId, updatedPost);
+      
+      // Update local array
+      const index = blogPosts.findIndex(p => p.id === postId);
+      if (index !== -1) {
+        blogPosts[index] = { ...updatedPost, id: postId };
+      }
+      
+      // Re-render blog posts
+      renderBlogPosts();
+      
+      // Close modal
+      closeEditBlogModal();
+      
+      // Show success message
+      showSuccessMessage('Blog post updated successfully!');
+      
+    } catch (error) {
+      console.error('Error updating blog post:', error);
+      showErrorMessage('Failed to update blog post. Please try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+}
+
+// Handle delete button
+if (deleteBlogBtn) {
+  deleteBlogBtn.addEventListener('click', async function(e) {
+    e.preventDefault();
+    
+    const postId = document.getElementById('edit-blog-id').value;
+    if (!postId) return;
+    
+    if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      // Delete from Firestore
+      await deleteBlogPostFromFirestore(postId);
+      
+      // Remove from local array
+      blogPosts = blogPosts.filter(p => p.id !== postId);
+      
+      // Re-render blog posts
+      renderBlogPosts();
+      
+      // Close modal
+      closeEditBlogModal();
+      
+      // Show success message
+      showSuccessMessage('Blog post deleted successfully!');
+      
+    } catch (error) {
+      console.error('Error deleting blog post:', error);
+      showErrorMessage('Failed to delete blog post. Please try again.');
+    }
+  });
+}
+
+// Attach edit/delete button listeners
+function attachEditDeleteListeners() {
+  // Edit buttons
+  const editButtons = document.querySelectorAll('[data-edit-blog]');
+  editButtons.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const postId = this.getAttribute('data-edit-blog');
+      openEditBlogModal(postId);
+    });
+  });
+  
+  // Delete buttons
+  const deleteButtons = document.querySelectorAll('[data-delete-blog]');
+  deleteButtons.forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const postId = this.getAttribute('data-delete-blog');
+      
+      if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
+        return;
+      }
+      
+      try {
+        await deleteBlogPostFromFirestore(postId);
+        blogPosts = blogPosts.filter(p => p.id !== postId);
+        renderBlogPosts();
+        showSuccessMessage('Blog post deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting blog post:', error);
+        showErrorMessage('Failed to delete blog post. Please try again.');
+      }
+    });
+  });
+}
+
+// Enhanced editor toolbar functionality for edit modal
+const editEditorBtns = document.querySelectorAll('.editor-btn[data-editor="edit"]');
+editEditorBtns.forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const command = this.getAttribute('data-command');
+    
+    if (command === 'preview') {
+      alert('Preview feature coming soon!');
+      return;
+    }
+    
+    if (!editContentTextarea) return;
+    
+    editContentTextarea.focus();
+    const start = editContentTextarea.selectionStart;
+    const end = editContentTextarea.selectionEnd;
+    const selectedText = editContentTextarea.value.substring(start, end);
+    let newText = '';
+    let cursorPos = start;
+    
+    switch(command) {
+      case 'bold':
+        newText = `<strong>${selectedText || 'bold text'}</strong>`;
+        cursorPos = start + (selectedText ? newText.length : 7);
+        break;
+      case 'italic':
+        newText = `<em>${selectedText || 'italic text'}</em>`;
+        cursorPos = start + (selectedText ? newText.length : 8);
+        break;
+      case 'underline':
+        newText = `<u>${selectedText || 'underlined text'}</u>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertHeading':
+        newText = `<h2>${selectedText || 'Heading'}</h2>`;
+        cursorPos = start + (selectedText ? newText.length : 4);
+        break;
+      case 'insertUnorderedList':
+        newText = selectedText 
+          ? `<ul>\n  <li>${selectedText}</li>\n</ul>`
+          : `<ul>\n  <li>List item</li>\n</ul>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
+        break;
+      case 'insertOrderedList':
+        newText = selectedText
+          ? `<ol>\n  <li>${selectedText}</li>\n</ol>`
+          : `<ol>\n  <li>List item</li>\n</ol>`;
+        cursorPos = start + newText.length - (selectedText ? 6 : 10);
+        break;
+      case 'insertCode':
+        if (selectedText.includes('\n')) {
+          newText = `<pre><code>${selectedText || 'code block'}</code></pre>`;
+        } else {
+          newText = `<code>${selectedText || 'code'}</code>`;
+        }
+        cursorPos = start + (selectedText ? newText.length : (selectedText.includes('\n') ? 17 : 7));
+        break;
+      case 'insertQuote':
+        newText = `<blockquote>\n  ${selectedText || 'Quote text'}\n</blockquote>`;
+        cursorPos = start + (selectedText ? newText.length : 11);
+        break;
+      case 'insertLink':
+        const url = prompt('Enter URL:', 'https://');
+        if (url) {
+          newText = `<a href="${url}" target="_blank">${selectedText || 'link text'}</a>`;
+          cursorPos = start + (selectedText ? newText.length : 10);
+        } else {
+          return;
+        }
+        break;
+    }
+    
+    if (newText) {
+      editContentTextarea.value = editContentTextarea.value.substring(0, start) + newText + editContentTextarea.value.substring(end);
+      updateEditLineNumbers();
+      updateEditCounts();
+      editContentTextarea.focus();
+      editContentTextarea.setSelectionRange(cursorPos, cursorPos);
+    }
+  });
 });
 
 function showSuccessMessage(message) {
@@ -880,20 +1388,282 @@ function hideFormMessages() {
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
+// Function to switch to a specific page
+function switchToPage(pageName, skipSave = false) {
+  for (let i = 0; i < pages.length; i++) {
+    if (pageName === pages[i].dataset.page) {
+      pages[i].classList.add("active");
+      navigationLinks[i].classList.add("active");
+      window.scrollTo(0, 0);
+      
+      // Save to localStorage (unless skipSave is true)
+      if (!skipSave) {
+        localStorage.setItem('activePage', pageName);
+      }
+      
+      // Re-initialize accordions if resume page is shown
+      if (pages[i].dataset.page === "resume") {
+        accordionInitialized = false; // Reset flag to allow re-initialization
+        setTimeout(function() {
+          initClassAccordion();
+          initSubjectAccordion();
+        }, 150); // Small delay to ensure DOM is ready
+      }
+    } else {
+      pages[i].classList.remove("active");
+      navigationLinks[i].classList.remove("active");
+    }
+  }
+}
+
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
-      }
-    }
-
+    const pageName = this.innerHTML.toLowerCase();
+    switchToPage(pageName);
   });
 }
+
+// Restore active page from localStorage on page load with loading animation
+function restoreActivePage() {
+  const loadingScreen = document.getElementById('loading-screen');
+  const savedPage = localStorage.getItem('activePage');
+  
+  // Always show About page first (don't save to localStorage during initial load)
+  switchToPage('about', true);
+  
+  if (savedPage && savedPage !== 'about') {
+    // Wait 700ms (less than a second) then switch to saved page and hide loading
+    setTimeout(function() {
+      switchToPage(savedPage);
+      // Hide loading screen with fade out
+      if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+        // Remove from DOM after animation completes
+        setTimeout(function() {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+    }, 700);
+  } else {
+    // If no saved page or saved page is "about", just hide loading after delay
+    setTimeout(function() {
+      if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+        setTimeout(function() {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+    }, 700);
+  }
+}
+
+// Restore page on load
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure loading screen is visible
+  setTimeout(restoreActivePage, 50);
+});
+
+// Also restore if DOM is already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(restoreActivePage, 50);
+  });
+} else {
+  setTimeout(restoreActivePage, 50);
+}
+
+
+
+// high-level classes accordion functionality
+let accordionInitialized = false;
+let accordionDelegateHandler = null;
+let accordionTouchHandler = null;
+
+function initClassAccordion() {
+  // Use event delegation on the high-level-classes container for reliability
+  const highLevelClassesContainer = document.querySelector(".high-level-classes");
+  
+  if (!highLevelClassesContainer) {
+    return; // Container not found
+  }
+  
+  if (accordionInitialized) {
+    return;
+  }
+  
+  // Remove old delegation handler if exists
+  if (accordionDelegateHandler) {
+    highLevelClassesContainer.removeEventListener("click", accordionDelegateHandler);
+  }
+  if (accordionTouchHandler) {
+    highLevelClassesContainer.removeEventListener("touchend", accordionTouchHandler);
+  }
+  
+  // Create new delegation handler
+  accordionDelegateHandler = function(e) {
+    // Ignore clicks on subject toggle buttons
+    const subjectToggle = e.target.closest("[data-subject-toggle]");
+    if (subjectToggle) return;
+    
+    // Check if click is on a button or any element inside a button with data-class-toggle
+    const button = e.target.closest("[data-class-toggle]");
+    const classHeader = e.target.closest(".class-header");
+    
+    if (!button && !classHeader) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get the actual button element
+    const targetButton = button || classHeader;
+    const classItem = targetButton.closest(".class-item");
+    
+    if (!classItem) return;
+    
+    const isActive = classItem.classList.contains("active");
+    
+    // Close all other class items in the same subject section
+    const subjectSection = classItem.closest(".class-subject-section");
+    if (subjectSection) {
+      subjectSection.querySelectorAll(".class-item").forEach(item => {
+        if (item !== classItem) {
+          item.classList.remove("active");
+        }
+      });
+    }
+    
+    // Toggle current item
+    if (isActive) {
+      classItem.classList.remove("active");
+    } else {
+      classItem.classList.add("active");
+    }
+  };
+  
+  // Attach event listeners using delegation
+  highLevelClassesContainer.addEventListener("click", accordionDelegateHandler, { passive: false });
+  accordionTouchHandler = function(e) {
+    accordionDelegateHandler(e);
+    e.preventDefault();
+  };
+  highLevelClassesContainer.addEventListener("touchend", accordionTouchHandler, { passive: false });
+  
+  accordionInitialized = true;
+}
+
+// Subject accordion functionality (to collapse/expand entire subject sections)
+let subjectAccordionInitialized = false;
+let subjectAccordionDelegateHandler = null;
+let subjectAccordionTouchHandler = null;
+
+function initSubjectAccordion() {
+  const highLevelClassesContainer = document.querySelector(".high-level-classes");
+  
+  if (!highLevelClassesContainer) {
+    return;
+  }
+  
+  if (subjectAccordionInitialized) {
+    return;
+  }
+  
+  // Remove old delegation handler if exists
+  if (subjectAccordionDelegateHandler) {
+    highLevelClassesContainer.removeEventListener("click", subjectAccordionDelegateHandler);
+  }
+  if (subjectAccordionTouchHandler) {
+    highLevelClassesContainer.removeEventListener("touchend", subjectAccordionTouchHandler);
+  }
+  
+  // Create new delegation handler
+  subjectAccordionDelegateHandler = function(e) {
+    // Ignore clicks on class items (handled by class accordion)
+    const classItem = e.target.closest(".class-item");
+    const classHeader = e.target.closest(".class-header");
+    if (classItem || classHeader) return;
+    
+    // Check if click/touch is on a subject toggle button or any element inside it
+    const subjectToggle = e.target.closest("[data-subject-toggle]");
+    const subjectTitleBtn = e.target.closest(".subject-title-btn");
+    
+    if (!subjectToggle && !subjectTitleBtn) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get the actual button element
+    const targetButton = subjectToggle || subjectTitleBtn;
+    const subjectSection = targetButton.closest(".class-subject-section");
+    
+    if (!subjectSection) return;
+    
+    const isActive = subjectSection.classList.contains("active");
+    
+    // Toggle active state
+    if (isActive) {
+      subjectSection.classList.remove("active");
+    } else {
+      subjectSection.classList.add("active");
+    }
+  };
+  
+  // Attach event listeners using delegation for both click and touch
+  highLevelClassesContainer.addEventListener("click", subjectAccordionDelegateHandler, { passive: false });
+  subjectAccordionTouchHandler = function(e) {
+    subjectAccordionDelegateHandler(e);
+    e.preventDefault();
+  };
+  highLevelClassesContainer.addEventListener("touchend", subjectAccordionTouchHandler, { passive: false });
+  
+  subjectAccordionInitialized = true;
+}
+
+// Initialize subject accordion on page load
+document.addEventListener('DOMContentLoaded', function() {
+  initSubjectAccordion();
+});
+
+// Also initialize if DOM is already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSubjectAccordion);
+} else {
+  initSubjectAccordion();
+}
+
+// Re-initialize subject accordion when navigating to resume page (integrated with existing navigation)
+// This is handled in the switchToPage function below
+
+// Initialize accordion on page load
+function initializeAccordionOnLoad() {
+  // Wait a bit to ensure all DOM is ready, especially if page loads on Resume section
+  setTimeout(function() {
+    initClassAccordion();
+    initSubjectAccordion();
+    // Also check if resume page is active on load and initialize
+    const resumePage = document.querySelector('[data-page="resume"]');
+    if (resumePage && resumePage.classList.contains('active')) {
+      setTimeout(function() {
+        initClassAccordion();
+        initSubjectAccordion();
+      }, 100);
+    }
+  }, 200);
+}
+
+document.addEventListener('DOMContentLoaded', initializeAccordionOnLoad);
+
+// Also initialize if DOM is already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeAccordionOnLoad);
+} else {
+  initializeAccordionOnLoad();
+}
+
+// Also initialize when window loads (as a fallback)
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    initClassAccordion();
+    initSubjectAccordion();
+  }, 100);
+});
