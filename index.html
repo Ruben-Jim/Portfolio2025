@@ -5,7 +5,45 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ruben's Portfolio</title>
+  
+  <!-- Primary Meta Tags -->
+  <title>Ruben Jimenez - Fullstack Developer | Web & Mobile App Developer | Portfolio</title>
+  <meta name="title" content="Ruben Jimenez - Fullstack Developer | Web & Mobile App Developer | Portfolio">
+  <meta name="description" content="Fullstack developer specializing in React Native, JavaScript, Firebase, and Node.js. Creating modern web applications and mobile apps. Based in Fresno, California. Available for hire.">
+  <meta name="keywords" content="fullstack developer, web developer, mobile app developer, React Native developer, JavaScript developer, Firebase developer, Node.js developer, portfolio, Fresno developer, California developer, hire developer, web development services, mobile app development">
+  <meta name="author" content="Ruben Jimenez">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  <meta name="theme-color" content="#ceb15a">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rubenjimenez.dev/">
+  <meta property="og:title" content="Ruben Jimenez - Fullstack Developer | Web & Mobile App Developer">
+  <meta property="og:description" content="Fullstack developer specializing in React Native, JavaScript, Firebase, and Node.js. Creating modern web applications and mobile apps. Available for hire.">
+  <meta property="og:image" content="https://rubenjimenez.dev/assets/images/my-avatar.png">
+  <meta property="og:site_name" content="Ruben Jimenez Portfolio">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://rubenjimenez.dev/">
+  <meta property="twitter:title" content="Ruben Jimenez - Fullstack Developer | Web & Mobile App Developer">
+  <meta property="twitter:description" content="Fullstack developer specializing in React Native, JavaScript, Firebase, and Node.js. Creating modern web applications and mobile apps.">
+  <meta property="twitter:image" content="https://rubenjimenez.dev/assets/images/my-avatar.png">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://rubenjimenez.dev/">
+  
+  <!-- Sitemap -->
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  
+  <!-- Additional SEO -->
+  <meta name="geo.region" content="US-CA">
+  <meta name="geo.placename" content="Fresno">
+  <meta name="geo.position" content="36.7378;-119.7871">
+  <meta name="ICBM" content="36.7378, -119.7871">
 
   <!--
     - favicon
@@ -42,7 +80,7 @@
       <div class="sidebar-info">
 
         <figure class="avatar-box">
-          <img src="./assets/images/avatar-5.png" alt="Ruben Jimenez" width="100">
+          <img src="./assets/images/avatar-5.png" alt="Ruben Jimenez - Fullstack Developer and Web Developer" width="100">
         </figure>
 
         <div class="info-content">
@@ -182,6 +220,10 @@
           </li>
           
           
+          <li class="navbar-item" style="display: none;">
+            <button class="navbar-link" data-nav-link>Hire Me</button>
+          </li>
+          
           <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Contact</button>
           </li>
@@ -202,16 +244,16 @@
 
         <section class="about-text">
           <p>
-            I'm Fullstack developer from Fresno, California,
-            I enjoy
+            I'm a <strong>Fullstack developer</strong> from <strong>Fresno, California</strong>,
+            specializing in creating modern web applications and mobile apps. I enjoy
             turning complex problems into simple, beautiful and intuitive designs.
           </p>
 
           <p>
-            Hello, I am currently an undergraduate student at Clovis Community College working
+            Hello, I am currently an undergraduate student at <strong>Clovis Community College</strong> working
             towards an Associates degree in Engineering Computer Software. Outside of school I
-            like to develop technical skills in fullstack development and cross platform
-            applications. 
+            like to develop technical skills in <strong>fullstack development</strong> and <strong>cross platform
+            applications</strong> using technologies like React Native, JavaScript, Firebase, and Node.js.
           </p>
         </section>
 
@@ -278,6 +320,18 @@
 
           </ul>
 
+        </section>
+
+        <!--
+          - Hire Me Button
+        -->
+        <section class="hire-me-cta">
+          <div class="hire-me-buttons">
+            <a href="#hire-me" class="btn-hire-me" onclick="if(typeof switchToPage === 'function') { switchToPage('hire-me'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Hire Me'); if(btn) btn.click(); } return false;">
+              <ion-icon name="briefcase-outline"></ion-icon>
+              Hire Me
+            </a>
+          </div>
         </section>
 
         
@@ -847,6 +901,45 @@
 
             </li>
 
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">React Native</h5>
+                <data value="75">75%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 75%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Firebase</h5>
+                <data value="70">70%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Node.js</h5>
+                <data value="65">65%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 65%;"></div>
+              </div>
+
+            </li>
+
           </ul>
 
         </section>
@@ -951,211 +1044,337 @@
           -->
           <!-- Shelton Springs App -->
           <li class="project-item  active" data-filter-item data-category="applications">
-            <a href="https://hoa-demo--l91yvra8kn.expo.app">
+            <div class="project-card">
+              <a href="https://hoa-demo--l91yvra8kn.expo.app" class="project-link">
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-11.png" alt="Shelton Springs HOA App" loading="lazy">
+                </figure>
+              </a>
 
-              <figure class="project-img">
-                <div class="project-item-icon-box">
-                  <ion-icon name="eye-outline"></ion-icon>
+              <div class="project-content">
+                <h3 class="project-title">Shelton Springs Home Owners Association App</h3>
+                <p class="project-category">Application</p>
+                <div class="project-details-card">
+                  <p class="project-description">A production-ready mobile app for HOA community management with real-time notifications, document sharing, and resident communication.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">React Native</span>
+                    <span class="tech-tag">Expo</span>
+                    <span class="tech-tag">Firebase</span>
+                  </div>
+                  <p class="project-outcome"><strong>Outcome:</strong> Successfully deployed and in active use by Shelton Springs HOA—streamlined operations and improved resident engagement.</p>
+                  <div class="project-actions">
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
                 </div>
-
-                <img src="./assets/images/project-11.png" alt="pc services" loading="lazy">
-              </figure>
-
-              <h3 class="project-title">Shelton Springs Home Owners Association App</h3>
-
-              <p class="project-category">Application</p>
-
-            </a>
+              </div>
+            </div>
           </li>
 
           <!-- HOA Template App-->
           <li class="project-item  active" data-filter-item data-category="web development">
-            <a href="https://hoa-community-app--a7f6nhxo8x.expo.app">
+            <div class="project-card">
+              <a href="https://hoa-community-app--a7f6nhxo8x.expo.app" class="project-link">
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-10.png" alt="HOA App Template" loading="lazy">
+                </figure>
+              </a>
 
-              <figure class="project-img">
-                <div class="project-item-icon-box">
-                  <ion-icon name="eye-outline"></ion-icon>
+              <div class="project-content">
+                <h3 class="project-title">HOA App Template</h3>
+                <p class="project-category">Web development</p>
+                <div class="project-details-card">
+                  <p class="project-description">A customizable HOA community management app template. Built with React Native, Expo, and Firebase for community management, notifications, and document sharing.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">React Native</span>
+                    <span class="tech-tag">Expo</span>
+                    <span class="tech-tag">Firebase</span>
+                    <span class="tech-tag">Node.js</span>
+                  </div>
+                  <p class="project-outcome"><strong>Outcome:</strong> Sold to first client for $500—streamlined HOA operations and improved resident communication.</p>
+                  <div class="project-actions">
+                    <!-- <a href="https://gumroad.com" target="_blank" class="btn-buy-now">Buy Now - $500</a> -->
+                    <a href="#contact" class="btn-buy-now" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Buy Now - $500</a>
+                    <!-- <a href="https://gumroad.com" target="_blank" class="btn-buy-now btn-buy-premium">Premium with Customizations - $1,000</a> -->
+                    <a href="#contact" class="btn-buy-now btn-buy-premium" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Premium with Customizations - $1,000</a>
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
                 </div>
-
-                <img src="./assets/images/project-10.png" alt="pc services" loading="lazy">
-              </figure>
-
-              <h3 class="project-title">HOA App</h3>
-
-              <p class="project-category">web development</p>
-
-            </a>
+              </div>
+            </div>
           </li>
 
           <!-- Gadget garage -->
           <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="https://gadgetgarage.app">
-
+            <div class="project-card">
+              <a href="https://gadgetgarage.app" class="project-link">
                 <figure class="project-img">
                   <div class="project-item-icon-box">
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
-
-                  <img src="./assets/images/project-1.png" alt="pc services" loading="lazy">
+                  <img src="./assets/images/project-1.png" alt="Gadget Garage App" loading="lazy">
                 </figure>
-
-                <h3 class="project-title">Gadget Garage</h3>
-
-                <p class="project-category">Application</p>
-
               </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Gadget Garage</h3>
+                <p class="project-category">Application</p>
+                <div class="project-details-card">
+                  <p class="project-description">A comprehensive mobile app for managing and tracking your tech gadgets, warranties, and maintenance schedules. Built with modern mobile technologies.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">React Native</span>
+                    <span class="tech-tag">Firebase</span>
+                    <span class="tech-tag">Node.js</span>
+                  </div>
+                  <p class="project-outcome"><strong>Outcome:</strong> Live production app helping users organize their tech inventory efficiently.</p>
+                  <div class="project-actions">
+                    <!-- <a href="https://gumroad.com" target="_blank" class="btn-buy-now">Buy Now - $500</a> -->
+                    <a href="#contact" class="btn-buy-now" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Buy Now - $500</a>
+                    <!-- <a href="https://gumroad.com" target="_blank" class="btn-buy-now btn-buy-premium">Premium with Customizations - $1,000</a> -->
+                    <a href="#contact" class="btn-buy-now btn-buy-premium" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Premium with Customizations - $1,000</a>
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </li>
 
           <!-- Blog post in terminal -->
           <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="https://github.com/Ruben-Jim/BlogPostTerminal">
-
+            <div class="project-card">
+              <a href="https://github.com/Ruben-Jim/BlogPostTerminal" class="project-link">
                 <figure class="project-img">
                   <div class="project-item-icon-box">
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
-
-                  <img src="./assets/images/project-2.png" alt="blog" loading="lazy">
+                  <img src="./assets/images/project-2.png" alt="Blog Post Terminal" loading="lazy">
                 </figure>
-
-                <h3 class="project-title">Blog post in terminal</h3>
-
-                <p class="project-category">Application</p>
-
               </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Blog Post Terminal</h3>
+                <p class="project-category">Application</p>
+                <div class="project-details-card">
+                  <p class="project-description">A terminal-based blog post management system for developers who prefer command-line interfaces. Create, edit, and manage blog posts directly from your terminal.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">Node.js</span>
+                    <span class="tech-tag">CLI</span>
+                    <span class="tech-tag">JavaScript</span>
+                  </div>
+                  <div class="project-actions">
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </li>
 
-          <!-- Rosa's Beauuty -->
+          <!-- Rosa's Beauty -->
           <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="#">
-  
+            <div class="project-card">
+              <a href="https://github.com/Ruben-Jim" class="project-link">
                 <figure class="project-img">
                   <div class="project-item-icon-box">
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
-  
-                  <img src="./assets/images/project-3.png" alt="Salon" loading="lazy">
+                  <img src="./assets/images/project-3.png" alt="Rosa's Beauty Salon" loading="lazy">
                 </figure>
-  
-                <h3 class="project-title">Rosa's Beauty Salon</h3>
-  
-                <p class="project-category">Application</p>
-  
               </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Rosa's Beauty Salon</h3>
+                <p class="project-category">Application</p>
+                <div class="project-details-card">
+                  <p class="project-description">A modern booking and management system for beauty salons. Features appointment scheduling, client management, and service tracking.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">Web App</span>
+                    <span class="tech-tag">JavaScript</span>
+                  </div>
+                  <div class="project-actions">
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </li>
 
           <!-- Zoom Realty -->
           <li class="project-item  active" data-filter-item data-category="web development">
-            <a href="https://ruben-jim.github.io/ZoomRealty2025-main/">
-              
-              <figure class="project-img">
-                <div class="project-item-icon-box">
-                  <ion-icon name="eye-outline"></ion-icon>
+            <div class="project-card">
+              <a href="https://ruben-jim.github.io/ZoomRealty2025-main/" class="project-link">
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-5.png" alt="Zoom Realty" loading="lazy">
+                </figure>
+              </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Zoom Realty</h3>
+                <p class="project-category">Web development</p>
+                <div class="project-details-card">
+                  <p class="project-description">A modern real estate website with property listings, search functionality, and agent profiles. Responsive design optimized for all devices.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                  </div>
+                  <div class="project-actions">
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
                 </div>
-                
-                <img src="./assets/images/project-5.png" alt="Real-Estate" loading="lazy">
-              </figure>
-              
-              <h3 class="project-title">Zoom Realty</h3>
-              
-              <p class="project-category">Web development</p>
-              
-            </a>
+              </div>
+            </div>
           </li>
 
           <!-- Real Estate -->
           <li class="project-item active" data-filter-item data-category="web development">
-            <a href="https://ruben-jim.github.io/Real-Estate/">
-              
-              <figure class="project-img">
-                <div class="project-item-icon-box">
-                  <ion-icon name="eye-outline"></ion-icon>
+            <div class="project-card">
+              <a href="https://ruben-jim.github.io/Real-Estate/" class="project-link">
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-6.png" alt="Real Estate" loading="lazy">
+                </figure>
+              </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Estate</h3>
+                <p class="project-category">Web development</p>
+                <div class="project-details-card">
+                  <p class="project-description">A clean and modern real estate platform showcasing properties with advanced filtering and search capabilities.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                  </div>
+                  <div class="project-actions">
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
                 </div>
-                
-                <img src="./assets/images/project-6.png" alt="Real-Estate" loading="lazy">
-              </figure>
-              
-              <h3 class="project-title">Estate</h3>
-              
-              <p class="project-category">Web development</p>
-              
-            </a>
+              </div>
+            </div>
           </li>
 
           <!-- Homeverse -->
           <li class="project-item  active" data-filter-item data-category="web development">
-            <a href="https://ruben-jim.github.io/DEMO/">
-              
-              <figure class="project-img">
-                <div class="project-item-icon-box">
-                  <ion-icon name="eye-outline"></ion-icon>
+            <div class="project-card">
+              <a href="https://ruben-jim.github.io/DEMO/" class="project-link">
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-4.png" alt="Homeverse" loading="lazy">
+                </figure>
+              </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Homeverse</h3>
+                <p class="project-category">Web development</p>
+                <div class="project-details-card">
+                  <p class="project-description">An elegant real estate website featuring property showcases, virtual tours, and seamless user experience.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                  </div>
+                  <div class="project-actions">
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
                 </div>
-                
-                <img src="./assets/images/project-4.png" alt="Real-Estate" loading="lazy">
-              </figure>
-              
-              <h3 class="project-title">Homeverse</h3>
-              
-              <p class="project-category">Web development</p>
-              
-            </a>
+              </div>
+            </div>
           </li>
           
           <!-- Firecon merch store -->
           <li class="project-item  active" data-filter-item data-category="web design">
-            <a href="https://ruben-jim.github.io/FIreCON-merch-store/">
-              
-              <figure class="project-img">
-                <div class="project-item-icon-box">
-                  <ion-icon name="eye-outline"></ion-icon>
+            <div class="project-card">
+              <a href="https://ruben-jim.github.io/FIreCON-merch-store/" class="project-link">
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-7.png" alt="Firecon Merch Store" loading="lazy">
+                </figure>
+              </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Firecon Merch</h3>
+                <p class="project-category">Web design</p>
+                <div class="project-details-card">
+                  <p class="project-description">A modern e-commerce storefront for merchandise with shopping cart functionality and product showcases.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                  </div>
+                  <div class="project-actions">
+                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                  </div>
                 </div>
-                
-                <img src="./assets/images/project-7.png" alt="merch store" loading="lazy">
-              </figure>
-              
-              <h3 class="project-title">Firecon Merch</h3>
-              
-              <p class="project-category">Web design</p>
-              
-            </a>
+              </div>
+            </div>
           </li>
           
           <!-- Weather App  -->
           <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="https://ruben-jim.github.io/weather/">
-  
+            <div class="project-card">
+              <a href="https://ruben-jim.github.io/weather/" class="project-link">
                 <figure class="project-img">
                   <div class="project-item-icon-box">
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
-  
-                  <img src="./assets/images/project-8.png" alt="weather" loading="lazy">
+                  <img src="./assets/images/project-8.png" alt="Worldwide Weather App" loading="lazy">
                 </figure>
-  
-                <h3 class="project-title">Worldwide Weather App</h3>
-  
-                <p class="project-category">applications</p>
-  
               </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Worldwide Weather App</h3>
+                <p class="project-category">Applications</p>
+                <div class="project-details-card">
+                  <p class="project-description">A responsive weather application providing real-time weather data for cities worldwide with beautiful UI and accurate forecasts.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">Weather API</span>
+                    <span class="tech-tag">HTML5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </li>
 
           <!-- Digital Clock -->
           <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="https://ruben-jim.github.io/Digital-Clock/">
-  
+            <div class="project-card">
+              <a href="https://ruben-jim.github.io/Digital-Clock/" class="project-link">
                 <figure class="project-img">
                   <div class="project-item-icon-box">
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
-  
-                  <img src="./assets/images/project-9.png" alt="clock" loading="lazy">
+                  <img src="./assets/images/project-9.png" alt="Digital Clock" loading="lazy">
                 </figure>
-  
-                <h3 class="project-title">Digital Clock</h3>
-  
-                <p class="project-category">applications</p>
-  
               </a>
+
+              <div class="project-content">
+                <h3 class="project-title">Digital Clock</h3>
+                <p class="project-category">Applications</p>
+                <div class="project-details-card">
+                  <p class="project-description">A sleek digital clock application with multiple timezone support and customizable themes.</p>
+                  <div class="project-tech">
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">HTML5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </li>
         </ul>
         </section>
@@ -1753,6 +1972,221 @@
         
 
       <!--
+        - #HIRE ME
+      -->
+      
+      <article class="hire-me" data-page="hire-me">
+
+        <header>
+          <h2 class="h2 article-title">Hire Me</h2>
+        </header>
+
+        <section class="about-text">
+          <p>
+            Looking for a skilled developer to bring your project to life? I specialize in creating modern, responsive web applications and mobile apps that deliver exceptional user experiences.
+          </p>
+          <p>
+            Whether you need a complete website, a mobile app, or custom development solutions, I'm here to help turn your vision into reality.
+          </p>
+        </section>
+
+        <section class="service">
+
+          <h3 class="h3 service-title">What I Offer</h3>
+
+          <ul class="service-list">
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-dev.svg" alt="Web development icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Web Development</h4>
+
+                <p class="service-item-text">
+                  Custom websites and web applications built with modern technologies. Responsive design, fast performance, and SEO optimization.
+                </p>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-app.svg" alt="mobile app icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Mobile App Development</h4>
+
+                <p class="service-item-text">
+                  Cross-platform mobile applications using React Native and Expo. iOS and Android apps with native performance.
+                </p>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-design.svg" alt="design icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Full-Stack Solutions</h4>
+
+                <p class="service-item-text">
+                  Complete solutions from frontend to backend. Database design, API development, and cloud integration with Firebase.
+                </p>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">My Expertise</h3>
+
+          <ul class="skills-list content-card">
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">React Native</h5>
+                <data value="75">75%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 75%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">JavaScript</h5>
+                <data value="40">40%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 40%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Firebase</h5>
+                <data value="70">70%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Node.js</h5>
+                <data value="65">65%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 65%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Web Design</h5>
+                <data value="70">70%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">C++</h5>
+                <data value="90">90%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 90%;"></div>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+        <section class="contact-form">
+
+          <h3 class="h3 form-title">Let's Work Together</h3>
+
+          <p style="color: var(--light-gray); margin-bottom: 25px; line-height: 1.6;">
+            Fill out the form below to discuss your project. I'll get back to you within 24 hours to discuss your requirements and provide a quote.
+          </p>
+
+          <form class="form" data-form>
+
+            <div class="input-wrapper">
+              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
+
+              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="text" name="project-type" class="form-input" placeholder="Project Type (Web App, Mobile App, etc.)" data-form-input>
+
+              <input type="text" name="budget" class="form-input" placeholder="Budget Range (Optional)" data-form-input>
+            </div>
+
+            <textarea name="message" class="form-input" placeholder="Tell me about your project..." required data-form-input></textarea>
+
+            <button class="form-btn" type="submit" disabled data-form-btn>
+              <ion-icon name="paper-plane"></ion-icon>
+              <span>Send Inquiry</span>
+            </button>
+
+            <!-- Success/Error Messages -->
+            <div class="form-message" id="hire-form-message" style="display: none;">
+              <div class="message-content">
+                <ion-icon name="checkmark-circle" class="message-icon success-icon"></ion-icon>
+                <span class="message-text">Inquiry sent successfully! I'll get back to you within 24 hours.</span>
+              </div>
+            </div>
+
+            <div class="form-message error" id="hire-form-error" style="display: none;">
+              <div class="message-content">
+                <ion-icon name="close-circle" class="message-icon error-icon"></ion-icon>
+                <span class="message-text">Failed to send inquiry. Please try again.</span>
+              </div>
+            </div>
+
+          </form>
+
+        </section>
+
+      </article>
+
+      <!--
         - #CONTACT
       -->
       
@@ -1828,6 +2262,97 @@
       <p class="loading-text">Loading Portfolio...</p>
     </div>
   </div>
+
+  <!--
+    - Structured Data (JSON-LD) for SEO
+  -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ruben Jimenez",
+    "jobTitle": "Fullstack Developer",
+    "url": "https://rubenjimenez.dev",
+    "image": "https://rubenjimenez.dev/assets/images/my-avatar.png",
+    "email": "Ruben.Jim.co@gmail.com",
+    "telephone": "+1-559-653-7380",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Fresno",
+      "addressRegion": "CA",
+      "addressCountry": "US"
+    },
+    "alumniOf": {
+      "@type": "EducationalOrganization",
+      "name": "Clovis Community College"
+    },
+    "knowsAbout": [
+      "Web Development",
+      "Mobile App Development",
+      "React Native",
+      "JavaScript",
+      "Firebase",
+      "Node.js",
+      "C++",
+      "Full Stack Development"
+    ],
+    "sameAs": [
+      "https://github.com/Ruben-Jim",
+      "https://www.linkedin.com/in/rubenjimenezavila/",
+      "https://www.facebook.com/ruben.jimenez.avila.2025/"
+    ],
+    "offers": {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "serviceType": "Web Development",
+        "description": "Professional web development services including custom websites, web applications, and mobile apps"
+      }
+    }
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Ruben Jimenez Portfolio",
+    "url": "https://rubenjimenez.dev",
+    "description": "Portfolio website of Ruben Jimenez, Fullstack Developer specializing in web and mobile app development",
+    "author": {
+      "@type": "Person",
+      "name": "Ruben Jimenez"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://rubenjimenez.dev/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Ruben Jimenez - Web & Mobile Development Services",
+    "description": "Professional web development and mobile app development services",
+    "url": "https://rubenjimenez.dev",
+    "telephone": "+1-559-653-7380",
+    "email": "Ruben.Jim.co@gmail.com",
+    "areaServed": "Worldwide",
+    "serviceType": [
+      "Web Development",
+      "Mobile App Development",
+      "Full Stack Development",
+      "React Native Development"
+    ],
+    "provider": {
+      "@type": "Person",
+      "name": "Ruben Jimenez"
+    }
+  }
+  </script>
 
   <!--
     - Firebase config
