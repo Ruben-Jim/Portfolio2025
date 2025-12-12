@@ -1259,18 +1259,18 @@ forms.forEach((form, index) => {
   const formBtn = form.querySelector("[data-form-btn]");
   const formMessage = form.closest('article').querySelector('[id*="form-message"]') || document.getElementById("form-message");
   const formError = form.closest('article').querySelector('[id*="form-error"]') || document.getElementById("form-error");
-  
-  // add event to all form input field
-  for (let i = 0; i < formInputs.length; i++) {
-    formInputs[i].addEventListener("input", function () {
-      // check form validation
-      if (form.checkValidity()) {
-        formBtn.removeAttribute("disabled");
-      } else {
-        formBtn.setAttribute("disabled", "");
-      }
-    });
-  }
+
+// add event to all form input field
+for (let i = 0; i < formInputs.length; i++) {
+  formInputs[i].addEventListener("input", function () {
+    // check form validation
+    if (form.checkValidity()) {
+      formBtn.removeAttribute("disabled");
+    } else {
+      formBtn.setAttribute("disabled", "");
+    }
+  });
+}
   
   // Store form elements for later use
   form._formBtn = formBtn;
@@ -1287,82 +1287,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Enhanced form submission with EmailJS for all forms
 forms.forEach((form) => {
-  form.addEventListener("submit", async function(e) {
-    e.preventDefault();
+form.addEventListener("submit", async function(e) {
+  e.preventDefault();
     
     const formBtn = form._formBtn;
     const formMessage = form._formMessage;
     const formError = form._formError;
     const isHireMeForm = form.closest('[data-page="hire-me"]') !== null;
-    
-    // Hide any existing messages
+  
+  // Hide any existing messages
     if (formMessage) formMessage.style.display = 'none';
     if (formError) formError.style.display = 'none';
-    
-    // Show loading state
+  
+  // Show loading state
     showFormLoading(formBtn, isHireMeForm);
+  
+  try {
+    // Check if EmailJS is available
+    if (typeof emailjs === 'undefined') {
+      throw new Error('EmailJS not loaded');
+    }
     
-    try {
-      // Check if EmailJS is available
-      if (typeof emailjs === 'undefined') {
-        throw new Error('EmailJS not loaded');
-      }
-      
-      // Get form data
-      const formData = new FormData(form);
-      const fullname = formData.get('fullname');
-      const email = formData.get('email');
-      const message = formData.get('message');
+    // Get form data
+    const formData = new FormData(form);
+    const fullname = formData.get('fullname');
+    const email = formData.get('email');
+    const message = formData.get('message');
       const projectType = formData.get('project-type') || 'Not specified';
       const budget = formData.get('budget') || 'Not specified';
-      
-      // Validate required fields
-      if (!fullname || !email || !message) {
-        throw new Error('Please fill in all required fields');
-      }
-      
-      // Create email template parameters
-      const templateParams = {
-        fullname: fullname,
-        email: email,
+    
+    // Validate required fields
+    if (!fullname || !email || !message) {
+      throw new Error('Please fill in all required fields');
+    }
+    
+    // Create email template parameters
+    const templateParams = {
+      fullname: fullname,
+      email: email,
         message: isHireMeForm 
           ? `Project Type: ${projectType}\nBudget: ${budget}\n\nMessage:\n${message}`
           : message,
-        timestamp: new Date().toISOString(),
-        website: window.location.href,
-        user_agent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+      website: window.location.href,
+      user_agent: navigator.userAgent,
         ip_address: 'N/A',
         to_email: 'Ruben.Jim.co@gmail.com',
         subject: isHireMeForm 
           ? 'New Hire Me Inquiry - Portfolio'
           : 'New Contact Form Submission - Portfolio'
-      };
-      
-      console.log('Sending email with params:', templateParams);
-      
-      // Send email using EmailJS
-      const response = await emailjs.send(
-        window.EMAILJS_CONFIG.serviceId,
-        window.EMAILJS_CONFIG.templateId,
-        templateParams
-      );
-      
-      console.log('EmailJS response:', response);
-      
-      if (response.status === 200) {
+    };
+    
+    console.log('Sending email with params:', templateParams);
+    
+    // Send email using EmailJS
+    const response = await emailjs.send(
+      window.EMAILJS_CONFIG.serviceId,
+      window.EMAILJS_CONFIG.templateId,
+      templateParams
+    );
+    
+    console.log('EmailJS response:', response);
+    
+    if (response.status === 200) {
         showFormSuccess(formMessage, formError);
-        form.reset();
-        formBtn.setAttribute("disabled", "");
-      } else {
-        throw new Error('Email sending failed');
-      }
-      
-    } catch (error) {
-      console.error('Form submission error:', error);
-      showFormError(formMessage, formError);
-    } finally {
-      hideFormLoading(formBtn, isHireMeForm);
+      form.reset();
+      formBtn.setAttribute("disabled", "");
+    } else {
+      throw new Error('Email sending failed');
     }
+    
+  } catch (error) {
+    console.error('Form submission error:', error);
+      showFormError(formMessage, formError);
+  } finally {
+      hideFormLoading(formBtn, isHireMeForm);
+  }
   });
 });
 
@@ -1404,6 +1404,58 @@ function hideFormMessages(formMessage, formError) {
   if (formError) formError.style.display = 'none';
 }
 
+// Prefill contact form with service details
+function prefillContactForm(serviceType, message) {
+  // Wait for contact page to be active
+  setTimeout(() => {
+    const contactForm = document.querySelector('[data-page="contact"] [data-form]');
+    if (contactForm) {
+      const messageField = contactForm.querySelector('textarea[name="message"]');
+      if (messageField) {
+        const prefilledMessage = `Service: ${serviceType}\n\n${message}\n\nPlease provide more details about your project:`;
+        messageField.value = prefilledMessage;
+        messageField.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // Track in Google Analytics if available
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'service_inquiry', {
+            'service_type': serviceType,
+            'event_category': 'engagement',
+            'event_label': 'Service & Pricing Page'
+          });
+        }
+      }
+    }
+  }, 300);
+}
+
+// Track events for Google Analytics
+function trackEvent(eventName, eventLabel, eventValue) {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', eventName, {
+      'event_category': 'engagement',
+      'event_label': eventLabel,
+      'value': eventValue
+    });
+  }
+  
+  // Also track project views
+  if (eventName === 'project_view') {
+    console.log('Project viewed:', eventLabel);
+  }
+}
+
+// Track project clicks
+document.addEventListener('DOMContentLoaded', function() {
+  const projectLinks = document.querySelectorAll('.project-link');
+  projectLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      const projectTitle = this.closest('.project-card')?.querySelector('.project-title')?.textContent || 'Unknown Project';
+      trackEvent('project_click', projectTitle, 'Portfolio');
+    });
+  });
+});
+
 
 
 // page navigation variables
@@ -1412,11 +1464,36 @@ const pages = document.querySelectorAll("[data-page]");
 
 // Function to switch to a specific page
 function switchToPage(pageName, skipSave = false) {
+  // First, remove active class from all pages and navigation links
+  for (let i = 0; i < pages.length; i++) {
+    pages[i].classList.remove("active");
+  }
+  for (let i = 0; i < navigationLinks.length; i++) {
+    navigationLinks[i].classList.remove("active");
+  }
+  
+  // Find and activate the matching page
   for (let i = 0; i < pages.length; i++) {
     if (pageName === pages[i].dataset.page) {
       pages[i].classList.add("active");
-      navigationLinks[i].classList.add("active");
       window.scrollTo(0, 0);
+      
+      // Find the matching navigation link by comparing text content
+      for (let j = 0; j < navigationLinks.length; j++) {
+        const navText = navigationLinks[j].textContent.trim();
+        // Match by converting both to lowercase and handling special cases
+        let navPageName = navText.toLowerCase().trim();
+        if (navPageName === "services & pricing" || (navPageName.includes("services") && navPageName.includes("pricing"))) {
+          navPageName = "services-pricing";
+        }
+        if (navPageName === "hire me") {
+          navPageName = "hire-me";
+        }
+        if (navPageName === pageName) {
+          navigationLinks[j].classList.add("active");
+          break;
+        }
+      }
       
       // Save to localStorage (unless skipSave is true)
       if (!skipSave) {
@@ -1431,9 +1508,7 @@ function switchToPage(pageName, skipSave = false) {
           initSubjectAccordion();
         }, 150); // Small delay to ensure DOM is ready
       }
-    } else {
-      pages[i].classList.remove("active");
-      navigationLinks[i].classList.remove("active");
+      return; // Exit early when page is found
     }
   }
 }
@@ -1441,7 +1516,13 @@ function switchToPage(pageName, skipSave = false) {
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-    const pageName = this.innerHTML.toLowerCase();
+    let pageName = this.textContent.trim().toLowerCase();
+    // Handle special cases for page names
+    if (pageName === "services & pricing" || (pageName.includes("services") && pageName.includes("pricing"))) {
+      pageName = "services-pricing";
+    } else if (pageName === "hire me") {
+      pageName = "hire-me";
+    }
     switchToPage(pageName);
   });
 }

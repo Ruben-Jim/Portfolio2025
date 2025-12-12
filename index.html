@@ -219,6 +219,9 @@
             <button class="navbar-link" data-nav-link>Blog</button>
           </li>
           
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Services & Pricing</button>
+          </li>
           
           <li class="navbar-item" style="display: none;">
             <button class="navbar-link" data-nav-link>Hire Me</button>
@@ -496,7 +499,7 @@
 
             <li class="clients-item">
               <a href="#">
-                <!-- <img src="./assets/images/logo-2-color.png" alt="client logo"> -->
+                <img src="./assets/images/logo-2-color.png" alt="client logo">
               </a>
             </li>
 
@@ -1099,10 +1102,10 @@
                   <p class="project-outcome"><strong>Outcome:</strong> Sold to first client for $500—streamlined HOA operations and improved resident communication.</p>
                   <div class="project-actions">
                     <!-- <a href="https://gumroad.com" target="_blank" class="btn-buy-now">Buy Now - $500</a> -->
-                    <a href="#contact" class="btn-buy-now" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Buy Now - $500</a>
+                    <a href="#contact" class="btn-buy-now" onclick="trackEvent('buy_now_click', 'HOA App Template', 'Base License - $500'); prefillContactForm('HOA App Template - Base License', 'Interested in purchasing HOA App Template base license ($500)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Buy Now - $500</a>
                     <!-- <a href="https://gumroad.com" target="_blank" class="btn-buy-now btn-buy-premium">Premium with Customizations - $1,000</a> -->
-                    <a href="#contact" class="btn-buy-now btn-buy-premium" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Premium with Customizations - $1,000</a>
-                    <a href="#contact" class="btn-quote" onclick="if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
+                    <a href="#contact" class="btn-buy-now btn-buy-premium" onclick="trackEvent('buy_now_click', 'HOA App Template', 'Premium License - $1,000'); prefillContactForm('HOA App Template - Premium', 'Interested in purchasing HOA App Template premium license with customizations ($1,000)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Premium with Customizations - $1,000</a>
+                    <a href="#contact" class="btn-quote" onclick="trackEvent('quote_request', 'HOA App Template', 'Similar Project Quote'); if(typeof switchToPage === 'function') { switchToPage('contact'); } else { const btn = Array.from(document.querySelectorAll('[data-nav-link]')).find(b => b.textContent.trim() === 'Contact'); if(btn) btn.click(); } return false;">Similar Project? Get a Quote</a>
                   </div>
                 </div>
               </div>
@@ -1969,6 +1972,173 @@
           </div>
         </div>
       </article>
+
+      <!--
+        - #SERVICES & PRICING
+      -->
+
+      <article class="services-pricing" data-page="services-pricing">
+
+        <header>
+          <h2 class="h2 article-title">Services<br>& Pricing</h2>
+        </header>
+
+        <section class="about-text">
+          <p>
+            Transparent pricing for all development services. All projects include consultation, planning, and professional delivery. Get a custom quote tailored to your specific needs.
+          </p>
+        </section>
+
+        <section class="service">
+
+          <h3 class="h3 service-title">Services & Pricing</h3>
+
+          <ul class="service-list">
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <ion-icon name="code-slash-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Web & Mobile App Development</h4>
+
+                <p class="service-item-text">
+                  Custom projects built to your specifications. Includes Firebase integration, responsive design, real-time notifications, and deployment setup.
+                </p>
+
+                <div class="service-pricing">
+                  <span class="price-amount">$1,000 - $5,000</span>
+                  <span class="price-type">Fixed Price</span>
+                </div>
+
+                <a href="#contact" class="btn-pricing" onclick="prefillContactForm('Web & Mobile App Development', 'Interested in custom web/mobile app development ($1,000-$5,000)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false;">
+                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                  Get a Quote
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <ion-icon name="key-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Code Licensing</h4>
+
+                <p class="service-item-text">
+                  Reusable app templates with full source code. Includes 12 months support, customization assistance, documentation, and commercial use license. Examples: Shelton Springs HOA App.
+                </p>
+
+                <div class="service-pricing">
+                  <span class="price-amount">$1,000+</span>
+                  <span class="price-type">One-time License</span>
+                </div>
+
+                <p class="service-note">12 months support included, then $200/year maintenance</p>
+
+                <a href="#contact" class="btn-pricing" onclick="prefillContactForm('Code Licensing', 'Interested in code licensing ($1,000+ with 12 months support)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false;">
+                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                  Get a Quote
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <ion-icon name="hardware-chip-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">PC Services (Gadget Garage)</h4>
+
+                <p class="service-item-text">
+                  Hardware builds, repairs, and upgrades. Includes Gadget Garage app setup, system optimization, warranty tracking, and maintenance scheduling.
+                </p>
+
+                <div class="service-pricing">
+                  <span class="price-amount">$100 - $300</span>
+                  <span class="price-type">Per Service</span>
+                </div>
+
+                <a href="#contact" class="btn-pricing" onclick="prefillContactForm('PC Services', 'Interested in PC services ($100-$300) with Gadget Garage app setup'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false;">
+                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                  Get a Quote
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <ion-icon name="time-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Hourly Consulting</h4>
+
+                <p class="service-item-text">
+                  Expert guidance for Expo/React Native development, API integrations (e.g., football data), code reviews, bug fixes, architecture consultation, and performance optimization.
+                </p>
+
+                <div class="service-pricing">
+                  <span class="price-amount">$75/hour</span>
+                  <span class="price-type">Hourly Rate</span>
+                </div>
+
+                <a href="#contact" class="btn-pricing" onclick="prefillContactForm('Hourly Consulting', 'Interested in hourly consulting ($75/hour)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false;">
+                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                  Get a Quote
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item service-item-featured">
+
+              <div class="service-icon-box">
+                <ion-icon name="cube-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Community Tech Package <span class="featured-badge">Popular</span></h4>
+
+                <p class="service-item-text">
+                  Complete solution bundle including HOA app code license, Gadget Garage integration, community management features, tech inventory tracking, 12 months support, custom branding, and setup assistance. Save $500+ vs. purchasing separately.
+                </p>
+
+                <div class="service-pricing">
+                  <span class="price-amount">$2,000</span>
+                  <span class="price-type">Bundle Package</span>
+                </div>
+
+                <a href="#contact" class="btn-pricing btn-pricing-featured" onclick="prefillContactForm('Community Tech Package', 'Interested in Community Tech Package bundle ($2,000)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false;">
+                  <ion-icon name="cart-outline"></ion-icon>
+                  Get This Package
+                </a>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+        <section class="about-text" style="margin-top: 30px;">
+          <p>
+            <strong>Note:</strong> All prices are starting points. Final quotes depend on project scope, complexity, and specific requirements. 
+            Contact me for a detailed estimate tailored to your needs.
+          </p>
+        </section>
+
+      </article>
         
 
       <!--
@@ -2352,6 +2522,17 @@
       "name": "Ruben Jimenez"
     }
   }
+  </script>
+
+  <!--
+    - Google Analytics
+  -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX'); // Replace with your Google Analytics ID
   </script>
 
   <!--
