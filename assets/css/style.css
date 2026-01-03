@@ -474,8 +474,8 @@ main {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  padding: 0 10px;
-  gap: 5px;
+  padding: 0 5px;
+  gap: 1px;
 }
 
 .navbar-link {
