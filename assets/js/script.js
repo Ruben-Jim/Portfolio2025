@@ -1348,9 +1348,30 @@ form.addEventListener("submit", async function(e) {
     );
     
     console.log('EmailJS response:', response);
-    
+
     if (response.status === 200) {
-        showFormSuccess(formMessage, formError);
+      // Save to Firestore after successful email send
+      try {
+        await saveMessageToFirestore({
+          name: fullname,
+          email: email,
+          message: isHireMeForm
+            ? `Project Type: ${projectType}\nBudget: ${budget}\n\nMessage:\n${message}`
+            : message,
+          subject: isHireMeForm
+            ? 'New Hire Me Inquiry - Portfolio'
+            : 'New Contact Form Submission - Portfolio',
+          timestamp: window.serverTimestamp(),
+          status: 'new',
+          source: isHireMeForm ? 'hire-me' : 'contact'
+        });
+        console.log('Message saved to Firestore');
+      } catch (firestoreError) {
+        console.error('Firestore save error:', firestoreError);
+        // Don't fail the form submission if Firestore fails, just log it
+      }
+
+      showFormSuccess(formMessage, formError);
       form.reset();
       formBtn.setAttribute("disabled", "");
     } else {
@@ -1402,6 +1423,26 @@ function showFormError(formMessage, formError) {
 function hideFormMessages(formMessage, formError) {
   if (formMessage) formMessage.style.display = 'none';
   if (formError) formError.style.display = 'none';
+}
+
+// Save message to Firestore
+async function saveMessageToFirestore(messageData) {
+  try {
+    // Access the global db instance from the admin module
+    if (!window.db) {
+      console.warn('Firestore not initialized, but message will still be sent via EmailJS');
+      return;
+    }
+
+    const messagesRef = window.collection(window.db, 'messages');
+    const docRef = await window.addDoc(messagesRef, messageData);
+    console.log('Message saved to Firestore successfully with ID:', docRef.id);
+    return docRef;
+  } catch (error) {
+    console.error('Error saving message to Firestore:', error);
+    // Don't throw error - we still want the email to be sent even if Firestore fails
+    return null;
+  }
 }
 
 // Prefill contact form with service details
@@ -1770,3 +1811,582 @@ window.addEventListener('load', function() {
     initSubjectAccordion();
   }, 100);
 });
+
+// Firebase initialization and Admin functionality
+(function() {
+  'use strict';
+
+  // Firebase variables
+  let auth = null;
+  let db = null;
+  let currentUser = null;
+
+  // DOM elements
+  const adminLoginModal = document.getElementById('admin-login');
+  const adminLoginOverlay = document.getElementById('admin-login-overlay');
+  const adminLoginCloseBtn = document.getElementById('admin-login-close-btn');
+  const adminCancelLoginBtn = document.getElementById('admin-cancel-login-btn');
+  const adminDashboard = document.getElementById('admin-dashboard');
+  const adminLoginForm = document.getElementById('admin-login-form');
+  const adminLoginError = document.getElementById('admin-login-error');
+  const adminLogoutBtn = document.getElementById('admin-logout');
+  const messagesList = document.getElementById('messages-list');
+
+  // Stats elements
+  const totalMessagesEl = document.getElementById('total-messages');
+  const newMessagesEl = document.getElementById('new-messages');
+  const repliedMessagesEl = document.getElementById('replied-messages');
+
+  // Initialize Firebase
+  function initializeFirebase() {
+    try {
+      const firebaseConfig = window.FIREBASE_CONFIG;
+      if (!firebaseConfig) {
+        console.error('Firebase config not found');
+        return false;
+      }
+
+      // Initialize Firebase
+      const app = window.initializeApp(firebaseConfig);
+      auth = window.getAuth(app);
+      db = window.getFirestore(app);
+
+      console.log('Firebase initialized successfully');
+      console.log('Note: Make sure firestore.rules is deployed to Firebase Console for proper permissions');
+
+      // Test Firestore connectivity
+      testFirestoreConnection();
+
+      return true;
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+      return false;
+    }
+  }
+
+  // Initialize Firebase when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check if running locally (file:// protocol) which can cause CORS issues
+    if (window.location.protocol === 'file:') {
+      console.warn('Running locally with file:// protocol. Firestore may not work properly. Deploy to a web server for full functionality.');
+    }
+
+    if (initializeFirebase()) {
+      setupAuthListeners();
+      setupAdminEventListeners();
+    } else {
+      console.error('Firebase initialization failed');
+    }
+  });
+
+  // Test Firestore connectivity
+  function testFirestoreConnection() {
+    if (!db) return;
+
+    try {
+      // Try to get a reference to test connectivity
+      const testRef = window.collection(db, 'messages');
+      console.log('Firestore connection test: collection reference created');
+    } catch (error) {
+      console.error('Firestore connection test failed:', error);
+    }
+  }
+
+  // Setup authentication state listener (using simple credential check)
+  function setupAuthListeners() {
+    // Check if admin is already logged in on page load
+    if (currentUser && currentUser.role === 'admin') {
+      showDashboard();
+      fetchMessages();
+    } else {
+      showLogin();
+    }
+
+    // Also check when switching to admin page
+    const adminPage = document.querySelector('[data-page="admin"]');
+    if (adminPage) {
+      // This will be called when switching to admin page
+      setTimeout(() => {
+        if (currentUser && currentUser.role === 'admin') {
+          showDashboard();
+          fetchMessages();
+        } else {
+          showLogin();
+        }
+      }, 100);
+    }
+  }
+
+  // Setup admin event listeners
+  function setupAdminEventListeners() {
+    if (adminLoginForm) {
+      adminLoginForm.addEventListener('submit', handleAdminLogin);
+    }
+
+    if (adminLogoutBtn) {
+      adminLogoutBtn.addEventListener('click', handleLogout);
+    }
+
+    // Modal controls
+    if (adminLoginCloseBtn) {
+      adminLoginCloseBtn.addEventListener('click', closeAdminLoginModal);
+    }
+
+    if (adminCancelLoginBtn) {
+      adminCancelLoginBtn.addEventListener('click', closeAdminLoginModal);
+    }
+
+    if (adminLoginOverlay) {
+      adminLoginOverlay.addEventListener('click', closeAdminLoginModal);
+    }
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', handleFilterClick);
+    });
+
+    // Refresh button
+    const refreshBtn = document.getElementById('refresh-messages');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        console.log('Manual refresh triggered');
+        fetchMessages();
+      });
+    }
+
+    // Test Firestore button
+    const testBtn = document.getElementById('test-firestore');
+    if (testBtn) {
+      testBtn.addEventListener('click', async () => {
+        console.log('Testing Firestore connection...');
+
+        if (!db) {
+          alert('Firestore not initialized');
+          return;
+        }
+
+        try {
+          // Try to read from messages collection
+          const messagesRef = window.collection(db, 'messages');
+          const snapshot = await window.getDocs(messagesRef);
+          console.log('Firestore test successful. Found', snapshot.size, 'documents');
+          alert(`Firestore connected! Found ${snapshot.size} messages.`);
+        } catch (error) {
+          console.error('Firestore test failed:', error);
+          alert(`Firestore test failed: ${error.message}`);
+        }
+      });
+    }
+
+    // Reply modal
+    const replyModal = document.getElementById('reply-modal');
+    const replyModalOverlay = document.getElementById('reply-modal-overlay');
+    const replyModalClose = document.getElementById('reply-modal-close');
+    const cancelReplyBtn = document.getElementById('cancel-reply');
+    const replyForm = document.getElementById('reply-form');
+
+    if (replyModalClose) {
+      replyModalClose.addEventListener('click', hideReplyModal);
+    }
+
+    if (cancelReplyBtn) {
+      cancelReplyBtn.addEventListener('click', hideReplyModal);
+    }
+
+    if (replyModalOverlay) {
+      replyModalOverlay.addEventListener('click', hideReplyModal);
+    }
+
+    if (replyForm) {
+      replyForm.addEventListener('submit', handleReplySubmit);
+    }
+  }
+
+  // Show login modal
+  function showLogin() {
+    if (adminLoginModal) {
+      adminLoginModal.classList.add('active');
+      adminLoginModal.style.display = 'flex';
+    }
+    if (adminDashboard) adminDashboard.style.display = 'none';
+  }
+
+  // Show dashboard
+  function showDashboard() {
+    if (adminLoginModal) {
+      adminLoginModal.classList.remove('active');
+      adminLoginModal.style.display = 'none'; // Completely hide login modal
+    }
+    if (adminDashboard) adminDashboard.style.display = 'block';
+  }
+
+  // Close login modal
+  function closeAdminLoginModal() {
+    if (adminLoginModal) adminLoginModal.classList.remove('active');
+    if (adminLoginForm) adminLoginForm.reset();
+    if (adminLoginError) adminLoginError.style.display = 'none';
+  }
+
+  // Handle admin login (using same credentials as blog admin)
+  async function handleAdminLogin(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('admin-email').value; // Using email field for username
+    const password = document.getElementById('admin-password').value;
+
+    // Use same credentials as blog admin login
+    if (username === 'admin' && password === 'admin123') {
+      // Set current user for admin session
+      currentUser = { username: 'admin', role: 'admin' };
+      showDashboard();
+      fetchMessages(); // Fetch messages when admin logs in
+      showAdminLoginError(''); // Clear any previous errors
+
+      // Also update the global blog auth state for consistency
+      updateAuthUI();
+    } else {
+      showAdminLoginError('Invalid username or password');
+    }
+  }
+
+  // Handle logout
+  async function handleLogout() {
+    try {
+      // Clear admin session
+      currentUser = null;
+
+      // Also update the global blog auth state for consistency
+      updateAuthUI();
+
+      // Show login form and hide dashboard
+      showLogin();
+
+      console.log('Admin logged out successfully');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  }
+
+  // Show login error
+  function showAdminLoginError(message) {
+    if (adminLoginError) {
+      adminLoginError.textContent = message;
+      adminLoginError.style.display = message ? 'block' : 'none';
+    }
+  }
+
+  // Handle filter button clicks
+  function handleFilterClick(e) {
+    const filter = e.target.dataset.filter;
+
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    e.target.classList.add('active');
+
+    // Filter messages
+    filterMessages(filter);
+  }
+
+  // Filter messages based on status
+  function filterMessages(filter) {
+    const messageItems = document.querySelectorAll('.message-card');
+
+    messageItems.forEach(item => {
+      const status = item.dataset.status;
+
+      switch (filter) {
+        case 'all':
+          item.style.display = 'block';
+          break;
+        case 'new':
+          item.style.display = status === 'new' ? 'block' : 'none';
+          break;
+        case 'replied':
+          item.style.display = status === 'replied' ? 'block' : 'none';
+          break;
+      }
+    });
+  }
+
+  // Fetch messages from Firestore
+  function fetchMessages() {
+    console.log('fetchMessages called, db available:', !!db);
+    if (!db) {
+      console.warn('Firestore not initialized, cannot fetch messages');
+      if (messagesList) {
+        messagesList.innerHTML = `
+          <div class="no-messages">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <p>Database not initialized. Check Firebase configuration.</p>
+          </div>
+        `;
+      }
+      return;
+    }
+
+    try {
+      console.log('Setting up Firestore listener...');
+      const messagesRef = window.collection(db, 'messages');
+      const q = window.query(messagesRef, window.orderBy('timestamp', 'desc'));
+
+      window.onSnapshot(q, (snapshot) => {
+        console.log('Firestore snapshot received, docs count:', snapshot.size);
+        const messages = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          console.log('Message doc:', doc.id, data);
+          messages.push({ id: doc.id, ...data });
+        });
+
+        console.log('Total messages processed:', messages.length);
+        renderMessages(messages);
+        updateStats(messages);
+      }, (error) => {
+        console.error('Error fetching messages:', error);
+        // Show error in UI
+        if (messagesList) {
+          messagesList.innerHTML = `
+            <div class="no-messages">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              <p>Error loading messages: ${error.message}</p>
+              <p>Make sure firestore.rules is deployed to Firebase.</p>
+            </div>
+          `;
+        }
+      });
+    } catch (error) {
+      console.error('Error setting up message listener:', error);
+      if (messagesList) {
+        messagesList.innerHTML = `
+          <div class="no-messages">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <p>Error: ${error.message}</p>
+          </div>
+        `;
+      }
+    }
+  }
+
+  // Render messages in the dashboard
+  function renderMessages(messages) {
+    if (!messagesList) return;
+
+    if (messages.length === 0) {
+      messagesList.innerHTML = `
+        <div class="no-messages">
+          <ion-icon name="mail-outline"></ion-icon>
+          <p>No messages yet</p>
+        </div>
+      `;
+      return;
+    }
+
+    messagesList.innerHTML = `<ul class="message-grid">${messages.map(message => `
+      <li class="message-card" data-status="${message.status || 'new'}" data-id="${message.id}">
+        <div class="message-card-icon">
+          <ion-icon name="${message.status === 'replied' ? 'checkmark-done-outline' : 'mail-unread-outline'}"></ion-icon>
+        </div>
+        <div class="message-card-content">
+          <div class="message-card-header">
+            <h4 class="message-card-name">${message.name || 'Anonymous'}</h4>
+            <span class="status-badge status-${message.status || 'new'}">${message.status || 'new'}</span>
+          </div>
+          <p class="message-card-email">${message.email || ''}</p>
+          <p class="message-card-subject">${message.subject || 'No subject'}</p>
+          <div class="message-card-text">${(message.message || '').replace(/\n/g, '<br>').substring(0, 150)}${(message.message || '').length > 150 ? '...' : ''}</div>
+          <p class="message-card-date">${formatDate(message.timestamp)}</p>
+          ${message.source ? `<p class="message-card-source">Source: ${message.source}</p>` : ''}
+          <div class="message-card-actions">
+            <button class="reply-btn" data-id="${message.id}" title="Reply to this message">
+              <ion-icon name="return-up-forward-outline"></ion-icon>
+              <span>Reply</span>
+            </button>
+            ${message.status !== 'replied' ? `<button class="mark-replied-btn" data-id="${message.id}" title="Mark as replied">
+              <ion-icon name="checkmark-outline"></ion-icon>
+              <span>Mark Replied</span>
+            </button>` : ''}
+          </div>
+        </div>
+      </li>
+    `).join('')}</ul>`;
+
+    // Add event listeners to buttons
+    document.querySelectorAll('.reply-btn').forEach(btn => {
+      btn.addEventListener('click', handleReplyClick);
+    });
+
+    document.querySelectorAll('.mark-replied-btn').forEach(btn => {
+      btn.addEventListener('click', handleMarkRepliedClick);
+    });
+  }
+
+  // Update dashboard stats
+  function updateStats(messages) {
+    const total = messages.length;
+    const newCount = messages.filter(m => (m.status || 'new') === 'new').length;
+    const repliedCount = messages.filter(m => m.status === 'replied').length;
+
+    if (totalMessagesEl) totalMessagesEl.textContent = total;
+    if (newMessagesEl) newMessagesEl.textContent = newCount;
+    if (repliedMessagesEl) repliedMessagesEl.textContent = repliedCount;
+  }
+
+  // Format timestamp for display
+  function formatDate(timestamp) {
+    if (!timestamp) return 'Unknown date';
+
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Handle reply button click
+  function handleReplyClick(e) {
+    const messageId = e.target.closest('.reply-btn').dataset.id;
+    const messageCard = e.target.closest('.message-card');
+    const messageData = {
+      name: messageCard.querySelector('.message-card-name').textContent,
+      email: messageCard.querySelector('.message-card-email').textContent,
+      subject: messageCard.querySelector('.message-card-subject').textContent,
+      message: messageCard.querySelector('.message-card-text').textContent,
+      id: messageId
+    };
+
+    showReplyModal(messageData);
+  }
+
+  // Handle mark as replied button click
+  async function handleMarkRepliedClick(e) {
+    const messageId = e.target.dataset.id;
+
+    try {
+      const messageRef = window.doc(db, 'messages', messageId);
+      await window.updateDoc(messageRef, {
+        status: 'replied'
+      });
+    } catch (error) {
+      console.error('Error marking message as replied:', error);
+    }
+  }
+
+  // Show reply modal
+  function showReplyModal(messageData) {
+    const replyModal = document.getElementById('reply-modal');
+    const replyFrom = document.getElementById('reply-from');
+    const replySubject = document.getElementById('reply-subject');
+    const replyMessage = document.getElementById('reply-message');
+    const replySubjectInput = document.getElementById('reply-subject-input');
+    const replyMessageInput = document.getElementById('reply-message-input');
+    const replyForm = document.getElementById('reply-form');
+
+    if (replyModal && replyFrom && replySubject && replyMessage && replySubjectInput && replyMessageInput) {
+      // Populate original message data
+      replyFrom.textContent = `${messageData.name} (${messageData.email})`;
+      replySubject.textContent = messageData.subject;
+      replyMessage.innerHTML = (messageData.message || '').replace(/\n/g, '<br>');
+
+      // Set default reply subject
+      replySubjectInput.value = `Re: ${messageData.subject}`;
+
+      // Clear reply message
+      replyMessageInput.value = '';
+
+      // Store message data for reply
+      replyForm._messageData = messageData;
+
+      // Show modal using consistent class toggle
+      replyModal.classList.add('active');
+
+      // Focus on reply message
+      setTimeout(() => replyMessageInput.focus(), 100);
+    }
+  }
+
+  // Hide reply modal
+  function hideReplyModal() {
+    const replyModal = document.getElementById('reply-modal');
+    if (replyModal) {
+      replyModal.classList.remove('active');
+    }
+  }
+
+  // Handle reply form submission
+  async function handleReplySubmit(e) {
+    e.preventDefault();
+
+    const replyForm = e.target;
+    const messageData = replyForm._messageData;
+    const replySubject = document.getElementById('reply-subject-input').value;
+    const replyMessage = document.getElementById('reply-message-input').value;
+
+    if (!messageData || !replySubject || !replyMessage) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    try {
+      // Send reply email via EmailJS
+      await sendReplyEmail(messageData, replySubject, replyMessage);
+
+      // Update message status in Firestore
+      await updateMessageStatus(messageData.id, 'replied');
+
+      // Hide modal
+      hideReplyModal();
+
+      // Show success message
+      alert('Reply sent successfully!');
+
+    } catch (error) {
+      console.error('Reply error:', error);
+      alert('Failed to send reply. Please try again.');
+    }
+  }
+
+  // Send reply email via EmailJS
+  async function sendReplyEmail(messageData, subject, message) {
+    if (typeof emailjs === 'undefined') {
+      throw new Error('EmailJS not loaded');
+    }
+
+    const templateParams = {
+      to_email: messageData.email,
+      to_name: messageData.name,
+      from_name: 'Ruben Jimenez',
+      subject: subject,
+      message: message,
+      original_subject: messageData.subject,
+      original_message: messageData.message,
+      timestamp: new Date().toISOString()
+    };
+
+    // Note: You'll need to create a reply template in EmailJS
+    // For now, we'll use the existing template but modify it for replies
+    const response = await emailjs.send(
+      window.EMAILJS_CONFIG.serviceId,
+      'reply_template', // You'll need to create this template in EmailJS
+      templateParams
+    );
+
+    if (response.status !== 200) {
+      throw new Error('Email sending failed');
+    }
+
+    return response;
+  }
+
+  // Update message status in Firestore
+  async function updateMessageStatus(messageId, status) {
+    if (!db) {
+      throw new Error('Firestore not initialized');
+    }
+
+    const messageRef = window.doc(db, 'messages', messageId);
+    await window.updateDoc(messageRef, {
+      status: status,
+      repliedAt: window.serverTimestamp()
+    });
+  }
+
+})();

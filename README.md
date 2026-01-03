@@ -8,6 +8,31 @@
 
 vCard is a fully responsive personal portfolio website, responsive for all devices, built using HTML, CSS, and JavaScript.
 
+## Admin Dashboard Setup
+
+### Firebase Configuration
+
+1. **Deploy Firestore Rules:**
+   - Go to Firebase Console → Firestore Database → Rules
+   - Copy the contents of `firestore.rules` and paste them
+   - Click "Publish"
+
+2. **Testing Locally:**
+   - The app works locally but Firestore may have CORS issues with `file://` protocol
+   - For full functionality, deploy to a web server or use `python -m http.server` for local testing
+
+### Admin Access
+
+- **URL:** Navigate to `#admin` in your browser
+- **Login:** `admin` / `admin123`
+- **Features:** View contact form submissions, reply to messages, manage inquiries
+
+### Troubleshooting
+
+- **Messages not showing:** Check browser console for Firebase errors
+- **CORS issues:** Deploy to web server instead of running locally with `file://`
+- **Permission errors:** Ensure `firestore.rules` is deployed in Firebase Console
+
 ## Demo
 
 ![vCard Desktop Demo](./website-demo-image/desktop.png "Desktop Demo")

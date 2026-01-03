@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow anyone to read/write messages for now (for testing)
+    // TODO: Restrict to authenticated users only in production
+    match /messages/{messageId} {
+      allow read, write: if true;
+    }
+
+    // Allow anyone to read/write blog posts for now
+    // TODO: Restrict to authenticated users only in production
+    match /blogPosts/{postId} {
+      allow read, write: if true;
+    }
+  }
+}
