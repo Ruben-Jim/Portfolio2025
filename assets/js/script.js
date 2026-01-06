@@ -695,6 +695,9 @@ if (document.readyState === 'loading') {
 
 // Open edit modal with post data
 function openEditBlogModal(postId) {
+  console.log('Opening edit modal for post:', postId);
+  console.log('editBlogModal element:', editBlogModal);
+
   const post = blogPosts.find(p => p.id === postId);
   if (!post) {
     showErrorMessage('Blog post not found');
@@ -716,8 +719,31 @@ function openEditBlogModal(postId) {
     updateEditCounts();
   }, 100);
 
-  // Open modal
-  editBlogModal.classList.add('active');
+  // Open modal with forced visibility
+  if (editBlogModal) {
+    console.log('Adding active class to edit modal');
+    editBlogModal.classList.add('active');
+    editBlogModal.style.display = 'flex';
+    editBlogModal.style.visibility = 'visible';
+    editBlogModal.style.opacity = '1';
+    editBlogModal.style.zIndex = '9999';
+    editBlogModal.style.position = 'fixed';
+    editBlogModal.style.top = '0';
+    editBlogModal.style.left = '0';
+    editBlogModal.style.width = '100%';
+    editBlogModal.style.height = '100%';
+
+    // Force overlay
+    if (editBlogOverlay) {
+      editBlogOverlay.style.opacity = '0.8';
+      editBlogOverlay.style.visibility = 'visible';
+      editBlogOverlay.style.zIndex = '9998';
+    }
+
+    console.log('Modal should be visible now');
+  } else {
+    console.error('editBlogModal not found!');
+  }
 }
 
 // Close edit modal
@@ -827,8 +853,30 @@ if (deleteBlogBtn) {
 
 // Function to open add blog modal for admin dashboard
 function openAddBlogModal() {
+  console.log('Opening add blog modal');
+  console.log('addBlogModal element:', addBlogModal);
+
   if (addBlogModal) {
+    console.log('Adding active class to add modal');
     addBlogModal.classList.add('active');
+    addBlogModal.style.display = 'flex';
+    addBlogModal.style.visibility = 'visible';
+    addBlogModal.style.opacity = '1';
+    addBlogModal.style.zIndex = '9999';
+    addBlogModal.style.position = 'fixed';
+    addBlogModal.style.top = '0';
+    addBlogModal.style.left = '0';
+    addBlogModal.style.width = '100%';
+    addBlogModal.style.height = '100%';
+
+    // Force overlay
+    if (addBlogOverlay) {
+      addBlogOverlay.style.opacity = '0.8';
+      addBlogOverlay.style.visibility = 'visible';
+      addBlogOverlay.style.zIndex = '9998';
+    }
+
+    console.log('Add modal should be visible now');
 
     // Clear form for new post
     addBlogForm.reset();
