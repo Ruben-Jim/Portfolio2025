@@ -73,96 +73,17 @@ let currentUser = null;
 
 // Authentication state management
 function updateAuthUI() {
-  const loginBtn = document.getElementById('login-btn');
-  const addBlogBtn = document.getElementById('add-blog-btn');
-  const logoutBtn = document.getElementById('logout-btn');
-  
-  if (currentUser) {
-    // User is logged in
-    loginBtn.style.display = 'none';
-    addBlogBtn.style.display = 'inline-flex';
-    logoutBtn.style.display = 'inline-flex';
-  } else {
-    // User is not logged in
-    loginBtn.style.display = 'inline-flex';
-    addBlogBtn.style.display = 'none';
-    logoutBtn.style.display = 'none';
-  }
-  
   // Re-render blog posts to show/hide edit/delete buttons
   if (typeof renderBlogPosts === 'function') {
     renderBlogPosts();
   }
-}
-
-function login(username, password) {
-  const user = users.find(u => u.username === username && u.password === password);
-  
-  if (user) {
-    currentUser = user;
-    updateAuthUI();
-    closeLoginModal();
-    showSuccessMessage(`Welcome back, ${user.username}!`);
-    return true;
-  } else {
-    showErrorMessage('Invalid username or password');
-    return false;
+  // Also update admin dashboard if user is admin
+  if (currentUser && currentUser.role === 'admin') {
+    renderAdminBlogPosts();
   }
 }
 
-function logout() {
-  currentUser = null;
-  updateAuthUI();
-  showSuccessMessage('Logged out successfully');
-}
-
-function isAuthenticated() {
-  return currentUser !== null;
-}
-
-// Login modal functionality
-const loginModal = document.getElementById('login-modal');
-const loginOverlay = document.getElementById('login-overlay');
-const loginCloseBtn = document.getElementById('login-close-btn');
-const cancelLoginBtn = document.getElementById('cancel-login-btn');
-const loginForm = document.getElementById('login-form');
-const loginBtn = document.getElementById('login-btn');
-const logoutBtn = document.getElementById('logout-btn');
-
-function openLoginModal() {
-  loginModal.classList.add('active');
-}
-
-function closeLoginModal() {
-  loginModal.classList.remove('active');
-  loginForm.reset();
-}
-
-// Event listeners for login modal
-loginBtn.addEventListener('click', openLoginModal);
-loginCloseBtn.addEventListener('click', closeLoginModal);
-loginOverlay.addEventListener('click', closeLoginModal);
-cancelLoginBtn.addEventListener('click', closeLoginModal);
-logoutBtn.addEventListener('click', logout);
-
-// Login form submission
-loginForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  
-  login(username, password);
-});
-
-// Protect add blog functionality
-const originalAddBlogBtn = document.getElementById('add-blog-btn');
-originalAddBlogBtn.addEventListener('click', function(e) {
-  if (!isAuthenticated()) {
-    e.preventDefault();
-    openLoginModal();
-  }
-});
+// Blog management moved to admin tab only - authentication required for editing
 
 // blog modal elements
 const blogModalImage = document.querySelector("[data-blog-modal-image]");
@@ -321,7 +242,6 @@ function renderBlogPosts() {
   }
 
   console.log('Rendering blog posts:', blogPosts);
-  const isLoggedIn = isAuthenticated();
 
   blogPosts.forEach(post => {
     const blogItem = document.createElement('li');
@@ -331,40 +251,83 @@ function renderBlogPosts() {
         <figure class="blog-banner-box">
           <img src="${post.image}" alt="${post.title}" loading="lazy" data-blog-image>
         </figure>
-        
+
         <div class="blog-content">
           <div class="blog-meta">
             <p class="blog-category" data-blog-category>${post.category}</p>
             <span class="dot"></span>
             <time datetime="${post.date}" data-blog-date>${formatDate(post.date)}</time>
           </div>
-          
+
           <h3 class="h3 blog-item-title" data-blog-title>${post.title}</h3>
-          
+
           <p class="blog-text" data-blog-excerpt>${post.excerpt}</p>
         </div>
       </a>
-      ${isLoggedIn ? `
-        <div class="blog-post-actions">
-          <button class="blog-action-btn edit-btn" data-edit-blog="${post.id}" title="Edit Post">
-            <ion-icon name="create-outline"></ion-icon>
-          </button>
-          <button class="blog-action-btn delete-btn" data-delete-blog="${post.id}" title="Delete Post">
-            <ion-icon name="trash-outline"></ion-icon>
-          </button>
-        </div>
-      ` : ''}
     `;
     blogPostsList.appendChild(blogItem);
   });
 
   // Re-attach event listeners
   attachBlogEventListeners();
-  
-  // Attach edit/delete button listeners if logged in
-  if (isLoggedIn) {
-    attachEditDeleteListeners();
+}
+
+// Function to render blog posts in admin dashboard
+function renderAdminBlogPosts() {
+  const adminBlogPostsList = document.getElementById('admin-blog-posts-list');
+  if (!adminBlogPostsList) return;
+
+  adminBlogPostsList.innerHTML = '';
+
+  if (blogPosts.length === 0) {
+    adminBlogPostsList.innerHTML = `
+      <div class="empty-item">
+        <p>No blog posts found. Create your first post!</p>
+      </div>
+    `;
+    return;
   }
+
+  console.log('Rendering blog posts in admin dashboard:', blogPosts);
+
+  blogPosts.forEach(post => {
+    const blogItem = document.createElement('li');
+    blogItem.className = 'blog-post-item';
+    blogItem.innerHTML = `
+      <a href="#" data-blog-item data-blog-id="${post.id}">
+        <figure class="blog-banner-box">
+          <img src="${post.image}" alt="${post.title}" loading="lazy" data-blog-image>
+        </figure>
+
+        <div class="blog-content">
+          <div class="blog-meta">
+            <p class="blog-category" data-blog-category>${post.category}</p>
+            <span class="dot"></span>
+            <time datetime="${post.date}" data-blog-date>${formatDate(post.date)}</time>
+          </div>
+
+          <h3 class="h3 blog-item-title" data-blog-title>${post.title}</h3>
+
+          <p class="blog-text" data-blog-excerpt>${post.excerpt}</p>
+        </div>
+      </a>
+      <div class="blog-post-actions">
+        <button class="blog-action-btn edit-btn" data-edit-blog="${post.id}" title="Edit Post">
+          <ion-icon name="create-outline"></ion-icon>
+        </button>
+        <button class="blog-action-btn delete-btn" data-delete-blog="${post.id}" title="Delete Post">
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
+    `;
+    adminBlogPostsList.appendChild(blogItem);
+  });
+
+  // Re-attach event listeners
+  attachBlogEventListeners();
+
+  // Attach edit/delete button listeners (always shown in admin dashboard when logged in)
+  attachEditDeleteListeners();
 }
 
 // Function to attach blog event listeners
@@ -1540,6 +1503,11 @@ function switchToPage(pageName, skipSave = false) {
       if (!skipSave) {
         localStorage.setItem('activePage', pageName);
       }
+
+      // Update URL hash for deep linking support
+      if (!skipSave) {
+        window.location.hash = pageName;
+      }
       
       // Re-initialize accordions if resume page is shown
       if (pages[i].dataset.page === "resume") {
@@ -1548,6 +1516,19 @@ function switchToPage(pageName, skipSave = false) {
           initClassAccordion();
           initSubjectAccordion();
         }, 150); // Small delay to ensure DOM is ready
+      }
+
+      // Handle admin page authentication
+      if (pages[i].dataset.page === "admin") {
+        setTimeout(function() {
+          if (currentUser && currentUser.role === 'admin') {
+            if (typeof window.showDashboard === 'function') window.showDashboard();
+            if (typeof window.fetchMessages === 'function') window.fetchMessages();
+            if (typeof renderAdminBlogPosts === 'function') renderAdminBlogPosts();
+          } else {
+            if (typeof window.showLogin === 'function') window.showLogin();
+          }
+        }, 100); // Small delay to ensure DOM is ready
       }
       return; // Exit early when page is found
     }
@@ -1568,18 +1549,30 @@ for (let i = 0; i < navigationLinks.length; i++) {
   });
 }
 
-// Restore active page from localStorage on page load with loading animation
+// Handle URL hash changes for deep linking support
+window.addEventListener("hashchange", function() {
+  const hash = window.location.hash.substring(1); // Remove the '#'
+  if (hash && hash !== '') {
+    switchToPage(hash, true); // Skip saving to avoid infinite loop
+  }
+});
+
+// Restore active page from URL hash or localStorage on page load with loading animation
 function restoreActivePage() {
   const loadingScreen = document.getElementById('loading-screen');
+  const hashPage = window.location.hash.substring(1); // Remove the '#'
   const savedPage = localStorage.getItem('activePage');
-  
+
   // Always show About page first (don't save to localStorage during initial load)
   switchToPage('about', true);
-  
-  if (savedPage && savedPage !== 'about') {
-    // Wait 700ms (less than a second) then switch to saved page and hide loading
+
+  // Prioritize URL hash over localStorage
+  const targetPage = (hashPage && hashPage !== '') ? hashPage : savedPage;
+
+  if (targetPage && targetPage !== 'about') {
+    // Wait 700ms (less than a second) then switch to target page and hide loading
     setTimeout(function() {
-      switchToPage(savedPage);
+      switchToPage(targetPage);
       // Hide loading screen with fade out
       if (loadingScreen) {
         loadingScreen.classList.add('hidden');
@@ -1590,7 +1583,7 @@ function restoreActivePage() {
       }
     }, 700);
   } else {
-    // If no saved page or saved page is "about", just hide loading after delay
+    // If no target page or target page is "about", just hide loading after delay
     setTimeout(function() {
       if (loadingScreen) {
         loadingScreen.classList.add('hidden');
@@ -1822,14 +1815,15 @@ window.addEventListener('load', function() {
   let currentUser = null;
 
   // DOM elements
-  const adminLoginModal = document.getElementById('admin-login');
+  const adminLoginModal = document.getElementById('admin-login-modal');
   const adminLoginOverlay = document.getElementById('admin-login-overlay');
   const adminLoginCloseBtn = document.getElementById('admin-login-close-btn');
   const adminCancelLoginBtn = document.getElementById('admin-cancel-login-btn');
-  const adminDashboard = document.getElementById('admin-dashboard');
+  const adminDashboardContent = document.getElementById('admin-dashboard-content');
+  const adminLoginBtn = document.getElementById('admin-login-btn');
+  const adminLogoutBtn = document.getElementById('admin-logout-btn');
   const adminLoginForm = document.getElementById('admin-login-form');
   const adminLoginError = document.getElementById('admin-login-error');
-  const adminLogoutBtn = document.getElementById('admin-logout');
   const messagesList = document.getElementById('messages-list');
 
   // Stats elements
@@ -1864,6 +1858,26 @@ window.addEventListener('load', function() {
     }
   }
 
+  // Debug: Log window resolution for testing responsive issues
+  function logWindowResolution() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    console.log(`🖥️ Window Resolution: ${width}px x ${height}px`);
+    
+    // Log which grid layout should be active
+    if (width >= 1250) {
+      console.log('📊 Grid Layout: 3 columns (large desktop)');
+    } else if (width >= 768) {
+      console.log('📊 Grid Layout: 2 columns (tablet/medium)');
+    } else {
+      console.log('📊 Grid Layout: 1 column (mobile)');
+    }
+  }
+
+  // Log on load and resize
+  window.addEventListener('load', logWindowResolution);
+  window.addEventListener('resize', logWindowResolution);
+
   // Initialize Firebase when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
     // Check if running locally (file:// protocol) which can cause CORS issues
@@ -1877,6 +1891,9 @@ window.addEventListener('load', function() {
     } else {
       console.error('Firebase initialization failed');
     }
+    
+    // Initial resolution log
+    logWindowResolution();
   });
 
   // Test Firestore connectivity
@@ -1898,27 +1915,24 @@ window.addEventListener('load', function() {
     if (currentUser && currentUser.role === 'admin') {
       showDashboard();
       fetchMessages();
+      renderAdminBlogPosts();
     } else {
       showLogin();
-    }
-
-    // Also check when switching to admin page
-    const adminPage = document.querySelector('[data-page="admin"]');
-    if (adminPage) {
-      // This will be called when switching to admin page
-      setTimeout(() => {
-        if (currentUser && currentUser.role === 'admin') {
-          showDashboard();
-          fetchMessages();
-        } else {
-          showLogin();
-        }
-      }, 100);
     }
   }
 
   // Setup admin event listeners
   function setupAdminEventListeners() {
+    // Login button click
+    if (adminLoginBtn) {
+      adminLoginBtn.addEventListener('click', function() {
+        if (adminLoginModal) {
+          adminLoginModal.classList.add('active');
+          adminLoginModal.style.display = 'flex';
+        }
+      });
+    }
+
     if (adminLoginForm) {
       adminLoginForm.addEventListener('submit', handleAdminLogin);
     }
@@ -1940,6 +1954,14 @@ window.addEventListener('load', function() {
       adminLoginOverlay.addEventListener('click', closeAdminLoginModal);
     }
 
+    // Admin blog management
+    const adminAddBlogBtn = document.getElementById('admin-add-blog-btn');
+    if (adminAddBlogBtn) {
+      adminAddBlogBtn.addEventListener('click', function() {
+        openAddBlogModal();
+      });
+    }
+
     // Filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', handleFilterClick);
@@ -1958,23 +1980,7 @@ window.addEventListener('load', function() {
     const testBtn = document.getElementById('test-firestore');
     if (testBtn) {
       testBtn.addEventListener('click', async () => {
-        console.log('Testing Firestore connection...');
-
-        if (!db) {
-          alert('Firestore not initialized');
-          return;
-        }
-
-        try {
-          // Try to read from messages collection
-          const messagesRef = window.collection(db, 'messages');
-          const snapshot = await window.getDocs(messagesRef);
-          console.log('Firestore test successful. Found', snapshot.size, 'documents');
-          alert(`Firestore connected! Found ${snapshot.size} messages.`);
-        } catch (error) {
-          console.error('Firestore test failed:', error);
-          alert(`Firestore test failed: ${error.message}`);
-        }
+        testFirestoreConnection();
       });
     }
 
@@ -2008,7 +2014,10 @@ window.addEventListener('load', function() {
       adminLoginModal.classList.add('active');
       adminLoginModal.style.display = 'flex';
     }
-    if (adminDashboard) adminDashboard.style.display = 'none';
+    if (adminDashboardContent) adminDashboardContent.style.display = 'none';
+    // Show login button, hide logout button
+    if (adminLoginBtn) adminLoginBtn.style.display = 'inline-flex';
+    if (adminLogoutBtn) adminLogoutBtn.style.display = 'none';
   }
 
   // Show dashboard
@@ -2017,7 +2026,10 @@ window.addEventListener('load', function() {
       adminLoginModal.classList.remove('active');
       adminLoginModal.style.display = 'none'; // Completely hide login modal
     }
-    if (adminDashboard) adminDashboard.style.display = 'block';
+    if (adminDashboardContent) adminDashboardContent.style.display = 'block';
+    // Hide login button, show logout button
+    if (adminLoginBtn) adminLoginBtn.style.display = 'none';
+    if (adminLogoutBtn) adminLogoutBtn.style.display = 'inline-flex';
   }
 
   // Close login modal
@@ -2031,7 +2043,7 @@ window.addEventListener('load', function() {
   async function handleAdminLogin(e) {
     e.preventDefault();
 
-    const username = document.getElementById('admin-email').value; // Using email field for username
+    const username = document.getElementById('admin-username').value;
     const password = document.getElementById('admin-password').value;
 
     // Use same credentials as blog admin login
@@ -2040,6 +2052,7 @@ window.addEventListener('load', function() {
       currentUser = { username: 'admin', role: 'admin' };
       showDashboard();
       fetchMessages(); // Fetch messages when admin logs in
+      renderAdminBlogPosts(); // Render blog posts in admin dashboard
       showAdminLoginError(''); // Clear any previous errors
 
       // Also update the global blog auth state for consistency
@@ -2091,20 +2104,20 @@ window.addEventListener('load', function() {
 
   // Filter messages based on status
   function filterMessages(filter) {
-    const messageItems = document.querySelectorAll('.message-card');
+    const messageItems = document.querySelectorAll('.message-item');
 
     messageItems.forEach(item => {
       const status = item.dataset.status;
 
       switch (filter) {
         case 'all':
-          item.style.display = 'block';
+          item.style.display = 'list-item';
           break;
         case 'new':
-          item.style.display = status === 'new' ? 'block' : 'none';
+          item.style.display = status === 'new' ? 'list-item' : 'none';
           break;
         case 'replied':
-          item.style.display = status === 'replied' ? 'block' : 'none';
+          item.style.display = status === 'replied' ? 'list-item' : 'none';
           break;
       }
     });
@@ -2184,29 +2197,33 @@ window.addEventListener('load', function() {
     }
 
     messagesList.innerHTML = `<ul class="message-grid">${messages.map(message => `
-      <li class="message-card" data-status="${message.status || 'new'}" data-id="${message.id}">
-        <div class="message-card-icon">
-          <ion-icon name="${message.status === 'replied' ? 'checkmark-done-outline' : 'mail-unread-outline'}"></ion-icon>
-        </div>
-        <div class="message-card-content">
-          <div class="message-card-header">
-            <h4 class="message-card-name">${message.name || 'Anonymous'}</h4>
-            <span class="status-badge status-${message.status || 'new'}">${message.status || 'new'}</span>
+      <li class="message-item" data-status="${message.status || 'new'}" data-id="${message.id}">
+        <div class="message-card">
+          <div class="message-card-icon">
+            <ion-icon name="${message.status === 'replied' ? 'checkmark-done-outline' : 'mail-unread-outline'}"></ion-icon>
           </div>
-          <p class="message-card-email">${message.email || ''}</p>
-          <p class="message-card-subject">${message.subject || 'No subject'}</p>
-          <div class="message-card-text">${(message.message || '').replace(/\n/g, '<br>').substring(0, 150)}${(message.message || '').length > 150 ? '...' : ''}</div>
-          <p class="message-card-date">${formatDate(message.timestamp)}</p>
-          ${message.source ? `<p class="message-card-source">Source: ${message.source}</p>` : ''}
-          <div class="message-card-actions">
-            <button class="reply-btn" data-id="${message.id}" title="Reply to this message">
-              <ion-icon name="return-up-forward-outline"></ion-icon>
-              <span>Reply</span>
-            </button>
-            ${message.status !== 'replied' ? `<button class="mark-replied-btn" data-id="${message.id}" title="Mark as replied">
-              <ion-icon name="checkmark-outline"></ion-icon>
-              <span>Mark Replied</span>
-            </button>` : ''}
+          <div class="message-card-content">
+            <div class="message-card-header">
+              <h4 class="message-card-name">${message.name || 'Anonymous'}</h4>
+              <span class="status-badge status-${message.status || 'new'}">${message.status || 'new'}</span>
+            </div>
+            <p class="message-card-email">${message.email || ''}</p>
+            <p class="message-card-subject">${message.subject || 'No subject'}</p>
+            <div class="message-card-text">${(message.message || '').replace(/\n/g, '<br>')}</div>
+            <div class="message-card-footer">
+              <p class="message-card-date">${formatDate(message.timestamp)}</p>
+              ${message.source ? `<p class="message-card-source">Source: ${message.source}</p>` : ''}
+            </div>
+            <div class="message-card-actions">
+              <button class="reply-btn" data-id="${message.id}" title="Reply to this message">
+                <ion-icon name="return-up-forward-outline"></ion-icon>
+                <span>Reply</span>
+              </button>
+              ${message.status !== 'replied' ? `<button class="mark-replied-btn" data-id="${message.id}" title="Mark as replied">
+                <ion-icon name="checkmark-outline"></ion-icon>
+                <span>Mark Replied</span>
+              </button>` : ''}
+            </div>
           </div>
         </div>
       </li>
@@ -2361,13 +2378,26 @@ window.addEventListener('load', function() {
       timestamp: new Date().toISOString()
     };
 
-    // Note: You'll need to create a reply template in EmailJS
-    // For now, we'll use the existing template but modify it for replies
-    const response = await emailjs.send(
-      window.EMAILJS_CONFIG.serviceId,
-      'reply_template', // You'll need to create this template in EmailJS
-      templateParams
-    );
+    // Try to use a reply template first, fallback to contact template
+    let templateId = 'reply_template';
+    let response;
+
+    try {
+      response = await emailjs.send(
+        window.EMAILJS_CONFIG.serviceId,
+        templateId,
+        templateParams
+      );
+    } catch (error) {
+      // If reply template doesn't exist, try the contact template
+      console.warn('Reply template not found, trying contact template:', error);
+      templateId = window.EMAILJS_CONFIG.templateId;
+      response = await emailjs.send(
+        window.EMAILJS_CONFIG.serviceId,
+        templateId,
+        templateParams
+      );
+    }
 
     if (response.status !== 200) {
       throw new Error('Email sending failed');
@@ -2388,5 +2418,10 @@ window.addEventListener('load', function() {
       repliedAt: window.serverTimestamp()
     });
   }
+
+  // Expose admin functions to global scope for switchToPage
+  window.showLogin = showLogin;
+  window.showDashboard = showDashboard;
+  window.fetchMessages = fetchMessages;
 
 })();

@@ -80,4 +80,3 @@ Implement a secure backend using Firebase to capture contact inquiries and provi
 - [ ] Build Admin Login/Logout functionality | id: admin-auth
 - [ ] Implement message fetching and real-time dashboard UI | id: admin-dashboard-logic
 - [ ] Add styling for Admin components in style.css | id: admin-styles
-- [ ] Implement reply functionality via EmailJS and Firestore update | id: admin-reply

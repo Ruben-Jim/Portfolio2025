@@ -1433,24 +1433,6 @@
           
         </header>
 
-        <!-- Blog Management Section -->
-        <section class="blog-management">
-          <div class="blog-actions">
-            <button class="btn btn-secondary" id="login-btn" style="display: none;">
-              <ion-icon name="log-in-outline"></ion-icon>
-              Login
-            </button>
-            <button class="btn btn-primary" id="add-blog-btn" style="display: none;">
-              <ion-icon name="add-outline"></ion-icon>
-              Add New Post
-            </button>
-            <button class="btn btn-secondary" id="logout-btn" style="display: none;">
-              <ion-icon name="log-out-outline"></ion-icon>
-              Logout
-            </button>
-          </div>
-        </section>
-
         <!-- Blog posts -->
         <section class="blog-posts">
           <ul class="blog-posts-list" id="blog-posts-list">
@@ -2463,39 +2445,25 @@
 
       <article class="admin" data-page="admin">
 
-        <!-- Login Modal -->
-        <div class="admin-login-modal" id="admin-login">
-          <div class="admin-login-overlay" id="admin-login-overlay"></div>
-          <div class="admin-login-content">
-            <div class="admin-login-header">
-              <h3 class="h3">Admin Login</h3>
-            </div>
-
-            <form class="admin-login-form" id="admin-login-form">
-              <div class="form-group">
-                <label for="admin-email">Username</label>
-                <input type="text" id="admin-email" name="username" required>
-              </div>
-
-              <div class="form-group">
-                <label for="admin-password">Password</label>
-                <input type="password" id="admin-password" name="password" required>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-secondary" id="admin-cancel-login-btn">Cancel</button>
-                <button type="submit" class="btn btn-primary">Login</button>
-              </div>
-            </form>
-
-            <div class="admin-login-error" id="admin-login-error" style="display: none;"></div>
+        <!-- Admin Management Section (similar to blog management) -->
+        <section class="admin-management">
+          <div class="admin-actions">
+            <button class="btn btn-secondary" id="admin-login-btn" style="display: none;">
+              <ion-icon name="log-in-outline"></ion-icon>
+              Admin Login
+            </button>
+            <button class="btn btn-secondary" id="admin-logout-btn" style="display: none;">
+              <ion-icon name="log-out-outline"></ion-icon>
+              Logout
+            </button>
           </div>
-        </div>
+        </section>
 
-        <!-- Dashboard (shown after login) -->
-        <header>
-          <h2 class="h2 article-title">Admin Dashboard</h2>
-        </header>
+        <!-- Dashboard Content (hidden until authenticated) -->
+        <div id="admin-dashboard-content" style="display: none;">
+          <header>
+            <h2 class="h2 article-title">Admin Dashboard</h2>
+          </header>
 
         <section class="about-text">
           <p>
@@ -2595,6 +2563,29 @@
 
         </section>
 
+        <!-- Blog Management Section -->
+        <section class="service">
+          <h3 class="h3 service-title">Blog Management</h3>
+
+          <div class="blog-management-controls">
+            <div class="blog-management-actions">
+              <button class="btn btn-primary" id="admin-add-blog-btn">
+                <ion-icon name="add-outline"></ion-icon>
+                Add New Post
+              </button>
+            </div>
+          </div>
+
+          <div class="blog-posts-list" id="admin-blog-posts-list">
+            <!-- Blog posts will be populated here -->
+            <div class="empty-item">
+              <p>Loading blog posts...</p>
+            </div>
+          </div>
+        </section>
+
+        </div> <!-- End admin-dashboard-content -->
+
         <!-- Reply Modal -->
         <div class="modal-container" id="reply-modal" style="display: none;">
           <div class="overlay" id="reply-modal-overlay"></div>
@@ -2638,6 +2629,42 @@
 
       </article>
 
+      <!-- Admin Login Modal (similar to blog login modal) -->
+      <div class="login-modal" id="admin-login-modal">
+        <div class="login-overlay" id="admin-login-overlay"></div>
+        <div class="login-content">
+          <div class="login-header">
+            <h3 class="h3">Admin Login</h3>
+            <button class="login-close-btn" id="admin-login-close-btn">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <form class="login-form" id="admin-login-form">
+            <div class="form-group">
+              <label for="admin-username">Username</label>
+              <input type="text" id="admin-username" name="username" required>
+            </div>
+
+            <div class="form-group">
+              <label for="admin-password">Password</label>
+              <input type="password" id="admin-password" name="password" required>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" id="admin-cancel-login-btn">Cancel</button>
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+
+            <div class="login-info">
+              <p><strong>Demo Credentials:</strong></p>
+              <p>Username: <code>admin</code> | Password: <code>admin123</code></p>
+            </div>
+          </form>
+
+          <div class="login-error" id="admin-login-error" style="display: none;"></div>
+        </div>
+      </div>
 
     </div>
 
