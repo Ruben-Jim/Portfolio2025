@@ -80,7 +80,7 @@ function updateAuthUI() {
   // Also update admin dashboard if user is admin
   if (currentUser && currentUser.role === 'admin') {
     renderAdminBlogPosts();
-  }
+}
 }
 
 // Blog management moved to admin tab only - authentication required for editing
@@ -251,16 +251,16 @@ function renderBlogPosts() {
         <figure class="blog-banner-box">
           <img src="${post.image}" alt="${post.title}" loading="lazy" data-blog-image>
         </figure>
-
+        
         <div class="blog-content">
           <div class="blog-meta">
             <p class="blog-category" data-blog-category>${post.category}</p>
             <span class="dot"></span>
             <time datetime="${post.date}" data-blog-date>${formatDate(post.date)}</time>
           </div>
-
+          
           <h3 class="h3 blog-item-title" data-blog-title>${post.title}</h3>
-
+          
           <p class="blog-text" data-blog-excerpt>${post.excerpt}</p>
         </div>
       </a>
@@ -311,14 +311,14 @@ function renderAdminBlogPosts() {
           <p class="blog-text" data-blog-excerpt>${post.excerpt}</p>
         </div>
       </a>
-      <div class="blog-post-actions">
-        <button class="blog-action-btn edit-btn" data-edit-blog="${post.id}" title="Edit Post">
-          <ion-icon name="create-outline"></ion-icon>
-        </button>
-        <button class="blog-action-btn delete-btn" data-delete-blog="${post.id}" title="Delete Post">
-          <ion-icon name="trash-outline"></ion-icon>
-        </button>
-      </div>
+        <div class="blog-post-actions">
+          <button class="blog-action-btn edit-btn" data-edit-blog="${post.id}" title="Edit Post">
+            <ion-icon name="create-outline"></ion-icon>
+          </button>
+          <button class="blog-action-btn delete-btn" data-delete-blog="${post.id}" title="Delete Post">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
     `;
     adminBlogPostsList.appendChild(blogItem);
   });
@@ -695,12 +695,15 @@ if (document.readyState === 'loading') {
 
 // Open edit modal with post data
 function openEditBlogModal(postId) {
+  console.log('Opening edit modal for post:', postId);
+  console.log('editBlogModal element:', editBlogModal);
+
   const post = blogPosts.find(p => p.id === postId);
   if (!post) {
     showErrorMessage('Blog post not found');
     return;
   }
-  
+
   // Populate form fields
   document.getElementById('edit-blog-id').value = post.id;
   document.getElementById('edit-blog-title').value = post.title;
@@ -709,15 +712,38 @@ function openEditBlogModal(postId) {
   document.getElementById('edit-blog-image').value = post.image || '';
   document.getElementById('edit-blog-excerpt').value = post.excerpt;
   editContentTextarea.value = post.content;
-  
+
   // Update counts and line numbers
   setTimeout(function() {
     updateEditLineNumbers();
     updateEditCounts();
   }, 100);
-  
-  // Open modal
-  editBlogModal.classList.add('active');
+
+  // Open modal with forced visibility
+  if (editBlogModal) {
+    console.log('Adding active class to edit modal');
+    editBlogModal.classList.add('active');
+    editBlogModal.style.display = 'flex';
+    editBlogModal.style.visibility = 'visible';
+    editBlogModal.style.opacity = '1';
+    editBlogModal.style.zIndex = '9999';
+    editBlogModal.style.position = 'fixed';
+    editBlogModal.style.top = '0';
+    editBlogModal.style.left = '0';
+    editBlogModal.style.width = '100%';
+    editBlogModal.style.height = '100%';
+
+    // Force overlay
+    if (editBlogOverlay) {
+      editBlogOverlay.style.opacity = '0.8';
+      editBlogOverlay.style.visibility = 'visible';
+      editBlogOverlay.style.zIndex = '9998';
+    }
+
+    console.log('Modal should be visible now');
+  } else {
+    console.error('editBlogModal not found!');
+  }
 }
 
 // Close edit modal
@@ -823,6 +849,56 @@ if (deleteBlogBtn) {
       showErrorMessage('Failed to delete blog post. Please try again.');
     }
   });
+}
+
+// Function to open add blog modal for admin dashboard
+function openAddBlogModal() {
+  console.log('Opening add blog modal');
+  console.log('addBlogModal element:', addBlogModal);
+
+  if (addBlogModal) {
+    console.log('Adding active class to add modal');
+    addBlogModal.classList.add('active');
+    addBlogModal.style.display = 'flex';
+    addBlogModal.style.visibility = 'visible';
+    addBlogModal.style.opacity = '1';
+    addBlogModal.style.zIndex = '9999';
+    addBlogModal.style.position = 'fixed';
+    addBlogModal.style.top = '0';
+    addBlogModal.style.left = '0';
+    addBlogModal.style.width = '100%';
+    addBlogModal.style.height = '100%';
+
+    // Force overlay
+    if (addBlogOverlay) {
+      addBlogOverlay.style.opacity = '0.8';
+      addBlogOverlay.style.visibility = 'visible';
+      addBlogOverlay.style.zIndex = '9998';
+    }
+
+    console.log('Add modal should be visible now');
+
+    // Clear form for new post
+    addBlogForm.reset();
+
+    // Set today's date as default
+    const dateInput = document.getElementById('blog-date');
+    if (dateInput) {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
+    }
+
+    // Focus on title input
+    const titleInput = document.getElementById('blog-title');
+    if (titleInput) {
+      setTimeout(() => titleInput.focus(), 100);
+    }
+
+    // Update character/word counts
+    setTimeout(() => {
+      if (typeof updateCounts === 'function') updateCounts();
+    }, 100);
+  }
 }
 
 // Attach edit/delete button listeners
@@ -1562,10 +1638,10 @@ function restoreActivePage() {
   const loadingScreen = document.getElementById('loading-screen');
   const hashPage = window.location.hash.substring(1); // Remove the '#'
   const savedPage = localStorage.getItem('activePage');
-
+  
   // Always show About page first (don't save to localStorage during initial load)
   switchToPage('about', true);
-
+  
   // Prioritize URL hash over localStorage
   const targetPage = (hashPage && hashPage !== '') ? hashPage : savedPage;
 
@@ -2199,30 +2275,30 @@ window.addEventListener('load', function() {
     messagesList.innerHTML = `<ul class="message-grid">${messages.map(message => `
       <li class="message-item" data-status="${message.status || 'new'}" data-id="${message.id}">
         <div class="message-card">
-          <div class="message-card-icon">
-            <ion-icon name="${message.status === 'replied' ? 'checkmark-done-outline' : 'mail-unread-outline'}"></ion-icon>
+        <div class="message-card-icon">
+          <ion-icon name="${message.status === 'replied' ? 'checkmark-done-outline' : 'mail-unread-outline'}"></ion-icon>
+        </div>
+        <div class="message-card-content">
+          <div class="message-card-header">
+            <h4 class="message-card-name">${message.name || 'Anonymous'}</h4>
+            <span class="status-badge status-${message.status || 'new'}">${message.status || 'new'}</span>
           </div>
-          <div class="message-card-content">
-            <div class="message-card-header">
-              <h4 class="message-card-name">${message.name || 'Anonymous'}</h4>
-              <span class="status-badge status-${message.status || 'new'}">${message.status || 'new'}</span>
-            </div>
-            <p class="message-card-email">${message.email || ''}</p>
-            <p class="message-card-subject">${message.subject || 'No subject'}</p>
+          <p class="message-card-email">${message.email || ''}</p>
+          <p class="message-card-subject">${message.subject || 'No subject'}</p>
             <div class="message-card-text">${(message.message || '').replace(/\n/g, '<br>')}</div>
             <div class="message-card-footer">
-              <p class="message-card-date">${formatDate(message.timestamp)}</p>
-              ${message.source ? `<p class="message-card-source">Source: ${message.source}</p>` : ''}
+          <p class="message-card-date">${formatDate(message.timestamp)}</p>
+          ${message.source ? `<p class="message-card-source">Source: ${message.source}</p>` : ''}
             </div>
-            <div class="message-card-actions">
-              <button class="reply-btn" data-id="${message.id}" title="Reply to this message">
-                <ion-icon name="return-up-forward-outline"></ion-icon>
-                <span>Reply</span>
-              </button>
-              ${message.status !== 'replied' ? `<button class="mark-replied-btn" data-id="${message.id}" title="Mark as replied">
-                <ion-icon name="checkmark-outline"></ion-icon>
-                <span>Mark Replied</span>
-              </button>` : ''}
+          <div class="message-card-actions">
+            <button class="reply-btn" data-id="${message.id}" title="Reply to this message">
+              <ion-icon name="return-up-forward-outline"></ion-icon>
+              <span>Reply</span>
+            </button>
+            ${message.status !== 'replied' ? `<button class="mark-replied-btn" data-id="${message.id}" title="Mark as replied">
+              <ion-icon name="checkmark-outline"></ion-icon>
+              <span>Mark Replied</span>
+            </button>` : ''}
             </div>
           </div>
         </div>
@@ -2384,10 +2460,10 @@ window.addEventListener('load', function() {
 
     try {
       response = await emailjs.send(
-        window.EMAILJS_CONFIG.serviceId,
+      window.EMAILJS_CONFIG.serviceId,
         templateId,
-        templateParams
-      );
+      templateParams
+    );
     } catch (error) {
       // If reply template doesn't exist, try the contact template
       console.warn('Reply template not found, trying contact template:', error);
@@ -2425,3 +2501,4 @@ window.addEventListener('load', function() {
   window.fetchMessages = fetchMessages;
 
 })();
+
