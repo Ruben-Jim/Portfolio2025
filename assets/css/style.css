@@ -1822,6 +1822,11 @@ main {
   pointer-events: none;
 }
 
+/* Admin Dashboard: Always show blog action buttons */
+#admin-dashboard-content .blog-post-actions {
+  opacity: 1 !important;
+}
+
 
 
 
