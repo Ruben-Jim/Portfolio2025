@@ -1,0 +1,13 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:hsl(240, 2%, 13%);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:hsl(240, 1%, 17%);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <circle cx="200" cy="120" r="40" fill="hsl(45, 100%, 72%)" opacity="0.8"/>
+  <rect x="160" y="180" width="80" height="8" fill="hsl(45, 100%, 72%)" opacity="0.6"/>
+  <rect x="180" y="200" width="40" height="6" fill="hsl(45, 100%, 72%)" opacity="0.4"/>
+  <text x="200" y="250" text-anchor="middle" fill="hsl(45, 100%, 72%)" font-family="Arial, sans-serif" font-size="14" opacity="0.7">COMING SOON</text>
+</svg>
