@@ -63,12 +63,13 @@ const blogModalCloseBtn = document.querySelector("[data-blog-modal-close-btn]");
 const blogOverlay = document.querySelector("[data-blog-overlay]");
 
 
-// Authentication system
-const users = [
-  { username: "admin", password: "admin123", role: "admin" },
-  { username: "user", password: "user123", role: "user" }
+// Authentication system - Admin emails list (update this with your admin emails)
+const ADMIN_EMAILS = [
+  'ruben.jim.co@gmail.com', // Add your admin email(s) here
+  // Add more admin emails as needed
 ];
 
+// Global currentUser - will be set by Firebase Auth
 let currentUser = null;
 
 // Authentication state management
@@ -80,7 +81,13 @@ function updateAuthUI() {
   // Also update admin dashboard if user is admin
   if (currentUser && currentUser.role === 'admin') {
     renderAdminBlogPosts();
+  }
 }
+
+// Helper function to check if user is admin based on email
+function isAdminEmail(email) {
+  if (!email) return false;
+  return ADMIN_EMAILS.some(adminEmail => adminEmail.toLowerCase() === email.toLowerCase());
 }
 
 // Blog management moved to admin tab only - authentication required for editing
@@ -695,6 +702,12 @@ if (document.readyState === 'loading') {
 
 // Open edit modal with post data
 function openEditBlogModal(postId) {
+  // Security check: Only allow admin users to edit blog posts
+  if (!currentUser || currentUser.role !== 'admin') {
+    showErrorMessage('Access denied. Admin privileges required to edit blog posts.');
+    return;
+  }
+
   console.log('Opening edit modal for post:', postId);
   console.log('editBlogModal element:', editBlogModal);
 
@@ -748,7 +761,28 @@ function openEditBlogModal(postId) {
 
 // Close edit modal
 function closeEditBlogModal() {
-  editBlogModal.classList.remove('active');
+  if (editBlogModal) {
+    editBlogModal.classList.remove('active');
+    // Clear all inline styles set when opening the modal
+    editBlogModal.style.display = '';
+    editBlogModal.style.visibility = '';
+    editBlogModal.style.opacity = '';
+    editBlogModal.style.zIndex = '';
+    editBlogModal.style.position = '';
+    editBlogModal.style.top = '';
+    editBlogModal.style.left = '';
+    editBlogModal.style.width = '';
+    editBlogModal.style.height = '';
+  }
+  
+  // Clear overlay inline styles
+  if (editBlogOverlay) {
+    editBlogOverlay.style.opacity = '';
+    editBlogOverlay.style.visibility = '';
+    editBlogOverlay.style.zIndex = '';
+  }
+  
+  // Reset form
   if (editBlogForm) {
     editBlogForm.reset();
   }
@@ -765,10 +799,26 @@ if (cancelEditBlogBtn) {
   cancelEditBlogBtn.addEventListener('click', closeEditBlogModal);
 }
 
+// Prevent clicks inside modal content from closing the modal
+if (editBlogModal) {
+  const editBlogContent = editBlogModal.querySelector('.add-blog-content');
+  if (editBlogContent) {
+    editBlogContent.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
+}
+
 // Handle edit form submission
 if (editBlogForm) {
   editBlogForm.addEventListener('submit', async function(e) {
     e.preventDefault();
+    
+    // Security check: Only allow admin users to update blog posts
+    if (!currentUser || currentUser.role !== 'admin') {
+      showErrorMessage('Access denied. Admin privileges required to update blog posts.');
+      return;
+    }
     
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
@@ -797,8 +847,11 @@ if (editBlogForm) {
         blogPosts[index] = { ...updatedPost, id: postId };
       }
       
-      // Re-render blog posts
+      // Re-render blog posts (both regular view and admin dashboard)
       renderBlogPosts();
+      if (currentUser && currentUser.role === 'admin') {
+        renderAdminBlogPosts();
+      }
       
       // Close modal
       closeEditBlogModal();
@@ -821,6 +874,12 @@ if (deleteBlogBtn) {
   deleteBlogBtn.addEventListener('click', async function(e) {
     e.preventDefault();
     
+    // Security check: Only allow admin users to delete blog posts
+    if (!currentUser || currentUser.role !== 'admin') {
+      showErrorMessage('Access denied. Admin privileges required to delete blog posts.');
+      return;
+    }
+    
     const postId = document.getElementById('edit-blog-id').value;
     if (!postId) return;
     
@@ -835,8 +894,11 @@ if (deleteBlogBtn) {
       // Remove from local array
       blogPosts = blogPosts.filter(p => p.id !== postId);
       
-      // Re-render blog posts
+      // Re-render blog posts (both regular view and admin dashboard)
       renderBlogPosts();
+      if (currentUser && currentUser.role === 'admin') {
+        renderAdminBlogPosts();
+      }
       
       // Close modal
       closeEditBlogModal();
@@ -853,6 +915,12 @@ if (deleteBlogBtn) {
 
 // Function to open add blog modal for admin dashboard
 function openAddBlogModal() {
+  // Security check: Only allow admin users to add blog posts
+  if (!currentUser || currentUser.role !== 'admin') {
+    showErrorMessage('Access denied. Admin privileges required to add blog posts.');
+    return;
+  }
+
   console.log('Opening add blog modal');
   console.log('addBlogModal element:', addBlogModal);
 
@@ -920,6 +988,13 @@ function attachEditDeleteListeners() {
     btn.addEventListener('click', async function(e) {
       e.preventDefault();
       e.stopPropagation();
+      
+      // Security check: Only allow admin users to delete blog posts
+      if (!currentUser || currentUser.role !== 'admin') {
+        showErrorMessage('Access denied. Admin privileges required to delete blog posts.');
+        return;
+      }
+      
       const postId = this.getAttribute('data-delete-blog');
       
       if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
@@ -929,7 +1004,13 @@ function attachEditDeleteListeners() {
       try {
         await deleteBlogPostFromFirestore(postId);
         blogPosts = blogPosts.filter(p => p.id !== postId);
+        
+        // Re-render blog posts (both regular view and admin dashboard)
         renderBlogPosts();
+        if (currentUser && currentUser.role === 'admin') {
+          renderAdminBlogPosts();
+        }
+        
         showSuccessMessage('Blog post deleted successfully!');
       } catch (error) {
         console.error('Error deleting blog post:', error);
@@ -1888,7 +1969,6 @@ window.addEventListener('load', function() {
   // Firebase variables
   let auth = null;
   let db = null;
-  let currentUser = null;
 
   // DOM elements
   const adminLoginModal = document.getElementById('admin-login-modal');
@@ -1985,16 +2065,52 @@ window.addEventListener('load', function() {
     }
   }
 
-  // Setup authentication state listener (using simple credential check)
+  // Setup authentication state listener using Firebase Auth
   function setupAuthListeners() {
-    // Check if admin is already logged in on page load
-    if (currentUser && currentUser.role === 'admin') {
-      showDashboard();
-      fetchMessages();
-      renderAdminBlogPosts();
-    } else {
+    if (!auth) {
+      console.error('Auth not initialized');
       showLogin();
+      return;
     }
+
+    // Listen for authentication state changes
+    window.onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // User is signed in
+        const email = firebaseUser.email;
+        const isAdmin = isAdminEmail(email);
+        
+        // Set global currentUser with admin role if applicable
+        currentUser = {
+          uid: firebaseUser.uid,
+          email: email,
+          displayName: firebaseUser.displayName || email,
+          role: isAdmin ? 'admin' : 'user'
+        };
+        
+        // Also set on window for global access
+        window.currentUser = currentUser;
+        
+        if (isAdmin) {
+          showDashboard();
+          if (typeof fetchMessages === 'function') fetchMessages();
+          if (typeof renderAdminBlogPosts === 'function') renderAdminBlogPosts();
+        } else {
+          // User is logged in but not admin - show error and log out
+          showAdminLoginError('Access denied. Admin privileges required.');
+          handleLogout();
+        }
+        
+        // Update UI
+        updateAuthUI();
+      } else {
+        // User is signed out
+        currentUser = null;
+        window.currentUser = null;
+        showLogin();
+        updateAuthUI();
+      }
+    });
   }
 
   // Setup admin event listeners
@@ -2011,6 +2127,12 @@ window.addEventListener('load', function() {
 
     if (adminLoginForm) {
       adminLoginForm.addEventListener('submit', handleAdminLogin);
+    }
+
+    // Google Sign-In button
+    const googleSignInBtn = document.getElementById('admin-google-signin-btn');
+    if (googleSignInBtn) {
+      googleSignInBtn.addEventListener('click', handleGoogleSignIn);
     }
 
     if (adminLogoutBtn) {
@@ -2115,44 +2237,108 @@ window.addEventListener('load', function() {
     if (adminLoginError) adminLoginError.style.display = 'none';
   }
 
-  // Handle admin login (using same credentials as blog admin)
+  // Handle admin login with email/password
   async function handleAdminLogin(e) {
     e.preventDefault();
 
-    const username = document.getElementById('admin-username').value;
+    if (!auth) {
+      showAdminLoginError('Authentication service not initialized');
+      return;
+    }
+
+    const email = document.getElementById('admin-email').value;
     const password = document.getElementById('admin-password').value;
 
-    // Use same credentials as blog admin login
-    if (username === 'admin' && password === 'admin123') {
-      // Set current user for admin session
-      currentUser = { username: 'admin', role: 'admin' };
-      showDashboard();
-      fetchMessages(); // Fetch messages when admin logs in
-      renderAdminBlogPosts(); // Render blog posts in admin dashboard
-      showAdminLoginError(''); // Clear any previous errors
+    try {
+      showAdminLoginError(''); // Clear previous errors
+      
+      // Sign in with Firebase Auth
+      const userCredential = await window.signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      // Check if user is admin
+      if (!isAdminEmail(firebaseUser.email)) {
+        // User is not admin, sign them out
+        await window.signOut(auth);
+        showAdminLoginError('Access denied. Admin privileges required.');
+      } else {
+        // Login successful - onAuthStateChanged will handle UI update
+        closeAdminLoginModal();
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      }
+      
+      showAdminLoginError(errorMessage);
+    }
+  }
 
-      // Also update the global blog auth state for consistency
-      updateAuthUI();
-    } else {
-      showAdminLoginError('Invalid username or password');
+  // Handle Google Sign-In
+  async function handleGoogleSignIn() {
+    if (!auth) {
+      showAdminLoginError('Authentication service not initialized');
+      return;
+    }
+
+    try {
+      showAdminLoginError(''); // Clear previous errors
+      
+      const provider = new window.GoogleAuthProvider();
+      const userCredential = await window.signInWithPopup(auth, provider);
+      const firebaseUser = userCredential.user;
+      
+      // Check if user is admin
+      if (!isAdminEmail(firebaseUser.email)) {
+        // User is not admin, sign them out
+        await window.signOut(auth);
+        showAdminLoginError('Access denied. Admin privileges required.');
+      } else {
+        // Login successful - onAuthStateChanged will handle UI update
+        closeAdminLoginModal();
+      }
+    } catch (error) {
+      console.error('Google Sign-In error:', error);
+      let errorMessage = 'Google Sign-In failed. Please try again.';
+      
+      if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign-in popup was closed. Please try again.';
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMessage = 'Sign-in popup was cancelled.';
+      }
+      
+      showAdminLoginError(errorMessage);
     }
   }
 
   // Handle logout
   async function handleLogout() {
     try {
-      // Clear admin session
+      if (auth) {
+        await window.signOut(auth);
+      }
+      
+      // Clear admin session (onAuthStateChanged will handle the rest)
       currentUser = null;
-
-      // Also update the global blog auth state for consistency
-      updateAuthUI();
-
-      // Show login form and hide dashboard
-      showLogin();
-
+      window.currentUser = null;
+      
       console.log('Admin logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
+      // Still clear local state even if Firebase signout fails
+      currentUser = null;
+      window.currentUser = null;
+      showLogin();
+      updateAuthUI();
     }
   }
 

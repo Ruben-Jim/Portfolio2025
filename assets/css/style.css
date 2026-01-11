@@ -3731,6 +3731,52 @@ textarea.form-input::-webkit-resizer { display: none; }
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
 
+.login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: var(--light-gray);
+  font-size: 14px;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--jet);
+}
+
+.login-divider span {
+  padding: 0 15px;
+}
+
+.btn-google {
+  background: var(--onyx);
+  color: var(--white-1);
+  border: 1px solid var(--jet);
+  width: 100%;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-google:hover {
+  background: var(--vegas-gold);
+  border-color: var(--vegas-gold);
+  color: var(--smoky-black);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-1);
+}
+
+.btn-google ion-icon {
+  font-size: 20px;
+  color: var(--orange-yellow-crayola);
+}
+
+.btn-google:hover ion-icon {
+  color: var(--smoky-black);
+}
+
 /* Responsive design for login modal */
 @media (max-width: 768px) {
   .login-content {
