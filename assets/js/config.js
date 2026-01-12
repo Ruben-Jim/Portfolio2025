@@ -2,7 +2,9 @@
 // Replace with your actual Firebase API key
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyCaklIEadgb9ZckNGOyr6SDiaZvbOYZqBY",
-  authDomain: "rubenjimenez.dev",  // Custom domain for Firebase Auth
+  // Use Firebase hosting domain for authDomain (always authorized)
+  // Your custom domain (rubenjimenez.dev) should be in Authorized domains list
+  authDomain: "portfolio-2578e.firebaseapp.com",
   projectId: "portfolio-2578e",
   storageBucket: "portfolio-2578e.firebasestorage.app",
   messagingSenderId: "980239353589",

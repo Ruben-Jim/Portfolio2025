@@ -1996,6 +1996,11 @@ window.addEventListener('load', function() {
         return false;
       }
 
+      // Log current origin for debugging OAuth issues
+      console.log('Current origin:', window.location.origin);
+      console.log('Current hostname:', window.location.hostname);
+      console.log('Firebase authDomain:', firebaseConfig.authDomain);
+
       // Initialize Firebase
       const app = window.initializeApp(firebaseConfig);
       auth = window.getAuth(app);
@@ -2003,6 +2008,7 @@ window.addEventListener('load', function() {
 
       console.log('Firebase initialized successfully');
       console.log('Note: Make sure firestore.rules is deployed to Firebase Console for proper permissions');
+      console.log('Note: Ensure your domain is in Firebase Console → Authentication → Settings → Authorized domains');
 
       // Test Firestore connectivity
       testFirestoreConnection();
@@ -2293,7 +2299,15 @@ window.addEventListener('load', function() {
     try {
       showAdminLoginError(''); // Clear previous errors
       
+      // Log origin for debugging
+      console.log('Attempting Google Sign-In from origin:', window.location.origin);
+      
       const provider = new window.GoogleAuthProvider();
+      // Add custom parameters for better OAuth handling
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      
       const userCredential = await window.signInWithPopup(auth, provider);
       const firebaseUser = userCredential.user;
       
@@ -2308,6 +2322,10 @@ window.addEventListener('load', function() {
       }
     } catch (error) {
       console.error('Google Sign-In error:', error);
+      console.error('Error code:', error.code);
+      console.error('Current origin:', window.location.origin);
+      console.error('Current hostname:', window.location.hostname);
+      
       let errorMessage = 'Google Sign-In failed. Please try again.';
       
       if (error.code === 'auth/popup-closed-by-user') {
@@ -2315,11 +2333,14 @@ window.addEventListener('load', function() {
       } else if (error.code === 'auth/cancelled-popup-request') {
         errorMessage = 'Sign-in popup was cancelled.';
       } else if (error.code === 'auth/unauthorized-domain') {
-        errorMessage = 'Domain not authorized. Please ensure rubenjimenez.dev is added to Firebase authorized domains.';
-        console.error('Current origin:', window.location.origin);
-        console.error('Make sure to add the following to Firebase Console → Authentication → Settings → Authorized domains:');
-        console.error('- rubenjimenez.dev');
-        console.error('- www.rubenjimenez.dev (if using www)');
+        errorMessage = 'Domain not authorized for OAuth. Please add your domain to Firebase Console → Authentication → Settings → Authorized domains.';
+        console.error('⚠️ DOMAIN AUTHORIZATION REQUIRED:');
+        console.error('1. Go to Firebase Console → Authentication → Settings → Authorized domains');
+        console.error('2. Add these domains (without https://):');
+        console.error('   - rubenjimenez.dev');
+        console.error('   - www.rubenjimenez.dev (if you use www)');
+        console.error('3. Wait 5-10 minutes for changes to propagate');
+        console.error('4. Current origin being checked:', window.location.origin);
       }
       
       showAdminLoginError(errorMessage);
