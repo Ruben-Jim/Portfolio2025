@@ -2314,6 +2314,12 @@ window.addEventListener('load', function() {
         errorMessage = 'Sign-in popup was closed. Please try again.';
       } else if (error.code === 'auth/cancelled-popup-request') {
         errorMessage = 'Sign-in popup was cancelled.';
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = 'Domain not authorized. Please ensure rubenjimenez.dev is added to Firebase authorized domains.';
+        console.error('Current origin:', window.location.origin);
+        console.error('Make sure to add the following to Firebase Console → Authentication → Settings → Authorized domains:');
+        console.error('- rubenjimenez.dev');
+        console.error('- www.rubenjimenez.dev (if using www)');
       }
       
       showAdminLoginError(errorMessage);
