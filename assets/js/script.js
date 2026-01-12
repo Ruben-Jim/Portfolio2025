@@ -63,13 +63,13 @@ const blogModalCloseBtn = document.querySelector("[data-blog-modal-close-btn]");
 const blogOverlay = document.querySelector("[data-blog-overlay]");
 
 
-// Authentication system - Admin emails list (update this with your admin emails)
-const ADMIN_EMAILS = [
-  'ruben.jim.co@gmail.com', // Add your admin email(s) here
-  // Add more admin emails as needed
-];
+// Simple authentication system - Admin credentials
+const ADMIN_CREDENTIALS = {
+  username: 'admin',
+  password: 'admin123'
+};
 
-// Global currentUser - will be set by Firebase Auth
+// Global currentUser - simple session management
 let currentUser = null;
 
 // Authentication state management
@@ -84,10 +84,9 @@ function updateAuthUI() {
   }
 }
 
-// Helper function to check if user is admin based on email
-function isAdminEmail(email) {
-  if (!email) return false;
-  return ADMIN_EMAILS.some(adminEmail => adminEmail.toLowerCase() === email.toLowerCase());
+// Helper function to check if user is logged in as admin
+function isAdmin() {
+  return currentUser && currentUser.role === 'admin';
 }
 
 // Blog management moved to admin tab only - authentication required for editing
@@ -117,9 +116,9 @@ async function loadBlogPostsFromFirestore() {
     isLoading = true;
     showLoadingState();
 
-    const blogPostsRef = collection(window.db, 'blogPosts');
-    const q = query(blogPostsRef, orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
+    const blogPostsRef = window.collection(window.db, 'blogPosts');
+    const q = window.query(blogPostsRef, window.orderBy('createdAt', 'desc'));
+    const querySnapshot = await window.getDocs(q);
     
     blogPosts = [];
     querySnapshot.forEach((doc) => {
@@ -153,22 +152,42 @@ async function loadBlogPostsFromFirestore() {
 async function saveBlogPostToFirestore(postData) {
   try {
     if (!window.db) {
-      console.log('Firebase not initialized, saving locally');
-      return postData;
+      console.error('Firebase not initialized! window.db is:', window.db);
+      const error = new Error('Firebase is not initialized. Please refresh the page and try again.');
+      showErrorMessage(error.message);
+      throw error;
     }
 
-    const blogPostsRef = collection(window.db, 'blogPosts');
-    const docRef = await addDoc(blogPostsRef, {
+    console.log('Saving blog post to Firestore:', postData);
+    console.log('window.db:', window.db);
+    console.log('window.collection:', typeof window.collection);
+    console.log('window.addDoc:', typeof window.addDoc);
+    console.log('window.serverTimestamp:', typeof window.serverTimestamp);
+    
+    const blogPostsRef = window.collection(window.db, 'blogPosts');
+    console.log('blogPostsRef created:', blogPostsRef);
+    
+    const docRef = await window.addDoc(blogPostsRef, {
       ...postData,
-      createdAt: serverTimestamp()
+      createdAt: window.serverTimestamp()
     });
 
+    console.log('Blog post saved successfully with ID:', docRef.id);
+    console.log('docRef:', docRef);
+    
+    if (!docRef || !docRef.id) {
+      throw new Error('Failed to save post - no document ID returned from Firestore');
+    }
+    
     return {
       ...postData,
       id: docRef.id
     };
   } catch (error) {
-    console.error('Error saving blog post:', error);
+    console.error('Error saving blog post to Firestore:', error);
+    console.error('Error details:', error.message, error.code);
+    console.error('Error stack:', error.stack);
+    showErrorMessage(`Failed to save blog post: ${error.message}`);
     throw error;
   }
 }
@@ -176,22 +195,27 @@ async function saveBlogPostToFirestore(postData) {
 async function updateBlogPostInFirestore(postId, postData) {
   try {
     if (!window.db) {
-      console.log('Firebase not initialized, updating locally');
+      console.error('Firebase not initialized! window.db is:', window.db);
+      showErrorMessage('Firebase is not initialized. Please refresh the page and try again.');
       return postData;
     }
 
-    const postRef = doc(window.db, 'blogPosts', postId);
-    await updateDoc(postRef, {
+    console.log('Updating blog post in Firestore:', postId, postData);
+    const postRef = window.doc(window.db, 'blogPosts', postId);
+    await window.updateDoc(postRef, {
       ...postData,
-      updatedAt: serverTimestamp()
+      updatedAt: window.serverTimestamp()
     });
 
+    console.log('Blog post updated successfully');
     return {
       ...postData,
       id: postId
     };
   } catch (error) {
-    console.error('Error updating blog post:', error);
+    console.error('Error updating blog post in Firestore:', error);
+    console.error('Error details:', error.message, error.code);
+    showErrorMessage(`Failed to update blog post: ${error.message}`);
     throw error;
   }
 }
@@ -199,14 +223,19 @@ async function updateBlogPostInFirestore(postId, postData) {
 async function deleteBlogPostFromFirestore(postId) {
   try {
     if (!window.db) {
-      console.log('Firebase not initialized, deleting locally');
+      console.error('Firebase not initialized! window.db is:', window.db);
+      showErrorMessage('Firebase is not initialized. Please refresh the page and try again.');
       return;
     }
 
-    const postRef = doc(window.db, 'blogPosts', postId);
-    await deleteDoc(postRef);
+    console.log('Deleting blog post from Firestore:', postId);
+    const postRef = window.doc(window.db, 'blogPosts', postId);
+    await window.deleteDoc(postRef);
+    console.log('Blog post deleted successfully');
   } catch (error) {
-    console.error('Error deleting blog post:', error);
+    console.error('Error deleting blog post from Firestore:', error);
+    console.error('Error details:', error.message, error.code);
+    showErrorMessage(`Failed to delete blog post: ${error.message}`);
     throw error;
   }
 }
@@ -429,32 +458,83 @@ function updateCounts() {
   wordCount.textContent = `${wordCountValue.toLocaleString()} words`;
 }
 
-// Open add blog modal
+// Open add blog modal (only from admin dashboard)
 if (addBlogBtn) {
   addBlogBtn.addEventListener('click', function() {
-    addBlogModal.classList.add('active');
-    // Set today's date as default
-    const dateInput = document.getElementById('blog-date');
-    if (dateInput) {
-      dateInput.value = new Date().toISOString().split('T')[0];
+    // Security check: Only allow admin users to open add blog modal
+    if (!isAdmin()) {
+      showErrorMessage('Access denied. Admin privileges required to add blog posts.');
+      return;
     }
-    // Initialize editor features when modal opens
-    setTimeout(function() {
-      updateLineNumbers();
-      updateCounts();
-    }, 100);
+    
+    // Use the proper function to open modal (which has additional security checks)
+    openAddBlogModal();
   });
 }
 
 // Close add blog modal
 function closeAddBlogModal() {
-  addBlogModal.classList.remove('active');
-  addBlogForm.reset();
+  if (addBlogModal) {
+    addBlogModal.classList.remove('active');
+    // Clear all inline styles set when opening the modal
+    addBlogModal.style.display = '';
+    addBlogModal.style.visibility = '';
+    addBlogModal.style.opacity = '';
+    addBlogModal.style.zIndex = '';
+    addBlogModal.style.position = '';
+    addBlogModal.style.top = '';
+    addBlogModal.style.left = '';
+    addBlogModal.style.width = '';
+    addBlogModal.style.height = '';
+  }
+  
+  // Clear overlay inline styles
+  if (addBlogOverlay) {
+    addBlogOverlay.style.opacity = '';
+    addBlogOverlay.style.visibility = '';
+    addBlogOverlay.style.zIndex = '';
+  }
+  
+  // Reset form
+  if (addBlogForm) {
+    addBlogForm.reset();
+  }
 }
 
-addBlogCloseBtn.addEventListener('click', closeAddBlogModal);
-addBlogOverlay.addEventListener('click', closeAddBlogModal);
-cancelBlogBtn.addEventListener('click', closeAddBlogModal);
+// Event listeners for add modal
+if (addBlogCloseBtn) {
+  addBlogCloseBtn.addEventListener('click', closeAddBlogModal);
+}
+if (addBlogOverlay) {
+  addBlogOverlay.addEventListener('click', closeAddBlogModal);
+}
+if (cancelBlogBtn) {
+  cancelBlogBtn.addEventListener('click', closeAddBlogModal);
+}
+
+// Prevent clicks inside modal content from closing the modal
+if (addBlogModal) {
+  const addBlogContent = addBlogModal.querySelector('.add-blog-content');
+  if (addBlogContent) {
+    addBlogContent.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
+}
+
+// ESC key to close modals
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    // Close add modal if it's open
+    if (addBlogModal && addBlogModal.classList.contains('active')) {
+      closeAddBlogModal();
+    }
+    // Close edit modal if it's open
+    if (editBlogModal && editBlogModal.classList.contains('active')) {
+      closeEditBlogModal();
+    }
+  }
+});
 
 // Editor toolbar functionality
 const editorBtns = document.querySelectorAll('.editor-btn');
@@ -587,12 +667,49 @@ editorBtns.forEach(btn => {
   });
 });
 
-// Handle form submission
-if (addBlogForm) {
-  addBlogForm.addEventListener('submit', async function(e) {
+// Handle form submission - attach listener when DOM is ready
+function setupAddBlogFormListener() {
+  const form = document.getElementById('add-blog-form');
+  if (!form) {
+    console.error('add-blog-form not found!');
+    return;
+  }
+  
+  console.log('Setting up add blog form listener');
+  
+  // Remove any existing listeners by cloning
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+  
+  // Get the new form reference
+  const freshForm = document.getElementById('add-blog-form');
+  
+  // Add onsubmit attribute as backup
+  freshForm.setAttribute('onsubmit', 'event.preventDefault(); return false;');
+  freshForm.setAttribute('action', 'javascript:void(0);');
+  
+  // Attach submit listener
+  freshForm.addEventListener('submit', async function(e) {
     e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    
+    console.log('Add blog form submitted - event caught!');
+    
+    // Security check: Only allow admin users to add blog posts
+    if (!isAdmin()) {
+      console.warn('Access denied - not admin');
+      showErrorMessage('Access denied. Admin privileges required to add blog posts.');
+      return false;
+    }
     
     const submitBtn = this.querySelector('button[type="submit"]');
+    if (!submitBtn) {
+      console.error('Submit button not found in form');
+      return false;
+    }
+    
+    console.log('Submit button found:', submitBtn);
     const originalText = submitBtn.textContent;
     
     try {
@@ -610,14 +727,42 @@ if (addBlogForm) {
         content: formData.get('content')
       };
       
+      console.log('New post data:', newPost);
+      
+      // Validate required fields
+      if (!newPost.title || !newPost.category || !newPost.date || !newPost.excerpt || !newPost.content) {
+        throw new Error('Please fill in all required fields');
+      }
+      
       // Save to Firestore
+      console.log('Saving to Firestore...');
       const savedPost = await saveBlogPostToFirestore(newPost);
+      console.log('Saved post:', savedPost);
+      
+      if (!savedPost || !savedPost.id) {
+        throw new Error('Failed to save post - no ID returned from Firestore');
+      }
       
       // Add to local array
       blogPosts.unshift(savedPost);
       
-      // Re-render blog posts
+      // Re-render blog posts (both regular view and admin dashboard)
       renderBlogPosts();
+      if (isAdmin()) {
+        renderAdminBlogPosts();
+      }
+      
+      // Reload from Firestore to ensure we have the latest data (including server timestamp)
+      // This ensures consistency, but the local update above provides immediate feedback
+      loadBlogPostsFromFirestore().then(() => {
+        renderBlogPosts();
+        if (isAdmin()) {
+          renderAdminBlogPosts();
+        }
+      }).catch(err => {
+        console.warn('Failed to reload blog posts from Firestore:', err);
+        // Continue anyway since we already updated locally
+      });
       
       // Close modal
       closeAddBlogModal();
@@ -627,11 +772,33 @@ if (addBlogForm) {
       
     } catch (error) {
       console.error('Error creating blog post:', error);
-      showErrorMessage('Failed to create blog post. Please try again.');
+      console.error('Error stack:', error.stack);
+      showErrorMessage(`Failed to create blog post: ${error.message || 'Please try again.'}`);
     } finally {
       // Reset button state
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }
+    
+    return false;
+  });
+  
+  console.log('Add blog form listener attached successfully');
+}
+
+// Make function globally accessible
+window.setupAddBlogFormListener = setupAddBlogFormListener;
+
+// Setup form listener when DOM is ready
+if (addBlogForm) {
+  setupAddBlogFormListener();
+} else {
+  // If form not found initially, try again when DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('add-blog-form')) {
+      setupAddBlogFormListener();
     }
   });
 }
@@ -703,8 +870,16 @@ if (document.readyState === 'loading') {
 // Open edit modal with post data
 function openEditBlogModal(postId) {
   // Security check: Only allow admin users to edit blog posts
-  if (!currentUser || currentUser.role !== 'admin') {
+  if (!isAdmin()) {
     showErrorMessage('Access denied. Admin privileges required to edit blog posts.');
+    return;
+  }
+  
+  // Additional check: Ensure we're in admin context (not public blog page)
+  const adminBlogPostsList = document.getElementById('admin-blog-posts-list');
+  if (!adminBlogPostsList) {
+    console.warn('Edit blog modal can only be opened from admin dashboard');
+    showErrorMessage('Blog management is only available in the admin dashboard.');
     return;
   }
 
@@ -916,8 +1091,16 @@ if (deleteBlogBtn) {
 // Function to open add blog modal for admin dashboard
 function openAddBlogModal() {
   // Security check: Only allow admin users to add blog posts
-  if (!currentUser || currentUser.role !== 'admin') {
+  if (!isAdmin()) {
     showErrorMessage('Access denied. Admin privileges required to add blog posts.');
+    return;
+  }
+  
+  // Additional check: Ensure we're in admin context (not public blog page)
+  const adminBlogPostsList = document.getElementById('admin-blog-posts-list');
+  if (!adminBlogPostsList) {
+    console.warn('Add blog modal can only be opened from admin dashboard');
+    showErrorMessage('Blog management is only available in the admin dashboard.');
     return;
   }
 
@@ -946,8 +1129,16 @@ function openAddBlogModal() {
 
     console.log('Add modal should be visible now');
 
+    // Re-attach form listener in case form was reset
+    setTimeout(() => {
+      setupAddBlogFormListener();
+    }, 100);
+
     // Clear form for new post
-    addBlogForm.reset();
+    const form = document.getElementById('add-blog-form');
+    if (form) {
+      form.reset();
+    }
 
     // Set today's date as default
     const dateInput = document.getElementById('blog-date');
@@ -969,12 +1160,29 @@ function openAddBlogModal() {
   }
 }
 
-// Attach edit/delete button listeners
+// Attach edit/delete button listeners (only in admin context)
 function attachEditDeleteListeners() {
-  // Edit buttons
-  const editButtons = document.querySelectorAll('[data-edit-blog]');
+  // Security check: Only attach listeners if admin is logged in
+  if (!isAdmin()) {
+    console.log('Skipping edit/delete listeners - admin not logged in');
+    return;
+  }
+  
+  // Only attach to buttons within admin dashboard
+  const adminBlogPostsList = document.getElementById('admin-blog-posts-list');
+  if (!adminBlogPostsList) {
+    console.log('Admin blog posts list not found - skipping edit/delete listeners');
+    return;
+  }
+  
+  // Edit buttons (only within admin dashboard)
+  const editButtons = adminBlogPostsList.querySelectorAll('[data-edit-blog]');
   editButtons.forEach(btn => {
-    btn.addEventListener('click', function(e) {
+    // Remove existing listeners to prevent duplicates
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    
+    newBtn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
       const postId = this.getAttribute('data-edit-blog');
@@ -982,15 +1190,19 @@ function attachEditDeleteListeners() {
     });
   });
   
-  // Delete buttons
-  const deleteButtons = document.querySelectorAll('[data-delete-blog]');
+  // Delete buttons (only within admin dashboard)
+  const deleteButtons = adminBlogPostsList.querySelectorAll('[data-delete-blog]');
   deleteButtons.forEach(btn => {
-    btn.addEventListener('click', async function(e) {
+    // Remove existing listeners to prevent duplicates
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    
+    newBtn.addEventListener('click', async function(e) {
       e.preventDefault();
       e.stopPropagation();
       
       // Security check: Only allow admin users to delete blog posts
-      if (!currentUser || currentUser.role !== 'admin') {
+      if (!isAdmin()) {
         showErrorMessage('Access denied. Admin privileges required to delete blog posts.');
         return;
       }
@@ -1112,21 +1324,32 @@ function showSuccessMessage(message) {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: var(--bg-gradient-yellow-1);
-    color: var(--vegas-gold);
-    padding: 12px 20px;
-    border-radius: 8px;
-    border:1px solid var(--vegas-gold);
-    box-shadow: var(--shadow-1);
-    z-index: 1000;
-    font-weight: 500;
+    background: hsl(45, 100%, 72%);
+    color: hsl(0, 0%, 7%);
+    padding: 15px 24px;
+    border-radius: 12px;
+    border: 2px solid hsl(45, 100%, 72%);
+    box-shadow: 0 8px 24px hsla(45, 100%, 72%, 0.4), var(--shadow-2);
+    z-index: 10000;
+    font-weight: 600;
+    font-size: 15px;
+    min-width: 250px;
+    text-align: center;
+    opacity: 1;
+    visibility: visible;
+    display: block;
   `;
   
   document.body.appendChild(successDiv);
   
-  // Remove after 3 seconds
+  // Remove after 3 seconds with fade out
   setTimeout(() => {
-    successDiv.remove();
+    successDiv.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+    successDiv.style.opacity = '0';
+    successDiv.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      successDiv.remove();
+    }, 300);
   }, 3000);
 }
 
@@ -1966,8 +2189,7 @@ window.addEventListener('load', function() {
 (function() {
   'use strict';
 
-  // Firebase variables
-  let auth = null;
+  // Firebase variables (only Firestore, no Auth)
   let db = null;
 
   // DOM elements
@@ -1996,29 +2218,15 @@ window.addEventListener('load', function() {
         return false;
       }
 
-      // Log current origin for debugging OAuth issues
-      const currentOrigin = window.location.origin;
-      const currentHostname = window.location.hostname;
-      const currentProtocol = window.location.protocol;
-      
-      console.log('=== Firebase OAuth Debug Info ===');
-      console.log('Current origin:', currentOrigin);
-      console.log('Current hostname:', currentHostname);
-      console.log('Current protocol:', currentProtocol);
-      console.log('Current full URL:', window.location.href);
-      console.log('Firebase authDomain:', firebaseConfig.authDomain);
-      console.log('================================');
-      console.log('⚠️ IMPORTANT: Add this EXACT domain to Firebase Console:');
-      console.log('   Domain to add:', currentHostname);
-      console.log('   (Without protocol, without www, just the domain name)');
-      console.log('   Go to: Firebase Console → Authentication → Settings → Authorized domains');
-
-      // Initialize Firebase
+      // Initialize Firebase (only Firestore, no Auth)
       const app = window.initializeApp(firebaseConfig);
-      auth = window.getAuth(app);
-      db = window.getFirestore(app);
+      const db = window.getFirestore(app);
+      
+      // Make db available globally
+      window.db = db;
 
       console.log('Firebase initialized successfully');
+      console.log('Firestore database:', window.db);
       console.log('Note: Make sure firestore.rules is deployed to Firebase Console for proper permissions');
 
       // Test Firestore connectivity
@@ -2071,101 +2279,40 @@ window.addEventListener('load', function() {
 
   // Test Firestore connectivity
   function testFirestoreConnection() {
-    if (!db) return;
+    if (!window.db) return;
 
     try {
       // Try to get a reference to test connectivity
-      const testRef = window.collection(db, 'messages');
+      const testRef = window.collection(window.db, 'messages');
       console.log('Firestore connection test: collection reference created');
     } catch (error) {
       console.error('Firestore connection test failed:', error);
     }
   }
 
-  // Setup authentication state listener using Firebase Auth
+  // Setup authentication - check for existing session
   function setupAuthListeners() {
-    if (!auth) {
-      console.error('Auth not initialized');
-      showLogin();
-      return;
-    }
-
-    // Check for redirect result (if user was redirected back from OAuth)
-    window.getRedirectResult(auth)
-      .then((result) => {
-        if (result && result.user) {
-          const firebaseUser = result.user;
-          const email = firebaseUser.email;
-          const isAdmin = isAdminEmail(email);
-          
-          console.log('✅ Google Sign-In redirect successful');
-          console.log('User email:', email);
-          
-          if (isAdmin) {
-            // User is admin, authentication will be handled by onAuthStateChanged
-            console.log('✅ Admin access granted');
-          } else {
-            // User is not admin, sign them out
-            console.warn('❌ Access denied - not an admin user');
-            window.signOut(auth);
-            showAdminLoginError('Access denied. Admin privileges required.');
-          }
-        } else {
-          console.log('No redirect result - user not signed in via redirect');
-        }
-      })
-      .catch((error) => {
-        if (error.code === 'auth/unauthorized-domain') {
-          console.error('❌ Redirect also failed with unauthorized-domain');
-          console.error('This means the domain is still not authorized in Firebase Console');
-          console.error('Please verify:');
-          console.error('1. Domain is added: rubenjimenez.dev');
-          console.error('2. No typos or extra spaces');
-          console.error('3. Wait 10-15 minutes after adding');
-          console.error('4. Try clearing cache and hard refresh');
-        } else if (error.code !== 'auth/operation-not-allowed') {
-          console.error('Redirect result error:', error);
-        }
-      });
-
-    // Listen for authentication state changes
-    window.onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        // User is signed in
-        const email = firebaseUser.email;
-        const isAdmin = isAdminEmail(email);
-        
-        // Set global currentUser with admin role if applicable
-        currentUser = {
-          uid: firebaseUser.uid,
-          email: email,
-          displayName: firebaseUser.displayName || email,
-          role: isAdmin ? 'admin' : 'user'
-        };
-        
-        // Also set on window for global access
+    // Check if user is already logged in (from sessionStorage)
+    const savedUser = sessionStorage.getItem('adminUser');
+    if (savedUser) {
+      try {
+        currentUser = JSON.parse(savedUser);
         window.currentUser = currentUser;
-        
-        if (isAdmin) {
+        if (currentUser.role === 'admin') {
           showDashboard();
           if (typeof fetchMessages === 'function') fetchMessages();
           if (typeof renderAdminBlogPosts === 'function') renderAdminBlogPosts();
-        } else {
-          // User is logged in but not admin - show error and log out
-          showAdminLoginError('Access denied. Admin privileges required.');
-          handleLogout();
+          updateAuthUI();
+          return;
         }
-        
-        // Update UI
-        updateAuthUI();
-      } else {
-        // User is signed out
-        currentUser = null;
-        window.currentUser = null;
-        showLogin();
-        updateAuthUI();
+      } catch (e) {
+        console.error('Error parsing saved user:', e);
+        sessionStorage.removeItem('adminUser');
       }
-    });
+    }
+    
+    // No valid session, show login
+    showLogin();
   }
 
   // Setup admin event listeners
@@ -2184,11 +2331,6 @@ window.addEventListener('load', function() {
       adminLoginForm.addEventListener('submit', handleAdminLogin);
     }
 
-    // Google Sign-In button
-    const googleSignInBtn = document.getElementById('admin-google-signin-btn');
-    if (googleSignInBtn) {
-      googleSignInBtn.addEventListener('click', handleGoogleSignIn);
-    }
 
     if (adminLogoutBtn) {
       adminLogoutBtn.addEventListener('click', handleLogout);
@@ -2292,53 +2434,42 @@ window.addEventListener('load', function() {
     if (adminLoginError) adminLoginError.style.display = 'none';
   }
 
-  // Handle admin login with email/password
-  async function handleAdminLogin(e) {
+  // Handle admin login with username/password
+  function handleAdminLogin(e) {
     e.preventDefault();
 
-    if (!auth) {
-      showAdminLoginError('Authentication service not initialized');
-      return;
-    }
-
-    const email = document.getElementById('admin-email').value;
+    const username = document.getElementById('admin-username').value.trim();
     const password = document.getElementById('admin-password').value;
 
-    try {
-      showAdminLoginError(''); // Clear previous errors
+    showAdminLoginError(''); // Clear previous errors
+
+    // Simple credential check
+    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+      // Login successful
+      currentUser = {
+        username: username,
+        role: 'admin'
+      };
+      window.currentUser = currentUser;
       
-      // Sign in with Firebase Auth
-      const userCredential = await window.signInWithEmailAndPassword(auth, email, password);
-      const firebaseUser = userCredential.user;
+      // Save to sessionStorage
+      sessionStorage.setItem('adminUser', JSON.stringify(currentUser));
       
-      // Check if user is admin
-      if (!isAdminEmail(firebaseUser.email)) {
-        // User is not admin, sign them out
-        await window.signOut(auth);
-        showAdminLoginError('Access denied. Admin privileges required.');
-      } else {
-        // Login successful - onAuthStateChanged will handle UI update
-        closeAdminLoginModal();
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      let errorMessage = 'Login failed. Please try again.';
-      
-      if (error.code === 'auth/user-not-found') {
-        errorMessage = 'No account found with this email.';
-      } else if (error.code === 'auth/wrong-password') {
-        errorMessage = 'Incorrect password.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address.';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'Too many failed attempts. Please try again later.';
-      }
-      
-      showAdminLoginError(errorMessage);
+      // Update UI
+      closeAdminLoginModal();
+      showDashboard();
+      if (typeof fetchMessages === 'function') fetchMessages();
+      if (typeof renderAdminBlogPosts === 'function') renderAdminBlogPosts();
+      updateAuthUI();
+    } else {
+      // Invalid credentials
+      showAdminLoginError('Invalid username or password.');
     }
   }
 
-  // Handle Google Sign-In
+  // Removed Google Sign-In - using simple username/password auth instead
+  // This function is no longer needed
+  /*
   async function handleGoogleSignIn() {
     if (!auth) {
       showAdminLoginError('Authentication service not initialized');
@@ -2474,27 +2605,20 @@ window.addEventListener('load', function() {
       showAdminLoginError(errorMessage);
     }
   }
+  */
 
   // Handle logout
-  async function handleLogout() {
-    try {
-      if (auth) {
-        await window.signOut(auth);
-      }
-      
-      // Clear admin session (onAuthStateChanged will handle the rest)
-      currentUser = null;
-      window.currentUser = null;
-      
-      console.log('Admin logged out successfully');
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Still clear local state even if Firebase signout fails
-      currentUser = null;
-      window.currentUser = null;
-      showLogin();
-      updateAuthUI();
-    }
+  function handleLogout() {
+    // Clear session
+    currentUser = null;
+    window.currentUser = null;
+    sessionStorage.removeItem('adminUser');
+    
+    // Update UI
+    showLogin();
+    updateAuthUI();
+    
+    console.log('Admin logged out successfully');
   }
 
   // Show login error
@@ -2542,8 +2666,8 @@ window.addEventListener('load', function() {
 
   // Fetch messages from Firestore
   function fetchMessages() {
-    console.log('fetchMessages called, db available:', !!db);
-    if (!db) {
+    console.log('fetchMessages called, db available:', !!window.db);
+    if (!window.db) {
       console.warn('Firestore not initialized, cannot fetch messages');
       if (messagesList) {
         messagesList.innerHTML = `
@@ -2558,7 +2682,7 @@ window.addEventListener('load', function() {
 
     try {
       console.log('Setting up Firestore listener...');
-      const messagesRef = window.collection(db, 'messages');
+      const messagesRef = window.collection(window.db, 'messages');
       const q = window.query(messagesRef, window.orderBy('timestamp', 'desc'));
 
       window.onSnapshot(q, (snapshot) => {
@@ -2695,7 +2819,7 @@ window.addEventListener('load', function() {
     const messageId = e.target.dataset.id;
 
     try {
-      const messageRef = window.doc(db, 'messages', messageId);
+      const messageRef = window.doc(window.db, 'messages', messageId);
       await window.updateDoc(messageRef, {
         status: 'replied'
       });
@@ -2825,11 +2949,11 @@ window.addEventListener('load', function() {
 
   // Update message status in Firestore
   async function updateMessageStatus(messageId, status) {
-    if (!db) {
+    if (!window.db) {
       throw new Error('Firestore not initialized');
     }
 
-    const messageRef = window.doc(db, 'messages', messageId);
+    const messageRef = window.doc(window.db, 'messages', messageId);
     await window.updateDoc(messageRef, {
       status: status,
       repliedAt: window.serverTimestamp()

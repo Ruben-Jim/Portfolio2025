@@ -467,6 +467,7 @@ main {
   border-radius: 12px 12px 0 0;
   box-shadow: var(--shadow-2);
   z-index: 5;
+  box-sizing: border-box;
 }
 
 .navbar-list {
@@ -1694,6 +1695,17 @@ main {
   gap: 20px;
 }
 
+/* Spacing for admin blog management */
+.blog-management-controls {
+  margin-bottom: 30px;
+}
+
+.blog-management-actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
 .blog-post-item > a {
   position: relative;
   background: var(--border-gradient-onyx);
@@ -2504,6 +2516,7 @@ textarea.form-input::-webkit-resizer { display: none; }
     position: relative;
     width: max-content;
     margin: auto;
+    padding-top: 0;
   }
 
 
@@ -2522,6 +2535,7 @@ textarea.form-input::-webkit-resizer { display: none; }
     border-radius: 0 20px;
     padding: 0 20px;
     box-shadow: none;
+    z-index: 10;
   }
 
   .navbar-list {
@@ -2634,6 +2648,8 @@ textarea.form-input::-webkit-resizer { display: none; }
     min-width: 75%;
     width: 75%;
     margin: 0;
+    position: relative;
+    padding-top: 0;
   }
 
 
@@ -3143,7 +3159,7 @@ textarea.form-input::-webkit-resizer { display: none; }
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  z-index: 1;
+  z-index: 9999; /* Below modal content but above page content */
   transition: var(--transition-1);
 }
 
@@ -3164,7 +3180,7 @@ textarea.form-input::-webkit-resizer { display: none; }
   transform: scale(1.05);
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 2;
+  z-index: 10001; /* Above overlay */
   max-width: 800px;
   width: 100%;
   max-height: 90vh;
@@ -4923,16 +4939,72 @@ textarea.form-input::-webkit-resizer { display: none; }
 /* Final Admin Dashboard Redo */
 
 #admin-dashboard-content {
-  background: var(--bg-gradient-jet);
+  background: transparent;
   color: var(--light-gray);
-  min-height: 100vh;
-  padding: 20px;
+  padding: 0;
 }
 
 #admin-dashboard-content .h2,
 #admin-dashboard-content .article-title {
   color: var(--white-2);
   margin-bottom: 30px;
+}
+
+/* Ensure admin article follows same base article styles */
+article.admin[data-page="admin"] {
+  background: var(--eerie-black-2);
+  border: 1px solid var(--jet);
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow: var(--shadow-1);
+}
+
+/* Ensure contact article follows same base article styles */
+article.contact[data-page="contact"] {
+  background: var(--eerie-black-2);
+  border: 1px solid var(--jet);
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow: var(--shadow-1);
+}
+
+/* Responsive adjustments for admin article */
+@media (min-width: 580px) {
+  article.admin[data-page="admin"] {
+    width: 520px;
+    margin-inline: auto;
+    padding: 30px;
+  }
+  
+  article.contact[data-page="contact"] {
+    width: 520px;
+    margin-inline: auto;
+    padding: 30px;
+  }
+}
+
+@media (min-width: 1024px) {
+  article.admin[data-page="admin"] {
+    width: 950px;
+    box-shadow: var(--shadow-5);
+  }
+  
+  article.contact[data-page="contact"] {
+    width: 950px;
+    box-shadow: var(--shadow-5);
+  }
+}
+
+@media (min-width: 1250px) {
+  article.admin[data-page="admin"] {
+    width: auto;
+    min-height: 100%;
+  }
+  
+  article.contact[data-page="contact"] {
+    width: auto;
+    min-height: 100%;
+  }
 }
 
 /* Admin Grid Layout - Override global resets */
