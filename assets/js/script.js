@@ -1997,9 +1997,21 @@ window.addEventListener('load', function() {
       }
 
       // Log current origin for debugging OAuth issues
-      console.log('Current origin:', window.location.origin);
-      console.log('Current hostname:', window.location.hostname);
+      const currentOrigin = window.location.origin;
+      const currentHostname = window.location.hostname;
+      const currentProtocol = window.location.protocol;
+      
+      console.log('=== Firebase OAuth Debug Info ===');
+      console.log('Current origin:', currentOrigin);
+      console.log('Current hostname:', currentHostname);
+      console.log('Current protocol:', currentProtocol);
+      console.log('Current full URL:', window.location.href);
       console.log('Firebase authDomain:', firebaseConfig.authDomain);
+      console.log('================================');
+      console.log('⚠️ IMPORTANT: Add this EXACT domain to Firebase Console:');
+      console.log('   Domain to add:', currentHostname);
+      console.log('   (Without protocol, without www, just the domain name)');
+      console.log('   Go to: Firebase Console → Authentication → Settings → Authorized domains');
 
       // Initialize Firebase
       const app = window.initializeApp(firebaseConfig);
@@ -2008,7 +2020,6 @@ window.addEventListener('load', function() {
 
       console.log('Firebase initialized successfully');
       console.log('Note: Make sure firestore.rules is deployed to Firebase Console for proper permissions');
-      console.log('Note: Ensure your domain is in Firebase Console → Authentication → Settings → Authorized domains');
 
       // Test Firestore connectivity
       testFirestoreConnection();
@@ -2078,6 +2089,30 @@ window.addEventListener('load', function() {
       showLogin();
       return;
     }
+
+    // Check for redirect result (if user was redirected back from OAuth)
+    window.getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
+          const firebaseUser = result.user;
+          const email = firebaseUser.email;
+          const isAdmin = isAdminEmail(email);
+          
+          if (isAdmin) {
+            // User is admin, authentication will be handled by onAuthStateChanged
+            console.log('Google Sign-In successful via redirect');
+          } else {
+            // User is not admin, sign them out
+            window.signOut(auth);
+            showAdminLoginError('Access denied. Admin privileges required.');
+          }
+        }
+      })
+      .catch((error) => {
+        if (error.code !== 'auth/operation-not-allowed') {
+          console.error('Redirect result error:', error);
+        }
+      });
 
     // Listen for authentication state changes
     window.onAuthStateChanged(auth, (firebaseUser) => {
@@ -2300,7 +2335,14 @@ window.addEventListener('load', function() {
       showAdminLoginError(''); // Clear previous errors
       
       // Log origin for debugging
-      console.log('Attempting Google Sign-In from origin:', window.location.origin);
+      const currentOrigin = window.location.origin;
+      const currentHostname = window.location.hostname;
+      console.log('=== Google Sign-In Attempt ===');
+      console.log('Origin:', currentOrigin);
+      console.log('Hostname:', currentHostname);
+      console.log('Protocol:', window.location.protocol);
+      console.log('Full URL:', window.location.href);
+      console.log('============================');
       
       const provider = new window.GoogleAuthProvider();
       // Add custom parameters for better OAuth handling
@@ -2308,23 +2350,42 @@ window.addEventListener('load', function() {
         prompt: 'select_account'
       });
       
-      const userCredential = await window.signInWithPopup(auth, provider);
-      const firebaseUser = userCredential.user;
-      
-      // Check if user is admin
-      if (!isAdminEmail(firebaseUser.email)) {
-        // User is not admin, sign them out
-        await window.signOut(auth);
-        showAdminLoginError('Access denied. Admin privileges required.');
-      } else {
-        // Login successful - onAuthStateChanged will handle UI update
-        closeAdminLoginModal();
+      // Try popup first, fallback to redirect if unauthorized-domain error
+      try {
+        const userCredential = await window.signInWithPopup(auth, provider);
+        const firebaseUser = userCredential.user;
+        
+        // Check if user is admin
+        if (!isAdminEmail(firebaseUser.email)) {
+          // User is not admin, sign them out
+          await window.signOut(auth);
+          showAdminLoginError('Access denied. Admin privileges required.');
+        } else {
+          // Login successful - onAuthStateChanged will handle UI update
+          closeAdminLoginModal();
+        }
+      } catch (popupError) {
+        // If popup fails with unauthorized-domain, try redirect instead
+        if (popupError.code === 'auth/unauthorized-domain') {
+          console.warn('Popup failed with unauthorized-domain, trying redirect method...');
+          // Use redirect method as fallback
+          await window.signInWithRedirect(auth, provider);
+          // Note: User will be redirected away, so we don't need to handle the result here
+          // The redirect result will be handled in setupAuthListeners()
+          return;
+        }
+        // Re-throw other errors
+        throw popupError;
       }
     } catch (error) {
-      console.error('Google Sign-In error:', error);
+      console.error('=== Google Sign-In Error ===');
       console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      console.error('Full error:', error);
       console.error('Current origin:', window.location.origin);
       console.error('Current hostname:', window.location.hostname);
+      console.error('Current protocol:', window.location.protocol);
+      console.error('===========================');
       
       let errorMessage = 'Google Sign-In failed. Please try again.';
       
@@ -2333,14 +2394,44 @@ window.addEventListener('load', function() {
       } else if (error.code === 'auth/cancelled-popup-request') {
         errorMessage = 'Sign-in popup was cancelled.';
       } else if (error.code === 'auth/unauthorized-domain') {
-        errorMessage = 'Domain not authorized for OAuth. Please add your domain to Firebase Console → Authentication → Settings → Authorized domains.';
-        console.error('⚠️ DOMAIN AUTHORIZATION REQUIRED:');
-        console.error('1. Go to Firebase Console → Authentication → Settings → Authorized domains');
-        console.error('2. Add these domains (without https://):');
-        console.error('   - rubenjimenez.dev');
-        console.error('   - www.rubenjimenez.dev (if you use www)');
-        console.error('3. Wait 5-10 minutes for changes to propagate');
-        console.error('4. Current origin being checked:', window.location.origin);
+        const hostname = window.location.hostname;
+        errorMessage = `Domain "${hostname}" not authorized. Using redirect method...`;
+        
+        console.error('🚨 UNAUTHORIZED DOMAIN ERROR');
+        console.error('===========================');
+        console.error('The domain being checked:', hostname);
+        console.error('Full origin:', window.location.origin);
+        console.error('');
+        console.error('📋 STEPS TO FIX IN FIREBASE CONSOLE:');
+        console.error('1. Go to: https://console.firebase.google.com/project/portfolio-2578e/authentication/settings');
+        console.error('2. Scroll to "Authorized domains" section');
+        console.error('3. Click "Add domain"');
+        console.error('4. Add EXACTLY this (without quotes, without protocol):');
+        console.error('   →', hostname);
+        console.error('5. If you use www, also add:');
+        console.error('   → www.' + hostname);
+        console.error('6. Click "Add"');
+        console.error('7. Wait 5-10 minutes for changes to propagate');
+        console.error('8. Clear browser cache (Ctrl+Shift+Delete) and try again');
+        console.error('');
+        console.error('⚠️ CRITICAL: Domain format must be EXACT:');
+        console.error('   ✅ Correct: rubenjimenez.dev');
+        console.error('   ❌ Wrong: https://rubenjimenez.dev');
+        console.error('   ❌ Wrong: rubenjimenez.dev/');
+        console.error('   ❌ Wrong: www.rubenjimenez.dev (unless you actually use www)');
+        console.error('');
+        console.error('🔄 Attempting redirect method as fallback...');
+        
+        // Try redirect as fallback
+        try {
+          const provider = new window.GoogleAuthProvider();
+          await window.signInWithRedirect(auth, provider);
+          // User will be redirected, so we don't show error message
+          return;
+        } catch (redirectError) {
+          console.error('Redirect also failed:', redirectError);
+          errorMessage = `Domain authorization required. Please add "${hostname}" to Firebase authorized domains.`;
+        }
       }
       
       showAdminLoginError(errorMessage);
