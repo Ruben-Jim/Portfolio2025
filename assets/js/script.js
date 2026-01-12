@@ -2098,18 +2098,32 @@ window.addEventListener('load', function() {
           const email = firebaseUser.email;
           const isAdmin = isAdminEmail(email);
           
+          console.log('✅ Google Sign-In redirect successful');
+          console.log('User email:', email);
+          
           if (isAdmin) {
             // User is admin, authentication will be handled by onAuthStateChanged
-            console.log('Google Sign-In successful via redirect');
+            console.log('✅ Admin access granted');
           } else {
             // User is not admin, sign them out
+            console.warn('❌ Access denied - not an admin user');
             window.signOut(auth);
             showAdminLoginError('Access denied. Admin privileges required.');
           }
+        } else {
+          console.log('No redirect result - user not signed in via redirect');
         }
       })
       .catch((error) => {
-        if (error.code !== 'auth/operation-not-allowed') {
+        if (error.code === 'auth/unauthorized-domain') {
+          console.error('❌ Redirect also failed with unauthorized-domain');
+          console.error('This means the domain is still not authorized in Firebase Console');
+          console.error('Please verify:');
+          console.error('1. Domain is added: rubenjimenez.dev');
+          console.error('2. No typos or extra spaces');
+          console.error('3. Wait 10-15 minutes after adding');
+          console.error('4. Try clearing cache and hard refresh');
+        } else if (error.code !== 'auth/operation-not-allowed') {
           console.error('Redirect result error:', error);
         }
       });
@@ -2367,12 +2381,23 @@ window.addEventListener('load', function() {
       } catch (popupError) {
         // If popup fails with unauthorized-domain, try redirect instead
         if (popupError.code === 'auth/unauthorized-domain') {
-          console.warn('Popup failed with unauthorized-domain, trying redirect method...');
+          console.warn('⚠️ Popup failed with unauthorized-domain');
+          console.warn('Domain being checked:', window.location.hostname);
+          console.warn('Full origin:', window.location.origin);
+          console.warn('Attempting redirect method as fallback...');
+          
           // Use redirect method as fallback
-          await window.signInWithRedirect(auth, provider);
-          // Note: User will be redirected away, so we don't need to handle the result here
-          // The redirect result will be handled in setupAuthListeners()
-          return;
+          try {
+            await window.signInWithRedirect(auth, provider);
+            // Note: User will be redirected away, so we don't need to handle the result here
+            // The redirect result will be handled in setupAuthListeners()
+            console.log('Redirect initiated - user will be redirected to Google');
+            return;
+          } catch (redirectError) {
+            console.error('❌ Redirect also failed:', redirectError);
+            // If redirect also fails, show detailed error
+            throw redirectError;
+          }
         }
         // Re-throw other errors
         throw popupError;
@@ -2420,17 +2445,29 @@ window.addEventListener('load', function() {
         console.error('   ❌ Wrong: rubenjimenez.dev/');
         console.error('   ❌ Wrong: www.rubenjimenez.dev (unless you actually use www)');
         console.error('');
+        console.error('🔍 TROUBLESHOOTING STEPS:');
+        console.error('1. Double-check Firebase Console → Authentication → Settings → Authorized domains');
+        console.error('2. Make sure "rubenjimenez.dev" is listed (exact match, no spaces)');
+        console.error('3. Wait 10-15 minutes after adding (propagation can be slow)');
+        console.error('4. Try clearing browser cache completely');
+        console.error('5. Try in an incognito/private window');
+        console.error('6. Check if you have multiple Firebase projects - ensure you added it to the correct one');
+        console.error('');
         console.error('🔄 Attempting redirect method as fallback...');
         
         // Try redirect as fallback
         try {
-          const provider = new window.GoogleAuthProvider();
-          await window.signInWithRedirect(auth, provider);
+          const redirectProvider = new window.GoogleAuthProvider();
+          redirectProvider.setCustomParameters({
+            prompt: 'select_account'
+          });
+          await window.signInWithRedirect(auth, redirectProvider);
           // User will be redirected, so we don't show error message
+          console.log('✅ Redirect initiated successfully');
           return;
         } catch (redirectError) {
-          console.error('Redirect also failed:', redirectError);
-          errorMessage = `Domain authorization required. Please add "${hostname}" to Firebase authorized domains.`;
+          console.error('❌ Redirect also failed:', redirectError);
+          errorMessage = `Domain authorization required. Please verify "${hostname}" is correctly added to Firebase authorized domains and wait 10-15 minutes for changes to propagate.`;
         }
       }
       
