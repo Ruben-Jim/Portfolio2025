@@ -266,23 +266,23 @@
           <div class="tech-grid">
             
             <div class="tech-category">
+              <h4 class="tech-category-title">Frontend</h4>
+              <div class="tech-items">
+                <span class="tech-item">TypeScript</span>
+                <span class="tech-item">JavaScript</span>
+                <span class="tech-item">Uniwind</span>
+                
+              </div>
+            </div>
+            
+            <div class="tech-category">
               <h4 class="tech-category-title">Framework</h4>
               <div class="tech-items">
                 <span class="tech-item">React Native</span>
                 <span class="tech-item">Expo</span>
               </div>
             </div>
-
-            <div class="tech-category">
-              <h4 class="tech-category-title">Frontend</h4>
-              <div class="tech-items">
-                <span class="tech-item">TypeScript</span>
-                <span class="tech-item">JavaScript</span>
-                <span class="tech-item">Uniwind</span>
-
-              </div>
-            </div>
-
+            
             <div class="tech-category">
               <h4 class="tech-category-title">Backend</h4>
               <div class="tech-items">
@@ -1840,6 +1840,32 @@
             <li class="service-item">
 
               <div class="service-icon-box">
+                <ion-icon name="time-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Hourly Consulting</h4>
+
+                <p class="service-item-text">
+                  Expert guidance for Expo/React Native development, API integrations (e.g., football data), code reviews, bug fixes, architecture consultation, and performance optimization.
+                </p>
+
+                <div class="service-pricing">
+                  <span class="price-amount">$75/hour</span>
+                  <span class="price-type">Hourly Rate</span>
+                </div>
+
+                <a href="#contact" class="btn-pricing" onclick="prefillContactForm('Hourly Consulting', 'Interested in hourly consulting ($75/hour)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false;">
+                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                  Get a Quote
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
                 <ion-icon name="hardware-chip-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
               </div>
 
@@ -1858,32 +1884,6 @@
                 <!-- onclick="prefillContactForm('PC Services', 'Interested in PC services ($100-$300) with Gadget Garage app setup'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false; -->
 
                 <a href="https://gadgetgarage.app" class="btn-pricing">
-                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-                  Get a Quote
-                </a>
-              </div>
-
-            </li>
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <ion-icon name="time-outline" style="font-size: 40px; color: var(--orange-yellow-crayola);"></ion-icon>
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Hourly Consulting</h4>
-
-                <p class="service-item-text">
-                  Expert guidance for Expo/React Native development, API integrations (e.g., football data), code reviews, bug fixes, architecture consultation, and performance optimization.
-                </p>
-
-                <div class="service-pricing">
-                  <span class="price-amount">$75/hour</span>
-                  <span class="price-type">Hourly Rate</span>
-                </div>
-
-                <a href="#contact" class="btn-pricing" onclick="prefillContactForm('Hourly Consulting', 'Interested in hourly consulting ($75/hour)'); if(typeof switchToPage === 'function') { switchToPage('contact'); } return false;">
                   <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
                   Get a Quote
                 </a>
@@ -2503,63 +2503,141 @@
           <label for="blog-content">
             <ion-icon name="code-slash-outline"></ion-icon>
             Content Editor
-            <span class="editor-hint">HTML & Markdown supported</span>
+            <span class="editor-hint">Rich text with HTML & Markdown support</span>
           </label>
           <div class="content-editor">
             <div class="editor-toolbar">
+              <!-- Text Formatting -->
               <div class="toolbar-group">
                 <button type="button" class="editor-btn" data-command="bold" title="Bold (Ctrl+B)">
-                  <ion-icon name="remove-outline"></ion-icon>
-                  <span>B</span>
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Bold</span>
                 </button>
                 <button type="button" class="editor-btn" data-command="italic" title="Italic (Ctrl+I)">
-                  <ion-icon name="remove-outline"></ion-icon>
-                  <span>I</span>
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Italic</span>
                 </button>
-                <button type="button" class="editor-btn" data-command="underline" title="Underline">
-                  <ion-icon name="remove-outline"></ion-icon>
-                  <span>U</span>
+                <button type="button" class="editor-btn" data-command="underline" title="Underline (Ctrl+U)">
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Underline</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="strikethrough" title="Strikethrough">
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Strike</span>
                 </button>
               </div>
+
               <div class="toolbar-separator"></div>
+
+              <!-- Headings & Structure -->
               <div class="toolbar-group">
-                <button type="button" class="editor-btn" data-command="insertHeading" title="Heading">
-                  <ion-icon name="text-outline"></ion-icon>
-                  <span>H</span>
-                </button>
+                <div class="dropdown-container">
+                  <button type="button" class="editor-btn dropdown-trigger" data-command="heading" title="Headings">
+                    <ion-icon name="text-outline"></ion-icon>
+                    <span class="btn-label">H</span>
+                    <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
+                  </button>
+                  <div class="dropdown-menu">
+                    <button type="button" class="dropdown-item" data-command="h1">Heading 1</button>
+                    <button type="button" class="dropdown-item" data-command="h2">Heading 2</button>
+                    <button type="button" class="dropdown-item" data-command="h3">Heading 3</button>
+                    <button type="button" class="dropdown-item" data-command="h4">Heading 4</button>
+                    <button type="button" class="dropdown-item" data-command="h5">Heading 5</button>
+                    <button type="button" class="dropdown-item" data-command="h6">Heading 6</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="toolbar-separator"></div>
+
+              <!-- Lists & Structure -->
+              <div class="toolbar-group">
                 <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Bullet List">
                   <ion-icon name="list-outline"></ion-icon>
+                  <span class="btn-label">List</span>
                 </button>
                 <button type="button" class="editor-btn" data-command="insertOrderedList" title="Numbered List">
                   <ion-icon name="list-outline"></ion-icon>
+                  <span class="btn-label">1. List</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="indent" title="Increase Indent">
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
+                  <span class="btn-label">Indent</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="outdent" title="Decrease Indent">
+                  <ion-icon name="arrow-back-outline"></ion-icon>
+                  <span class="btn-label">Outdent</span>
                 </button>
               </div>
+
               <div class="toolbar-separator"></div>
+
+              <!-- Code & Links -->
               <div class="toolbar-group">
-                <button type="button" class="editor-btn" data-command="insertCode" title="Code Block">
+                <button type="button" class="editor-btn" data-command="insertCode" title="Inline Code">
+                  <ion-icon name="code-outline"></ion-icon>
+                  <span class="btn-label">Code</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="insertCodeBlock" title="Code Block">
                   <ion-icon name="code-slash-outline"></ion-icon>
+                  <span class="btn-label">Code Block</span>
                 </button>
-                <button type="button" class="editor-btn" data-command="insertQuote" title="Quote">
-                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-                </button>
-                <button type="button" class="editor-btn" data-command="insertLink" title="Link">
+                <button type="button" class="editor-btn" data-command="insertLink" title="Insert Link">
                   <ion-icon name="link-outline"></ion-icon>
+                  <span class="btn-label">Link</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="insertQuote" title="Blockquote">
+                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                  <span class="btn-label">Quote</span>
                 </button>
               </div>
+
               <div class="toolbar-separator"></div>
+
+              <!-- Media & Preview -->
               <div class="toolbar-group">
-                <button type="button" class="editor-btn" data-command="preview" title="Preview">
+                <button type="button" class="editor-btn" data-command="insertImage" title="Insert Image">
+                  <ion-icon name="image-outline"></ion-icon>
+                  <span class="btn-label">Image</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="preview" title="Toggle Preview">
                   <ion-icon name="eye-outline"></ion-icon>
+                  <span class="btn-label">Preview</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="fullscreen" title="Fullscreen Editor">
+                  <ion-icon name="expand-outline"></ion-icon>
+                  <span class="btn-label">Fullscreen</span>
                 </button>
               </div>
             </div>
-            <div class="editor-wrapper">
-              <div class="editor-line-numbers" id="editor-line-numbers"></div>
-              <textarea id="blog-content" name="content" rows="20" class="editor-textarea" placeholder="Start writing your blog post...&#10;&#10;You can use HTML tags:&#10;&lt;p&gt;Paragraph text&lt;/p&gt;&#10;&lt;h2&gt;Heading&lt;/h2&gt;&#10;&lt;code&gt;inline code&lt;/code&gt;&#10;&lt;pre&gt;&lt;code&gt;code block&lt;/code&gt;&lt;/pre&gt;&#10;&lt;blockquote&gt;Quote&lt;/blockquote&gt;&#10;&lt;ul&gt;&lt;li&gt;List item&lt;/li&gt;&lt;/ul&gt;"></textarea>
+
+            <div class="editor-container">
+              <div class="editor-wrapper" id="editor-wrapper">
+                <div class="editor-line-numbers" id="editor-line-numbers"></div>
+                <textarea id="blog-content" name="content" class="editor-textarea" placeholder="Start writing your blog post here...&#10;&#10;💡 Pro Tips:&#10;• Use Ctrl+B for bold, Ctrl+I for italic&#10;• Press Tab for indentation&#10;• Ctrl+Shift+7 for ordered lists&#10;• Ctrl+Shift+8 for unordered lists&#10;• Ctrl+Shift+` for code blocks"></textarea>
+              </div>
+
+              <div class="editor-preview" id="editor-preview" style="display: none;">
+                <div class="preview-content"></div>
+              </div>
             </div>
+
             <div class="editor-footer">
-              <span class="char-count">0 characters</span>
-              <span class="word-count">0 words</span>
+              <div class="editor-stats">
+                <span class="char-count"><ion-icon name="text-outline"></ion-icon> 0 characters</span>
+                <span class="word-count"><ion-icon name="document-text-outline"></ion-icon> 0 words</span>
+                <span class="line-count"><ion-icon name="list-outline"></ion-icon> 0 lines</span>
+              </div>
+              <div class="editor-mode">
+                <button type="button" class="mode-toggle active" data-mode="write">
+                  <ion-icon name="create-outline"></ion-icon>
+                  Write
+                </button>
+                <button type="button" class="mode-toggle" data-mode="preview">
+                  <ion-icon name="eye-outline"></ion-icon>
+                  Preview
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -2593,7 +2671,7 @@
         </button>
       </div>
       
-      <form class="add-blog-form" id="edit-blog-form">
+      <form class="add-blog-form" id="edit-blog-form" onsubmit="event.preventDefault(); return false;" action="javascript:void(0);" method="post">
         <input type="hidden" id="edit-blog-id" name="id">
         <div class="form-row">
           <div class="form-group form-group-half">
@@ -2653,63 +2731,141 @@
           <label for="edit-blog-content">
             <ion-icon name="code-slash-outline"></ion-icon>
             Content Editor
-            <span class="editor-hint">HTML & Markdown supported</span>
+            <span class="editor-hint">Rich text with HTML & Markdown support</span>
           </label>
           <div class="content-editor">
             <div class="editor-toolbar">
+              <!-- Text Formatting -->
               <div class="toolbar-group">
-                <button type="button" class="editor-btn" data-command="bold" title="Bold (Ctrl+B)">
-                  <ion-icon name="remove-outline"></ion-icon>
-                  <span>B</span>
+                <button type="button" class="editor-btn" data-command="bold" title="Bold">
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Bold</span>
                 </button>
-                <button type="button" class="editor-btn" data-command="italic" title="Italic (Ctrl+I)">
-                  <ion-icon name="remove-outline"></ion-icon>
-                  <span>I</span>
+                <button type="button" class="editor-btn" data-command="italic" title="Italic">
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Italic</span>
                 </button>
                 <button type="button" class="editor-btn" data-command="underline" title="Underline">
-                  <ion-icon name="remove-outline"></ion-icon>
-                  <span>U</span>
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Underline</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="strikethrough" title="Strikethrough">
+                  <ion-icon name="text-outline"></ion-icon>
+                  <span class="btn-label">Strike</span>
                 </button>
               </div>
+
               <div class="toolbar-separator"></div>
+
+              <!-- Headings & Structure -->
               <div class="toolbar-group">
-                <button type="button" class="editor-btn" data-command="insertHeading" title="Heading">
-                  <ion-icon name="text-outline"></ion-icon>
-                  <span>H</span>
-                </button>
+                <div class="dropdown-container">
+                  <button type="button" class="editor-btn dropdown-trigger" data-command="heading" title="Headings">
+                    <ion-icon name="text-outline"></ion-icon>
+                    <span class="btn-label">H</span>
+                    <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
+                  </button>
+                  <div class="dropdown-menu">
+                    <button type="button" class="dropdown-item" data-command="h1">Heading 1</button>
+                    <button type="button" class="dropdown-item" data-command="h2">Heading 2</button>
+                    <button type="button" class="dropdown-item" data-command="h3">Heading 3</button>
+                    <button type="button" class="dropdown-item" data-command="h4">Heading 4</button>
+                    <button type="button" class="dropdown-item" data-command="h5">Heading 5</button>
+                    <button type="button" class="dropdown-item" data-command="h6">Heading 6</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="toolbar-separator"></div>
+
+              <!-- Lists & Structure -->
+              <div class="toolbar-group">
                 <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Bullet List">
                   <ion-icon name="list-outline"></ion-icon>
+                  <span class="btn-label">List</span>
                 </button>
                 <button type="button" class="editor-btn" data-command="insertOrderedList" title="Numbered List">
                   <ion-icon name="list-outline"></ion-icon>
+                  <span class="btn-label">1. List</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="indent" title="Increase Indent">
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
+                  <span class="btn-label">Indent</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="outdent" title="Decrease Indent">
+                  <ion-icon name="arrow-back-outline"></ion-icon>
+                  <span class="btn-label">Outdent</span>
                 </button>
               </div>
+
               <div class="toolbar-separator"></div>
+
+              <!-- Code & Links -->
               <div class="toolbar-group">
-                <button type="button" class="editor-btn" data-command="insertCode" title="Code Block">
+                <button type="button" class="editor-btn" data-command="insertCode" title="Inline Code">
+                  <ion-icon name="code-outline"></ion-icon>
+                  <span class="btn-label">Code</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="insertCodeBlock" title="Code Block">
                   <ion-icon name="code-slash-outline"></ion-icon>
+                  <span class="btn-label">Code Block</span>
                 </button>
-                <button type="button" class="editor-btn" data-command="insertQuote" title="Quote">
-                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-                </button>
-                <button type="button" class="editor-btn" data-command="insertLink" title="Link">
+                <button type="button" class="editor-btn" data-command="insertLink" title="Insert Link">
                   <ion-icon name="link-outline"></ion-icon>
+                  <span class="btn-label">Link</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="insertQuote" title="Blockquote">
+                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                  <span class="btn-label">Quote</span>
                 </button>
               </div>
+
               <div class="toolbar-separator"></div>
+
+              <!-- Media & Preview -->
               <div class="toolbar-group">
-                <button type="button" class="editor-btn" data-command="preview" title="Preview">
+                <button type="button" class="editor-btn" data-command="insertImage" title="Insert Image">
+                  <ion-icon name="image-outline"></ion-icon>
+                  <span class="btn-label">Image</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="preview" title="Toggle Preview">
                   <ion-icon name="eye-outline"></ion-icon>
+                  <span class="btn-label">Preview</span>
+                </button>
+                <button type="button" class="editor-btn" data-command="fullscreen" title="Fullscreen Editor">
+                  <ion-icon name="expand-outline"></ion-icon>
+                  <span class="btn-label">Fullscreen</span>
                 </button>
               </div>
             </div>
-            <div class="editor-wrapper">
-              <div class="editor-line-numbers" id="edit-editor-line-numbers"></div>
-              <textarea id="edit-blog-content" name="content" rows="20" class="editor-textarea" placeholder="Start writing your blog post...&#10;&#10;You can use HTML tags:&#10;&lt;p&gt;Paragraph text&lt;/p&gt;&#10;&lt;h2&gt;Heading&lt;/h2&gt;&#10;&lt;code&gt;inline code&lt;/code&gt;&#10;&lt;pre&gt;&lt;code&gt;code block&lt;/code&gt;&lt;/pre&gt;&#10;&lt;blockquote&gt;Quote&lt;/blockquote&gt;&#10;&lt;ul&gt;&lt;li&gt;List item&lt;/li&gt;&lt;/ul&gt;"></textarea>
+
+            <div class="editor-container">
+              <div class="editor-wrapper" id="edit-editor-wrapper">
+                <div class="editor-line-numbers" id="edit-editor-line-numbers"></div>
+                <textarea id="edit-blog-content" name="content" class="editor-textarea" placeholder="Start writing your blog post here...&#10;&#10;💡 Pro Tips:&#10;• Press Tab for indentation&#10;• Use markdown formatting for better results"></textarea>
+              </div>
+
+              <div class="editor-preview" id="edit-editor-preview" style="display: none;">
+                <div class="preview-content"></div>
+              </div>
             </div>
+
             <div class="editor-footer">
-              <span class="char-count" id="edit-char-count">0 characters</span>
-              <span class="word-count" id="edit-word-count">0 words</span>
+              <div class="editor-stats">
+                <span class="char-count"><ion-icon name="text-outline"></ion-icon> 0 characters</span>
+                <span class="word-count"><ion-icon name="document-text-outline"></ion-icon> 0 words</span>
+                <span class="line-count"><ion-icon name="list-outline"></ion-icon> 0 lines</span>
+              </div>
+              <div class="editor-mode">
+                <button type="button" class="mode-toggle active" data-mode="write">
+                  <ion-icon name="create-outline"></ion-icon>
+                  Write
+                </button>
+                <button type="button" class="mode-toggle" data-mode="preview">
+                  <ion-icon name="eye-outline"></ion-icon>
+                  Preview
+                </button>
+              </div>
             </div>
           </div>
         </div>

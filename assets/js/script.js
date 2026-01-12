@@ -584,87 +584,528 @@ if (document.readyState === 'loading') {
   initEditorFeatures();
 }
 
-// Enhanced editor toolbar functionality
-editorBtns.forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    const command = this.getAttribute('data-command');
-    
-    if (command === 'preview') {
-      // Preview functionality - could open a preview modal
-      alert('Preview feature coming soon!');
-      return;
+// Enhanced editor functionality with modern features
+class BlogEditor {
+  constructor(container, isEdit = false) {
+    console.log('BlogEditor constructor called for', isEdit ? 'edit' : 'add', 'modal');
+    console.log('Container element:', container ? container.tagName + '.' + container.className : 'null');
+
+    this.container = container;
+    this.isEdit = isEdit;
+
+    // Find the content-editor div within the modal
+    const contentEditor = container.querySelector('.content-editor');
+    console.log('Content editor found:', !!contentEditor);
+
+    if (contentEditor) {
+      this.textarea = contentEditor.querySelector('.editor-textarea');
+      this.preview = contentEditor.querySelector('.preview-content');
+      this.lineNumbers = contentEditor.querySelector('.editor-line-numbers');
+      this.charCount = contentEditor.querySelector('.char-count');
+      this.wordCount = contentEditor.querySelector('.word-count');
+      this.lineCount = contentEditor.querySelector('.line-count');
+      this.modeToggles = contentEditor.querySelectorAll('.mode-toggle');
+      this.editorWrapper = contentEditor.querySelector('.editor-wrapper');
+      this.previewContainer = contentEditor.querySelector('.editor-preview');
+    } else {
+      console.log('Content editor not found, falling back to direct queries');
+      this.textarea = container.querySelector('.editor-textarea');
+      this.preview = container.querySelector('.preview-content');
+      this.lineNumbers = container.querySelector('.editor-line-numbers');
+      this.charCount = container.querySelector('.char-count');
+      this.wordCount = container.querySelector('.word-count');
+      this.lineCount = container.querySelector('.line-count');
+      this.modeToggles = container.querySelectorAll('.mode-toggle');
+      this.editorWrapper = container.querySelector('.editor-wrapper');
+      this.previewContainer = container.querySelector('.editor-preview');
     }
-    
-    if (!contentTextarea) return;
-    
-    contentTextarea.focus();
-    const start = contentTextarea.selectionStart;
-    const end = contentTextarea.selectionEnd;
-    const selectedText = contentTextarea.value.substring(start, end);
+
+    console.log('BlogEditor elements found:', {
+      textarea: !!this.textarea,
+      preview: !!this.preview,
+      previewContainer: !!this.previewContainer,
+      editorWrapper: !!this.editorWrapper,
+      modeToggles: this.modeToggles.length,
+      charCount: !!this.charCount,
+      wordCount: !!this.wordCount,
+      lineCount: !!this.lineCount
+    });
+
+    this.init();
+  }
+
+  init() {
+    console.log('BlogEditor: Initializing editor for', this.isEdit ? 'edit' : 'add', 'modal');
+    console.log('BlogEditor: Found elements:', {
+      textarea: !!this.textarea,
+      preview: !!this.preview,
+      previewContainer: !!this.previewContainer,
+      modeToggles: this.modeToggles.length
+    });
+
+    this.setupToolbar();
+    this.setupKeyboardShortcuts();
+    this.setupModeToggles();
+    this.updateStats();
+    this.updateLineNumbers();
+
+    // Live updates
+    this.textarea.addEventListener('input', () => {
+      this.updateStats();
+      this.updateLineNumbers();
+      if (this.previewContainer.classList.contains('show')) {
+        this.updatePreview();
+      }
+    });
+
+    this.textarea.addEventListener('scroll', () => {
+      if (this.lineNumbers) {
+        this.lineNumbers.scrollTop = this.textarea.scrollTop;
+      }
+    });
+
+    // Tab and Enter handling
+    this.textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = this.textarea.selectionStart;
+        const end = this.textarea.selectionEnd;
+        this.textarea.value = this.textarea.value.substring(0, start) + '  ' + this.textarea.value.substring(end);
+        this.textarea.selectionStart = this.textarea.selectionEnd = start + 2;
+        this.updateStats();
+        this.updateLineNumbers();
+      } else if (e.key === 'Enter') {
+        // Allow Enter key to create new lines normally
+        // Don't prevent default - let the browser handle line breaks
+        setTimeout(() => {
+          this.updateStats();
+          this.updateLineNumbers();
+        }, 0);
+      }
+    });
+
+    console.log('BlogEditor: Initialization complete');
+  }
+
+  setupToolbar() {
+    const buttons = this.container.querySelectorAll('.editor-btn');
+    console.log('BlogEditor: Found', buttons.length, 'toolbar buttons in', this.isEdit ? 'edit' : 'add', 'modal');
+
+    buttons.forEach(btn => {
+      const command = btn.getAttribute('data-command');
+      console.log('BlogEditor: Setting up button with command:', command);
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const command = btn.getAttribute('data-command');
+        console.log('BlogEditor: Toolbar button clicked:', command);
+
+        if (command === 'preview') {
+          this.togglePreview();
+        } else if (command === 'fullscreen') {
+          this.toggleFullscreen();
+        } else if (command.startsWith('h')) {
+          this.insertHeading(command);
+        } else if (command === 'heading') {
+          this.toggleHeadingDropdown(btn);
+        } else {
+          this.executeCommand(command);
+        }
+      });
+    });
+
+    // Setup dropdown menu items
+    const dropdownItems = this.container.querySelectorAll('.dropdown-item');
+    console.log('BlogEditor: Found dropdown items:', dropdownItems.length);
+    dropdownItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const command = item.getAttribute('data-command');
+        console.log('BlogEditor: Dropdown item clicked:', command);
+        if (command && command.startsWith('h')) {
+          this.insertHeading(command);
+          this.closeAllDropdowns();
+        }
+      });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown-container')) {
+        this.closeAllDropdowns();
+      }
+    });
+  }
+
+  setupKeyboardShortcuts() {
+    // Keyboard shortcuts removed for simplicity - can be re-added later if needed
+  }
+
+  setupModeToggles() {
+    this.modeToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const mode = toggle.getAttribute('data-mode');
+        this.setMode(mode);
+
+        // Update active state
+        this.modeToggles.forEach(t => t.classList.remove('active'));
+        toggle.classList.add('active');
+      });
+    });
+  }
+
+  executeCommand(command) {
+    console.log('BlogEditor: Executing command:', command);
+    this.textarea.focus();
+    const start = this.textarea.selectionStart;
+    const end = this.textarea.selectionEnd;
+    const selectedText = this.textarea.value.substring(start, end);
+    console.log('BlogEditor: Selected text length:', selectedText.length);
     let newText = '';
     let cursorPos = start;
-    
+
     switch(command) {
       case 'bold':
-        newText = `<strong>${selectedText || 'bold text'}</strong>`;
+        newText = `**${selectedText || 'bold text'}**`;
         cursorPos = start + (selectedText ? newText.length : 7);
         break;
       case 'italic':
-        newText = `<em>${selectedText || 'italic text'}</em>`;
+        newText = `*${selectedText || 'italic text'}*`;
         cursorPos = start + (selectedText ? newText.length : 8);
         break;
       case 'underline':
         newText = `<u>${selectedText || 'underlined text'}</u>`;
         cursorPos = start + (selectedText ? newText.length : 11);
         break;
-      case 'insertHeading':
-        newText = `<h2>${selectedText || 'Heading'}</h2>`;
-        cursorPos = start + (selectedText ? newText.length : 4);
+      case 'strikethrough':
+        newText = `~~${selectedText || 'strikethrough text'}~~`;
+        cursorPos = start + (selectedText ? newText.length : 11);
         break;
       case 'insertUnorderedList':
-        newText = selectedText 
-          ? `<ul>\n  <li>${selectedText}</li>\n</ul>`
-          : `<ul>\n  <li>List item</li>\n</ul>`;
-        cursorPos = start + newText.length - (selectedText ? 6 : 10);
+        newText = selectedText
+          ? `\n- ${selectedText}\n`
+          : `\n- List item\n`;
+        cursorPos = start + newText.length;
         break;
       case 'insertOrderedList':
         newText = selectedText
-          ? `<ol>\n  <li>${selectedText}</li>\n</ol>`
-          : `<ol>\n  <li>List item</li>\n</ol>`;
-        cursorPos = start + newText.length - (selectedText ? 6 : 10);
+          ? `\n1. ${selectedText}\n`
+          : `\n1. List item\n`;
+        cursorPos = start + newText.length;
         break;
+      case 'indent':
+        this.indentText();
+        return;
+      case 'outdent':
+        this.outdentText();
+        return;
       case 'insertCode':
-        if (selectedText.includes('\n')) {
-          newText = `<pre><code>${selectedText || 'code block'}</code></pre>`;
-        } else {
-          newText = `<code>${selectedText || 'code'}</code>`;
-        }
-        cursorPos = start + (selectedText ? newText.length : (selectedText.includes('\n') ? 17 : 7));
+        newText = `\`${selectedText || 'code'}\``;
+        cursorPos = start + (selectedText ? newText.length : 6);
+        break;
+      case 'insertCodeBlock':
+        newText = selectedText
+          ? `\`\`\`\n${selectedText}\n\`\`\``
+          : `\`\`\`\ncode block\n\`\`\``;
+        cursorPos = start + newText.length;
         break;
       case 'insertQuote':
-        newText = `<blockquote>\n  ${selectedText || 'Quote text'}\n</blockquote>`;
-        cursorPos = start + (selectedText ? newText.length : 11);
+        newText = selectedText
+          ? `> ${selectedText}`
+          : `> Quote text`;
+        cursorPos = start + newText.length;
         break;
       case 'insertLink':
         const url = prompt('Enter URL:', 'https://');
         if (url) {
-          newText = `<a href="${url}" target="_blank">${selectedText || 'link text'}</a>`;
-          cursorPos = start + (selectedText ? newText.length : 10);
+          newText = `[${selectedText || 'link text'}](${url})`;
+          cursorPos = start + (selectedText ? newText.length : 11);
         } else {
-          return; // User cancelled
+          return;
+        }
+        break;
+      case 'insertImage':
+        const imageUrl = prompt('Enter image URL:', 'https://');
+        if (imageUrl) {
+          newText = `![${selectedText || 'Alt text'}](${imageUrl})`;
+          cursorPos = start + (selectedText ? newText.length : 13);
+        } else {
+          return;
         }
         break;
     }
-    
+
     if (newText) {
-      contentTextarea.value = contentTextarea.value.substring(0, start) + newText + contentTextarea.value.substring(end);
-      updateLineNumbers();
-      updateCounts();
-      contentTextarea.focus();
-      contentTextarea.setSelectionRange(cursorPos, cursorPos);
+      this.textarea.value = this.textarea.value.substring(0, start) + newText + this.textarea.value.substring(end);
+      this.textarea.focus();
+      this.textarea.setSelectionRange(cursorPos, cursorPos);
+      this.updateStats();
+      this.updateLineNumbers();
+      if (this.previewContainer.classList.contains('show')) {
+        this.updatePreview();
+      }
     }
-  });
+  }
+
+  insertHeading(level) {
+    this.textarea.focus();
+    const start = this.textarea.selectionStart;
+    const end = this.textarea.selectionEnd;
+    const selectedText = this.textarea.value.substring(start, end);
+    const hashes = '#'.repeat(parseInt(level.replace('h', '')));
+    const newText = `\n${hashes} ${selectedText || 'Heading'}\n`;
+    const cursorPos = start + newText.length;
+
+    this.textarea.value = this.textarea.value.substring(0, start) + newText + this.textarea.value.substring(end);
+    this.textarea.focus();
+    this.textarea.setSelectionRange(cursorPos, cursorPos);
+    this.updateStats();
+    this.updateLineNumbers();
+    if (this.previewContainer.classList.contains('show')) {
+      this.updatePreview();
+    }
+  }
+
+  toggleHeadingDropdown(btn) {
+    const dropdown = btn.closest('.dropdown-container').querySelector('.dropdown-menu');
+    const isOpen = dropdown.classList.contains('show');
+
+    this.closeAllDropdowns();
+
+    if (!isOpen) {
+      dropdown.classList.add('show');
+      btn.classList.add('active');
+    }
+  }
+
+  closeAllDropdowns() {
+    const dropdowns = this.container.querySelectorAll('.dropdown-menu');
+    const triggers = this.container.querySelectorAll('.dropdown-trigger');
+
+    dropdowns.forEach(dropdown => dropdown.classList.remove('show'));
+    triggers.forEach(trigger => trigger.classList.remove('active'));
+  }
+
+  indentText() {
+    const start = this.textarea.selectionStart;
+    const end = this.textarea.selectionEnd;
+    const text = this.textarea.value;
+    const lines = text.split('\n');
+    let newStart = start;
+    let newEnd = end;
+
+    // Find the lines that contain the selection
+    let startLine = 0, endLine = 0;
+    let charCount = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const lineStart = charCount;
+      const lineEnd = charCount + lines[i].length;
+
+      if (start >= lineStart && start <= lineEnd) startLine = i;
+      if (end >= lineStart && end <= lineEnd) endLine = i;
+
+      charCount += lines[i].length + 1; // +1 for newline
+    }
+
+    // Indent each line in the selection
+    for (let i = startLine; i <= endLine; i++) {
+      if (lines[i].trim()) { // Don't indent empty lines
+        lines[i] = '  ' + lines[i];
+        if (i === startLine) newStart += 2;
+        if (i <= endLine) newEnd += 2;
+      }
+    }
+
+    this.textarea.value = lines.join('\n');
+    this.textarea.focus();
+    this.textarea.setSelectionRange(newStart, newEnd);
+    this.updateStats();
+    this.updateLineNumbers();
+  }
+
+  outdentText() {
+    const start = this.textarea.selectionStart;
+    const end = this.textarea.selectionEnd;
+    const text = this.textarea.value;
+    const lines = text.split('\n');
+    let newStart = start;
+    let newEnd = end;
+
+    // Find the lines that contain the selection
+    let startLine = 0, endLine = 0;
+    let charCount = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const lineStart = charCount;
+      const lineEnd = charCount + lines[i].length;
+
+      if (start >= lineStart && start <= lineEnd) startLine = i;
+      if (end >= lineStart && end <= lineEnd) endLine = i;
+
+      charCount += lines[i].length + 1;
+    }
+
+    // Outdent each line in the selection
+    for (let i = startLine; i <= endLine; i++) {
+      if (lines[i].startsWith('  ')) {
+        lines[i] = lines[i].substring(2);
+        if (i === startLine) newStart = Math.max(0, newStart - 2);
+        if (i <= endLine) newEnd = Math.max(0, newEnd - 2);
+      } else if (lines[i].startsWith('\t')) {
+        lines[i] = lines[i].substring(1);
+        if (i === startLine) newStart = Math.max(0, newStart - 1);
+        if (i <= endLine) newEnd = Math.max(0, newEnd - 1);
+      }
+    }
+
+    this.textarea.value = lines.join('\n');
+    this.textarea.focus();
+    this.textarea.setSelectionRange(newStart, newEnd);
+    this.updateStats();
+    this.updateLineNumbers();
+  }
+
+  togglePreview() {
+    console.log('BlogEditor: Toggle preview called for', this.isEdit ? 'edit' : 'add', 'modal');
+    console.log('BlogEditor: previewContainer exists:', !!this.previewContainer);
+    if (this.previewContainer) {
+      console.log('BlogEditor: previewContainer classList:', this.previewContainer.classList.toString());
+    }
+    const isPreview = this.previewContainer && this.previewContainer.classList.contains('show');
+    console.log('BlogEditor: Current preview state:', isPreview);
+
+    if (isPreview) {
+      console.log('BlogEditor: Switching to write mode');
+      this.setMode('write');
+    } else {
+      console.log('BlogEditor: Switching to preview mode');
+      this.setMode('preview');
+    }
+  }
+
+  setMode(mode) {
+    console.log('BlogEditor: Setting mode to:', mode);
+    if (mode === 'preview') {
+      console.log('BlogEditor: Activating preview mode');
+      if (this.editorWrapper) {
+        this.editorWrapper.style.display = 'none';
+      }
+      if (this.previewContainer) {
+        this.previewContainer.style.display = 'block';
+        this.previewContainer.classList.add('show');
+        this.updatePreview();
+      } else {
+        console.log('BlogEditor: Preview container not found');
+      }
+    } else {
+      console.log('BlogEditor: Activating write mode');
+      if (this.editorWrapper) {
+        this.editorWrapper.style.display = 'flex';
+      }
+      if (this.previewContainer) {
+        this.previewContainer.style.display = 'none';
+        this.previewContainer.classList.remove('show');
+      }
+    }
+
+    // Update toggle buttons
+    console.log('BlogEditor: Updating toggle buttons');
+    this.modeToggles.forEach(toggle => {
+      toggle.classList.toggle('active', toggle.getAttribute('data-mode') === mode);
+    });
+  }
+
+  updatePreview() {
+    console.log('BlogEditor: Updating preview');
+    if (!this.preview) {
+      console.log('BlogEditor: Preview element not found');
+      return;
+    }
+
+    // Simple markdown-like preview (can be enhanced with a proper markdown parser)
+    const content = this.textarea.value;
+    console.log('BlogEditor: Preview content length:', content.length);
+    let html = content
+      .replace(/\n/g, '<br>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/~~(.*?)~~/g, '<del>$1</del>')
+      .replace(/`(.*?)`/g, '<code>$1</code>')
+      .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+      .replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>')
+      .replace(/^### (.*)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.*)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.*)$/gm, '<h1>$1</h1>')
+      .replace(/^\- (.*)$/gm, '<ul><li>$1</li></ul>')
+      .replace(/^\d+\. (.*)$/gm, '<ol><li>$1</li></ol>')
+      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%;">');
+
+    this.preview.innerHTML = html;
+  }
+
+  toggleFullscreen() {
+    const container = this.container.closest('.add-blog-modal');
+    if (container) {
+      container.classList.toggle('fullscreen-editor');
+    }
+  }
+
+  updateStats() {
+    if (!this.charCount || !this.wordCount || !this.lineCount) return;
+
+    const text = this.textarea.value;
+    const chars = text.length;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const lines = text.split('\n').length;
+
+    this.charCount.innerHTML = `<ion-icon name="text-outline"></ion-icon> ${chars.toLocaleString()}`;
+    this.wordCount.innerHTML = `<ion-icon name="document-text-outline"></ion-icon> ${words.toLocaleString()}`;
+    this.lineCount.innerHTML = `<ion-icon name="list-outline"></ion-icon> ${lines.toLocaleString()}`;
+  }
+
+  updateLineNumbers() {
+    if (!this.lineNumbers) return;
+
+    const lines = this.textarea.value.split('\n').length;
+    let lineNumbersHtml = '';
+
+    for (let i = 1; i <= Math.max(lines, 20); i++) {
+      lineNumbersHtml += `${i}<br>`;
+    }
+
+    this.lineNumbers.innerHTML = lineNumbersHtml;
+  }
+}
+
+// Initialize editors when modals are opened
+function initializeEditor(modalId, isEdit = false) {
+  console.log('initializeEditor called for modal:', modalId, 'isEdit:', isEdit);
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    console.log('Modal element found:', modalId, 'tagName:', modal.tagName, 'className:', modal.className);
+    const editorKey = isEdit ? 'editEditor' : 'addEditor';
+    console.log('Using editor key:', editorKey);
+
+    // Always reinitialize to ensure fresh state
+    if (window[editorKey]) {
+      console.log('Cleaning up existing editor instance');
+      delete window[editorKey];
+    }
+
+    console.log('Creating new BlogEditor instance for modal:', modalId);
+    window[editorKey] = new BlogEditor(modal, isEdit);
+    console.log('Editor initialized successfully:', editorKey);
+    return window[editorKey];
+  }
+  console.log('Modal element not found:', modalId);
+  return null;
+}
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Editors will be initialized when modals are opened
 });
 
 // Handle form submission - attach listener when DOM is ready
@@ -874,6 +1315,9 @@ function openEditBlogModal(postId) {
     showErrorMessage('Access denied. Admin privileges required to edit blog posts.');
     return;
   }
+
+  // Initialize editor for edit blog modal
+  initializeEditor('edit-blog-modal', true);
   
   // Additional check: Ensure we're in admin context (not public blog page)
   const adminBlogPostsList = document.getElementById('admin-blog-posts-list');
@@ -899,13 +1343,20 @@ function openEditBlogModal(postId) {
   document.getElementById('edit-blog-date').value = post.date;
   document.getElementById('edit-blog-image').value = post.image || '';
   document.getElementById('edit-blog-excerpt').value = post.excerpt;
-  editContentTextarea.value = post.content;
-
-  // Update counts and line numbers
-  setTimeout(function() {
-    updateEditLineNumbers();
-    updateEditCounts();
-  }, 100);
+  
+  // Set content using editor instance if available
+  const editTextarea = document.getElementById('edit-blog-content');
+  if (editTextarea) {
+    editTextarea.value = post.content;
+    
+    // Update editor stats if editor is initialized
+    if (window.editEditor) {
+      setTimeout(() => {
+        window.editEditor.updateStats();
+        window.editEditor.updateLineNumbers();
+      }, 100);
+    }
+  }
 
   // Open modal with forced visibility
   if (editBlogModal) {
@@ -1095,6 +1546,9 @@ function openAddBlogModal() {
     showErrorMessage('Access denied. Admin privileges required to add blog posts.');
     return;
   }
+
+  // Initialize editor for add blog modal
+  initializeEditor('add-blog-modal', false);
   
   // Additional check: Ensure we're in admin context (not public blog page)
   const adminBlogPostsList = document.getElementById('admin-blog-posts-list');
