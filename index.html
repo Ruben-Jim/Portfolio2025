@@ -2323,7 +2323,7 @@
             </div>
           </div>
 
-          <div class="messages-list" id="messages-list">
+          <div class="messages-list has-scrollbar" id="messages-list">
             <!-- Messages will be populated here -->
             <div class="no-messages">
               <ion-icon name="mail-outline"></ion-icon>
@@ -2679,7 +2679,7 @@
         </button>
       </div>
       
-      <form class="add-blog-form" id="edit-blog-form" onsubmit="event.preventDefault(); return false;" action="javascript:void(0);" method="post">
+      <form class="add-blog-form has-scrollbar id="edit-blog-form" onsubmit="event.preventDefault(); return false;" action="javascript:void(0);" method="post">
         <input type="hidden" id="edit-blog-id" name="id">
         <div class="form-row">
           <div class="form-group form-group-half">
@@ -2850,7 +2850,7 @@
             <div class="editor-container">
               <div class="editor-wrapper" id="edit-editor-wrapper">
                 <div class="editor-line-numbers" id="edit-editor-line-numbers"></div>
-                <textarea id="edit-blog-content" name="content" class="editor-textarea" placeholder="Start writing your blog post here...&#10;&#10;💡 Pro Tips:&#10;• Press Tab for indentation&#10;• Use markdown formatting for better results"></textarea>
+                <textarea id="edit-blog-content" name="content" class="editor-textarea has-scrollbar" placeholder="Start writing your blog post here...&#10;&#10;💡 Pro Tips:&#10;• Press Tab for indentation&#10;• Use markdown formatting for better results"></textarea>
               </div>
 
               <div class="editor-preview" id="edit-editor-preview" style="display: none;">

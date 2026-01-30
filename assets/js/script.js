@@ -3204,7 +3204,7 @@ window.addEventListener('load', function() {
           </div>
           <p class="message-card-email">${message.email || ''}</p>
           <p class="message-card-subject">${message.subject || 'No subject'}</p>
-            <div class="message-card-text">${(message.message || '').replace(/\n/g, '<br>')}</div>
+            <div class="message-card-text has-scrollbar">${(message.message || '').replace(/\n/g, '<br>')}</div>
             <div class="message-card-footer">
           <p class="message-card-date">${formatDate(message.timestamp)}</p>
           ${message.source ? `<p class="message-card-source">Source: ${message.source}</p>` : ''}
