@@ -5,6 +5,7 @@ const FIREBASE_CONFIG = {
   // Use Firebase hosting domain for authDomain (always authorized)
   // Your custom domain (rubenjimenez.dev) should be in Authorized domains list
   authDomain: "portfolio-2578e.firebaseapp.com",
+  databaseURL: "https://portfolio-2578e-default-rtdb.firebaseio.com",
   projectId: "portfolio-2578e",
   storageBucket: "portfolio-2578e.firebasestorage.app",
   messagingSenderId: "980239353589",

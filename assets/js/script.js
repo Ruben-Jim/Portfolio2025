@@ -1455,14 +1455,20 @@ if (editBlogForm) {
       submitBtn.textContent = 'Updating...';
       
       const formData = new FormData(this);
+      const contentEl = document.getElementById('edit-blog-content');
       const updatedPost = {
         title: formData.get('title'),
         category: formData.get('category'),
         date: formData.get('date'),
         image: formData.get('image') || './assets/images/blog-1.jpg',
         excerpt: formData.get('excerpt'),
-        content: formData.get('content')
+        content: (contentEl && contentEl.value) || formData.get('content') || ''
       };
+      
+      if (!postId) {
+        showErrorMessage('Post ID is missing. Please close and reopen the edit modal.');
+        return;
+      }
       
       // Update in Firestore
       await updateBlogPostInFirestore(postId, updatedPost);
