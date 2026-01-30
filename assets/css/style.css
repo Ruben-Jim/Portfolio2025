@@ -2159,6 +2159,22 @@ textarea.form-input::-webkit-resizer { display: none; }
 
 @media (min-width: 450px) {
 
+  body::-webkit-scrollbar { width: 20px; }
+
+  body::-webkit-scrollbar-track { background: var(--smoky-black); }
+
+  body::-webkit-scrollbar-thumb {
+    border: 5px solid var(--smoky-black);
+    background: var(--orange-yellow-crayola);
+    border-radius: 20px;
+    box-shadow: inset 1px 1px 0 var(--vegas-gold),
+                inset -1px -1px 0 var(--vegas-gold);
+  }
+
+  body::-webkit-scrollbar-thumb:hover { background: var(--vegas-gold); }
+
+  body::-webkit-scrollbar-button { height: 60px; }
+
   /**
    * client
    */
@@ -2189,6 +2205,22 @@ textarea.form-input::-webkit-resizer { display: none; }
   /**
    * CUSTOM PROPERTY
    */
+
+   body::-webkit-scrollbar { width: 20px; }
+
+   body::-webkit-scrollbar-track { background: var(--smoky-black); }
+ 
+   body::-webkit-scrollbar-thumb {
+     border: 5px solid var(--smoky-black);
+     background: var(--orange-yellow-crayola);
+     border-radius: 20px;
+     box-shadow: inset 1px 1px 0 var(--vegas-gold),
+                 inset -1px -1px 0 var(--vegas-gold);
+   }
+ 
+   body::-webkit-scrollbar-thumb:hover { background: var(--vegas-gold); }
+ 
+   body::-webkit-scrollbar-button { height: 60px; }
 
   :root {
 
@@ -2514,6 +2546,22 @@ textarea.form-input::-webkit-resizer { display: none; }
    * REUSED STYLE
    */
 
+   body::-webkit-scrollbar { width: 20px; }
+
+   body::-webkit-scrollbar-track { background: var(--smoky-black); }
+ 
+   body::-webkit-scrollbar-thumb {
+     border: 5px solid var(--smoky-black);
+     background: var(--orange-yellow-crayola);
+     border-radius: 20px;
+     box-shadow: inset 1px 1px 0 var(--vegas-gold),
+                 inset -1px -1px 0 var(--vegas-gold);
+   }
+ 
+   body::-webkit-scrollbar-thumb:hover { background: var(--vegas-gold); }
+ 
+   body::-webkit-scrollbar-button { height: 60px; }
+
   .sidebar, article { width: 700px; }
 
   .has-scrollbar::-webkit-scrollbar-button { width: 100px; }
@@ -2613,6 +2661,22 @@ textarea.form-input::-webkit-resizer { display: none; }
   /**
    * CUSTOM PROPERTY
    */
+
+   body::-webkit-scrollbar { width: 20px; }
+
+   body::-webkit-scrollbar-track { background: var(--smoky-black); }
+ 
+   body::-webkit-scrollbar-thumb {
+     border: 5px solid var(--smoky-black);
+     background: var(--orange-yellow-crayola);
+     border-radius: 20px;
+     box-shadow: inset 1px 1px 0 var(--vegas-gold),
+                 inset -1px -1px 0 var(--vegas-gold);
+   }
+ 
+   body::-webkit-scrollbar-thumb:hover { background: var(--vegas-gold); }
+ 
+   body::-webkit-scrollbar-button { height: 60px; }
 
   :root {
 
@@ -4797,6 +4861,9 @@ textarea.form-input::-webkit-resizer { display: none; }
 }
 
 .admin-stats-section .service-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
   text-align: center;
   min-height: auto;
@@ -4804,6 +4871,14 @@ textarea.form-input::-webkit-resizer { display: none; }
 
 .admin-stats-section .service-icon-box {
   margin-bottom: 12px;
+}
+
+.admin-stats-section .service-content-box {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .admin-stats-section .service-item-title {
@@ -4828,8 +4903,10 @@ textarea.form-input::-webkit-resizer { display: none; }
   background: rgba(255, 217, 90, 0.1);
   border-radius: 8px;
   border: 1px solid rgba(255, 217, 90, 0.3);
-  display: inline-block;
+  display: block;
   min-width: 60px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .service-actions {
@@ -5430,7 +5507,7 @@ article.contact[data-page="contact"] {
 @media (min-width: 768px) {
   #admin-dashboard-content .message-grid,
   .messages-list .message-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 
