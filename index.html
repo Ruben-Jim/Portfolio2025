@@ -2248,6 +2248,10 @@
               <ion-icon name="log-out-outline"></ion-icon>
               Logout
             </button>
+            <button class="btn btn-primary admin-ops-btn" id="show-ops-manual">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <span>Business Ops Manual</span>
+            </button>
           </div>
         </section>
 
@@ -2356,6 +2360,7 @@
 
         </div> <!-- End admin-dashboard-content -->
 
+
         <!-- Admin Login Modal (moved inside admin tab) -->
         <div class="login-modal" id="admin-login-modal">
           <div class="login-overlay" id="admin-login-overlay"></div>
@@ -2437,6 +2442,7 @@
   </main>
 
   <!-- Blog Management Modals (Global - accessible from any page) -->
+  
   <!-- Add a Blog Post Modal -->
   <div class="add-blog-modal" id="add-blog-modal">
     <div class="add-blog-overlay" id="add-blog-overlay"></div>
@@ -2897,6 +2903,456 @@
       </form>
     </div>
   </div>
+
+  <!-- Business Ops Manual Modal -->
+  <div class="ops-modal" id="ops-modal">
+    <div class="ops-overlay" id="ops-overlay"></div>
+    
+    <div class="ops-content">
+      <!-- Header -->
+      <div class="ops-header">
+        <div class="header-left">
+          <ion-icon name="settings-outline" class="header-icon"></ion-icon>
+          <h3 class="h3">Business Operations Manual</h3>
+          <span class="editor-badge">INTERNAL PROTOCOL</span>
+        </div>
+        <button class="ops-close-btn" id="ops-close-btn">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      
+      <!-- Scrollable content area -->
+      <div class="ops-body has-scrollbar" id="ops-body">
+        <div class="ops-wrapper">
+          <!-- Full content from Master-Protocol -->
+          <header class="mb-12">
+            <h1 class="text-4xl font-bold tracking-tight">Internal <span class="accent">Operations</span></h1>
+            <p class="text-zinc-500 font-medium">Ruben Jimenez Systems — Performance Engineering Protocol</p>
+            <br>
+          </header>
+
+          <div class="ops-card cursor-pointer hover:shadow-xl transition-all" id="open-sales-routine">
+            <h2 class="text-xl font-semibold text-accent mb-3 flex items-center gap-3">
+              <ion-icon name="alarm-outline" class="text-2xl"></ion-icon>
+              The "1-2 Sales" Daily Routine
+            </h2>
+            <p class="text-zinc-400">
+              2h deep work + 30min show your work + 1h outreach  
+              <span class="text-vegas-gold font-medium">→ daily momentum engine</span>
+            </p>
+          </div>
+
+          <!-- 2. Product Inventory -->
+          <section class="ops-card">
+            <h2>Product Inventory</h2>
+            <div class="phase-grid mt-6">
+              <div class="phase-box">
+                <span class="tag">Standard</span>
+                <h3 class="text-lg font-semibold mt-3 mb-2">Managed Turn-Key (SaaS)</h3>
+                <ol class="step-list text-sm">
+                  <li>Client rents performance + hosting.</li>
+                  <li>Ruben owns code/repo/infrastructure.</li>
+                  <li>Deliverable: Branded app in stores + admin access.</li>
+                  <li>Pricing: $1,500 setup + $49/mo maintenance.</li>
+                </ol>
+              </div>
+              <div class="phase-box">
+                <span class="tag">Enterprise</span>
+                <h3 class="text-lg font-semibold mt-3 mb-2">Asset Buyout (Transfer)</h3>
+                <ol class="step-list text-sm">
+                  <li>Client purchases full source code + IP.</li>
+                  <li>Client manages hosting (Convex/Firebase).</li>
+                  <li>Deliverable: GitHub repo transfer + documentation.</li>
+                  <li>Pricing: $5,000–$10,000+ one-time fee.</li>
+                </ol>
+              </div>
+            </div>
+          </section>
+
+          <!-- Replace the full Turn-Key section with this card -->
+          <div class="ops-card cursor-pointer hover:shadow-xl transition-all" id="open-turnkey">
+            <h2 class="text-xl font-semibold text-accent mb-3 flex items-center gap-3">
+              <ion-icon name="build-outline" class="text-2xl"></ion-icon>
+              Turn-Key Client Architecture
+            </h2>
+            <p class="text-zinc-400">
+              4-phase process from lead ingestion to deployment & handover
+            </p>
+          </div>
+
+          <!-- End-to-End Client Flow -->
+          <div class="ops-card cursor-pointer hover:shadow-xl transition-all" id="open-endtoend">
+            <h2 class="text-xl font-semibold text-accent mb-3 flex items-center gap-3">
+              <ion-icon name="git-network-outline" class="text-2xl"></ion-icon>
+              End-to-End Client Flow
+            </h2>
+            <p class="text-zinc-400">
+              Fit & Filter → Asset Transfer (Buyout / HOA)
+            </p>
+          </div>
+
+          <!-- Questions to Personalize Flow – questions now in accent color -->
+          <div class="ops-card cursor-pointer hover:shadow-xl transition-all" id="open-questions">
+            <h2 class="text-xl font-semibold text-accent mb-3 flex items-center gap-3">
+              <ion-icon name="help-circle-outline" class="text-2xl"></ion-icon>
+              Questions to Personalize Your Flow
+            </h2>
+            <p class="text-zinc-400">
+              6 key decision points that shape scope, ownership & pricing
+            </p>
+          </div>
+
+          <!-- Component Mix-and-Match -->
+          <div class="ops-card cursor-pointer hover:shadow-xl transition-all" id="open-components">
+            <h2 class="text-xl font-semibold text-accent mb-3 flex items-center gap-3">
+              <ion-icon name="puzzle-outline" class="text-2xl"></ion-icon>
+              Component Mix-and-Match
+            </h2>
+            <p class="text-zinc-400">
+              Reuse proven modules from private library – never rewrite
+            </p>
+          </div>
+
+          <!-- Maintenance & Retainer -->
+          <section class="ops-card">
+            <h2>Maintenance & Retainer</h2>
+            <div class="phase-grid">
+              <div class="phase-box">
+                <p class="accent font-semibold mb-2 uppercase tracking-tighter">In Scope</p>
+                <ul class="space-y-1 opacity-80 text-xs">
+                  <li>● Database Hosting Costs</li>
+                  <li>● API Versioning Updates</li>
+                  <li>● UI Text/Content Refinement</li>
+                  <li>● Error Log Monitoring</li>
+                </ul>
+              </div>
+              <div class="phase-box">
+                <p class="text-zinc-500 font-semibold mb-2 uppercase tracking-tighter">Out of Scope</p>
+                <ul class="space-y-1 opacity-50 text-xs">
+                  <li>● Core Feature Development</li>
+                  <li>● Custom 3rd Party API Setup</li>
+                  <li>● Staff Training Sessions</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Legal & Safety Guardrails -->
+          <section class="ops-card">
+            <h2>Legal & Safety Guardrails</h2>
+            <div class="phase-grid">
+              <div class="phase-box">
+                <h4 class="text-xs font-bold text-white uppercase">Non-Resale Protection</h4>
+                <p class="text-[11px] text-zinc-400 italic">Code transfers are single-entity use only. Client legally barred from reselling.</p>
+              </div>
+              <div class="phase-box">
+                <h4 class="text-xs font-bold text-white uppercase">Liability Cap</h4>
+                <p class="text-[11px] text-zinc-400 italic">No responsibility for business loss due to 3rd party (Convex/Google) downtime.</p>
+              </div>
+              <div class="phase-box">
+                <h4 class="text-xs font-bold text-white uppercase">As-Is Clause</h4>
+                <p class="text-[11px] text-zinc-400 italic">Software delivered as-is. Not liable for server-side data loss or lead/revenue impact.</p>
+              </div>
+            </div>
+          </section>
+
+          <footer class="mt-12 text-center">
+            <p class="text-[10px] text-zinc-600 uppercase tracking-[5px]">© 2026 Ruben Jimenez Systems</p>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+     1-2 SALES DAILY ROUTINE MODAL
+───────────────────────────────────────────── -->
+  <div class="sales-modal" id="sales-modal">
+    <div class="sales-overlay" id="sales-overlay"></div>
+    
+    <div class="sales-content">
+      <!-- Header -->
+      <div class="sales-header">
+        <div class="header-left">
+          <ion-icon name="alarm-outline" class="header-icon"></ion-icon>
+          <h3 class="h3">The "1-2 Sales" Daily Routine</h3>
+          <span class="editor-badge">CORE HABIT</span>
+        </div>
+        <button class="sales-close-btn modal-close-btn" id="sales-close-btn">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      
+      <!-- Scrollable content -->
+      <div class="sales-body has-scrollbar" id="sales-body">
+        <div class="sales-wrapper">
+          <section class="ops-card">
+            <div class="phase-grid">
+              <div class="phase-box">
+                <span class="tag">Deep Work</span>
+                <h3 class="text-lg mt-3 mb-2">2 Hours</h3>
+                <ol class="step-list">
+                  <li>Review current master template status (SQLite/Convex sync, Reanimated UI).</li>
+                  <li>Improve one reusable module (e.g., offline lead capture, instant search).</li>
+                  <li>Test deployment speed: clone → brand → run in < 3 days target.</li>
+                  <li>Commit changes to private repo with clear notes.</li>
+                </ol>
+              </div>
+              <div class="phase-box">
+                <span class="tag">Show Your Work</span>
+                <h3 class="text-lg mt-3 mb-2">30 Minutes</h3>
+                <ol class="step-list">
+                  <li>Choose one high-value feature (e.g., 0ms offline sync demo).</li>
+                  <li>Record 60-second screen capture (clean UI, voice-over or captions).</li>
+                  <li>Write short caption + industry tag.</li>
+                  <li>Post to LinkedIn, X, IG/TikTok — include procleaning.expo.app link.</li>
+                </ol>
+              </div>
+              <div class="phase-box">
+                <span class="tag">Direct Outreach</span>
+                <h3 class="text-lg mt-3 mb-2">1 Hour</h3>
+                <ol class="step-list">
+                  <li>Find 5 local businesses (cleaning/roofing/real estate/solar) via Google Maps/Yelp.</li>
+                  <li>Personalize DM/email: mention their industry + pain point (slow apps, bad signal).</li>
+                  <li>Send message with procleaning.expo.app link + 2-min demo offer.</li>
+                  <li>Log contact in CRM (Obsidian note) with follow-up date.</li>
+                </ol>
+              </div>
+            </div>
+          </section>
+
+          <!-- Optional quick summary or motivational note at bottom -->
+          <div class="mt-8 text-center text-zinc-500 text-sm">
+            Consistency beats intensity.  
+            Do these three blocks every day → momentum compounds fast.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+     TURN-KEY CLIENT ARCHITECTURE MODAL
+───────────────────────────────────────────── -->
+<div class="turnkey-modal" id="turnkey-modal">
+  <div class="turnkey-overlay" id="turnkey-overlay"></div>
+  <div class="turnkey-content">
+    <div class="turnkey-header">
+      <div class="header-left">
+        <ion-icon name="build-outline" class="header-icon"></ion-icon>
+        <h3 class="h3">Turn-Key Client Architecture</h3>
+        <span class="editor-badge">FULL PROCESS</span>
+      </div>
+      <button class="turnkey-close-btn modal-close-btn" id="turnkey-close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+    <div class="turnkey-body has-scrollbar" id="turnkey-body">
+      <div class="turnkey-wrapper">
+        <section class="ops-card">
+          <div class="phase-grid">
+            <!-- Phase 1 -->
+            <div class="phase-box">
+              <span class="tag">Phase 1</span>
+              <h3 class="text-lg mt-3 mb-2 accent">Ingestion (The Lead)</h3>
+              <ol class="step-list">
+                <li>Receive lead (DM, email, social reply) or send proactive outreach.</li>
+                <li>Send procleaning.expo.app demo link immediately.</li>
+                <li>Wait for response (“looks good, can it do X?”).</li>
+                <li>Reply with branded 1-Page Sales PDF (anchors $1,500 price).</li>
+                <li>Log interaction in Obsidian CRM note.</li>
+              </ol>
+            </div>
+            <!-- Phase 2 -->
+            <div class="phase-box">
+              <span class="tag">Phase 2</span>
+              <h3 class="text-lg mt-3 mb-2 accent">Commitment (The Close)</h3>
+              <ol class="step-list">
+                <li>Schedule 15-minute Fit Call (strategy, not sales pitch).</li>
+                <li>Ask qualifying questions: employee count, iOS/Android mix, current tools.</li>
+                <li>Send digital contract via DocuSign/HelloSign (define Turn-Key vs Custom scope).</li>
+                <li>Generate Stripe Checkout link for 50% deposit ($750).</li>
+                <li>Confirm payment → move note to “Active Projects” folder in Obsidian.</li>
+              </ol>
+            </div>
+            <!-- Phase 3 -->
+            <div class="phase-box">
+              <span class="tag">Phase 3</span>
+              <h3 class="text-lg mt-3 mb-2 accent">Execution (The Build)</h3>
+              <ol class="step-list">
+                <li>Send onboarding form link (logo vector, hex colors, services list, pricing).</li>
+                <li>Clone private GitHub Roof-Cleaning-Template into new private repo.</li>
+                <li>Apply branding (logo, colors) + inject client backend credentials.</li>
+                <li>Customize logic (3–5 days max) based on paid scope.</li>
+                <li>Test offline/online sync, Reanimated UI, core features.</li>
+                <li>Commit changes with clear messages; notify client of progress.</li>
+              </ol>
+            </div>
+            <!-- Phase 4 -->
+            <div class="phase-box">
+              <span class="tag">Phase 4</span>
+              <h3 class="text-lg mt-3 mb-2 accent">Deployment (The Handover)</h3>
+              <ol class="step-list">
+                <li>Generate TestFlight (iOS) / Expo Internal Testing (Android) link.</li>
+                <li>Send beta link to client for review.</li>
+                <li>Receive approval email/text: “Looks good to go”.</li>
+                <li>Charge remaining 50% ($750) via Stripe.</li>
+                <li>Publish to App Stores (your dev account or client’s).</li>
+                <li>Activate $49/mo auto-pay (Managed SaaS only).</li>
+                <li>Hand over admin credentials + basic usage doc.</li>
+              </ol>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+     END-TO-END CLIENT FLOW MODAL
+───────────────────────────────────────────── -->
+<div class="endtoend-modal" id="endtoend-modal">
+  <div class="endtoend-overlay" id="endtoend-overlay"></div>
+  <div class="endtoend-content">
+    <div class="endtoend-header">
+      <div class="header-left">
+        <ion-icon name="git-network-outline" class="header-icon"></ion-icon>
+        <h3 class="h3">End-to-End Client Flow</h3>
+        <span class="editor-badge">COMPLETE JOURNEY</span>
+      </div>
+      <button class="endtoend-close-btn modal-close-btn" id="endtoend-close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+    <div class="endtoend-body has-scrollbar" id="endtoend-body">
+      <div class="endtoend-wrapper">
+        <section class="ops-card">
+          <div class="phase-grid">
+            <div class="phase-box">
+              <span class="tag">Fit & Filter</span>
+              <ol class="step-list">
+                <li>Client inquires or responds to outreach.</li>
+                <li>Request: GitHub username of tech lead + billing email for cloud.</li>
+                <li>Determine path: Managed SaaS → standard Turn-Key | Buyout → asset transfer.</li>
+                <li>Send appropriate contract template.</li>
+              </ol>
+            </div>
+            <div class="phase-box">
+              <span class="tag">Asset Transfer (Buyout / HOA)</span>
+              <ol class="step-list">
+                <li>Code Audit: Remove all personal API keys; convert to ENV variables.</li>
+                <li>Send Stripe Invoice for Source Code Release Fee.</li>
+                <li>Wait for full payment clearance.</li>
+                <li>Transfer GitHub repo ownership to client’s GitHub Org.</li>
+                <li>Migrate Convex team: invite client as Admin, swap billing card, remove self.</li>
+                <li>Transfer Expo project to client Org (if applicable).</li>
+                <li>Send signed Exit Agreement: “No ongoing responsibility post-transfer”.</li>
+                <li>Archive project in Obsidian + mark complete.</li>
+              </ol>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+     QUESTIONS TO PERSONALIZE YOUR FLOW MODAL
+───────────────────────────────────────────── -->
+<div class="questions-modal" id="questions-modal">
+  <div class="questions-overlay" id="questions-overlay"></div>
+  <div class="questions-content">
+    <div class="questions-header">
+      <div class="header-left">
+        <ion-icon name="help-circle-outline" class="header-icon"></ion-icon>
+        <h3 class="h3">Questions to Personalize Your Flow</h3>
+        <span class="editor-badge">QUALIFICATION</span>
+      </div>
+      <button class="questions-close-btn modal-close-btn" id="questions-close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+    <div class="questions-body has-scrollbar" id="questions-body">
+      <div class="questions-wrapper">
+        <section class="ops-card">
+          <div class="phase-grid">
+            <div class="phase-box">
+              <p class="question">1. Scope Creep Limit</p>
+              <p class="text-sm opacity-80">$1,500 Turn-Key = Branding + 1 Custom Form only. Extra screens/logic = separate SOW + fee.</p>
+            </div>
+            <div class="phase-box">
+              <p class="question">2. App Store Ownership</p>
+              <p class="text-sm opacity-80">A: Agency model (Ruben owns/publishes).<br>B: Client owns (pays Apple $99/yr + Google $25/yr fees).</p>
+            </div>
+            <div class="phase-box">
+              <p class="question">3. Payment Structure</p>
+              <p class="text-sm opacity-80">Stripe or PayPal business account. Preferred: send textable Checkout link for 50% deposit.</p>
+            </div>
+            <div class="phase-box">
+              <p class="question">4. Emergency SLA ($49/mo)</p>
+              <p class="text-sm opacity-80">Standard: 48-hour response. Instant/weekend fixes only with Premium SLA add-on.</p>
+            </div>
+            <div class="phase-box">
+              <p class="question">5. Content Collection</p>
+              <p class="text-sm opacity-80">Require vector/SVG files only. Blurry/low-res logos = $100 flat redesign fee.</p>
+            </div>
+            <div class="phase-box">
+              <p class="question">6. Legal Protection</p>
+              <p class="text-sm opacity-80">SOW must contain: “Software as-is. Engineer not liable for server downtime or lost leads.”</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+     COMPONENT MIX-AND-MATCH MODAL
+───────────────────────────────────────────── -->
+<div class="components-modal" id="components-modal">
+  <div class="components-overlay" id="components-overlay"></div>
+  <div class="components-content">
+    <div class="components-header">
+      <div class="header-left">
+        <ion-icon name="puzzle-outline" class="header-icon"></ion-icon>
+        <h3 class="h3">Component Mix-and-Match</h3>
+        <span class="editor-badge">REUSE LIBRARY</span>
+      </div>
+      <button class="components-close-btn modal-close-btn" id="components-close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+    <div class="components-body has-scrollbar" id="components-body">
+      <div class="components-wrapper">
+        <section class="ops-card">
+          <p class="text-sm mb-4">Never rewrite — import proven modules from private library.</p>
+          <div class="phase-grid">
+            <div class="phase-box">
+              <p class="accent font-medium mb-2">Private Library Structure</p>
+              <ul class="text-xs space-y-1">
+                <li>/BookingSystem</li>
+                <li>/ChatModule</li>
+                <li>/GPSTracker</li>
+                <li>/PaymentGateway</li>
+              </ul>
+            </div>
+            <div class="phase-box">
+              <p class="accent font-medium mb-2">Assembly Process</p>
+              <p class="text-xs">During Phase 3: Copy desired module folder into client repo, adjust config as needed.</p>
+            </div>
+            <div class="phase-box">
+              <p class="accent font-medium mb-2">Pricing Rule</p>
+              <p class="text-xs">Base Turn-Key: $1,500<br>Each add-on module: $500</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!--
     - Loading Screen

@@ -3427,3 +3427,104 @@ window.addEventListener('load', function() {
 
 })();
 
+// ─────────────────────────────────────────────
+// Main Business Ops Manual Modal
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const opsModal    = document.getElementById('ops-modal');
+  const opsOverlay  = document.getElementById('ops-overlay');
+  const opsCloseBtn = document.getElementById('ops-close-btn');
+  const showOpsBtn  = document.getElementById('show-ops-manual');
+
+  if (!opsModal || !showOpsBtn) {
+    console.warn('Main Ops modal elements missing');
+    return;
+  }
+
+  // Open main modal
+  showOpsBtn.addEventListener('click', () => {
+    opsModal.classList.add('active');
+    document.body.classList.add('modal-open');
+    opsModal.querySelector('button')?.focus();
+
+    // IMPORTANT: Attach sub-modal listeners NOW (after main modal is visible)
+    attachSubModalListeners();
+  });
+
+  // Close main modal
+  const closeOpsModal = () => {
+    opsModal.classList.remove('active');
+    document.body.classList.remove('modal-open');
+    showOpsBtn.focus();
+  };
+
+  opsCloseBtn.addEventListener('click', closeOpsModal);
+  opsOverlay.addEventListener('click', closeOpsModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && opsModal.classList.contains('active')) {
+      closeOpsModal();
+    }
+  });
+});
+
+// ─────────────────────────────────────────────
+// Attach listeners for ALL sub-modals (only once)
+// ─────────────────────────────────────────────
+function attachSubModalListeners() {
+  if (window.subModalsAttached) {
+    console.log("Sub-modals already attached — skipping");
+    return;
+  }
+  window.subModalsAttached = true;
+
+  console.log("Attaching sub-modal listeners now...");
+
+  const subModals = [
+    { trigger: 'open-sales-routine',   modal: 'sales-modal',    close: 'sales-close-btn',    overlay: 'sales-overlay'    },
+    { trigger: 'open-turnkey',         modal: 'turnkey-modal',   close: 'turnkey-close-btn',   overlay: 'turnkey-overlay'   },
+    { trigger: 'open-endtoend',        modal: 'endtoend-modal',  close: 'endtoend-close-btn',  overlay: 'endtoend-overlay'  },
+    { trigger: 'open-questions',       modal: 'questions-modal', close: 'questions-close-btn', overlay: 'questions-overlay' },
+    { trigger: 'open-components',      modal: 'components-modal',close: 'components-close-btn',overlay: 'components-overlay'}
+  ];
+
+  subModals.forEach(config => {
+    const triggerEl = document.getElementById(config.trigger);
+    const modalEl   = document.getElementById(config.modal);
+
+    console.log(`Checking ${config.trigger}: trigger found = ${!!triggerEl}, modal found = ${!!modalEl}`);
+
+    if (!triggerEl || !modalEl) {
+      console.warn(`Cannot attach listener for ${config.modal} — missing element`);
+      return;
+    }
+
+    triggerEl.addEventListener('click', () => {
+      console.log(`Trigger clicked: ${config.trigger} → opening ${config.modal}`);
+      modalEl.classList.add('active');
+      document.body.classList.add('modal-open');
+      modalEl.querySelector('button')?.focus();
+    });
+
+    const closeFn = () => {
+      modalEl.classList.remove('active');
+      document.body.classList.remove('modal-open');
+      triggerEl.focus();
+    };
+
+    document.getElementById(config.close)?.addEventListener('click', closeFn);
+    document.getElementById(config.overlay)?.addEventListener('click', closeFn);
+  });
+
+  // ESC handler
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll(
+        '#sales-modal.active, #turnkey-modal.active, #endtoend-modal.active, #questions-modal.active, #components-modal.active'
+      ).forEach(modal => modal.classList.remove('active'));
+      document.body.classList.remove('modal-open');
+    }
+  });
+
+  console.log("Sub-modal listeners attached successfully");
+}
